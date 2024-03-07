@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Future<dynamic> _buscarCuidadores() async {
     try {
-      return await Database.buscarDadosPost('/cuidadores/lista', {});
+      return await Database.buscarDadosGet('/cuidadores/lista', {});
     } catch (e) {
       // Tratamento de erro
       print('Erro ao buscar cuidadores: $e');
