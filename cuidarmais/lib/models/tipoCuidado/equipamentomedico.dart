@@ -1,0 +1,4 @@
+class Equipamentomedico {
+  int? idequipamentomedico;
+  
+}
