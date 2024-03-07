@@ -12,8 +12,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool continueConnected = false;
+  bool _continueConnected = false;
+  bool _mostrarSenha = false;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final Cuidador cuidador = Cuidador();
 
   final TextEditingController emailController = TextEditingController();
@@ -62,32 +65,38 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   children: [
                     TextFormField(
-                      controller: emailController,
-                      autofocus: true,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.email_outlined,
-                          color: Color.fromARGB(255, 2, 84, 109),
-                        ),
-                        labelText: "E-mail:",
-                        labelStyle: TextStyle(color: Colors.white),
-                        hintText: "Digite seu e-mail",
-                        hintStyle: TextStyle(color: Colors.white),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.white,
+                        controller: emailController,
+                        autofocus: true,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.email_outlined,
+                            color: Color.fromARGB(255, 2, 84, 109),
+                          ),
+                          labelText: "E-mail:",
+                          labelStyle: TextStyle(color: Colors.white),
+                          hintText: "Digite seu e-mail",
+                          hintStyle: TextStyle(color: Colors.white),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                            ),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor, digite seu e-mail';
+                          }
+                          return null;
+                        }),
                     TextFormField(
                       controller: senhaController,
-                      decoration: InputDecoration(
+                      obscureText: !_mostrarSenha,
+                      decoration:  InputDecoration(
                         prefixIcon: Icon(
                           Icons.vpn_key_sharp,
                           color: Color.fromARGB(255, 2, 84, 109),
@@ -106,7 +115,26 @@ class _LoginPageState extends State<LoginPage> {
                             color: Colors.white,
                           ),
                         ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _mostrarSenha
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Color.fromARGB(255, 2, 84, 109),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _mostrarSenha = !_mostrarSenha;
+                            });
+                          },
+                        ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor, digite sua senha';
+                        }
+                        return null;
+                      },
                     ),
                   ],
                 ),
@@ -126,10 +154,10 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 children: [
                   Checkbox(
-                    value: continueConnected,
+                    value: _continueConnected,
                     onChanged: (newValue) {
                       setState(() {
-                        continueConnected = newValue!;
+                        _continueConnected = newValue!;
                       });
                     },
                   ),
@@ -141,10 +169,10 @@ class _LoginPageState extends State<LoginPage> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  print(emailController.text);
-                  print(senhaController.text);
-                  if (_formKey.currentState!.validate()) {
-                    bool isValidLogin = await cuidador.isValid(emailController.text, senhaController.text);
+                  if (_formKey.currentState != null &&
+                      _formKey.currentState!.validate()) {
+                    bool isValidLogin = await cuidador.isValid(
+                        emailController.text, senhaController.text);
                     if (isValidLogin) {
                       Navigator.push(
                         context,

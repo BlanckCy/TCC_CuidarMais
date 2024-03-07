@@ -10,7 +10,7 @@ class SignUpCuidadorPage extends StatefulWidget {
 }
 
 class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
-  bool mostrarSenha = false;
+  bool _mostrarSenha = false;
   String _emailError = '';
   String _senhaError = '';
 
@@ -128,7 +128,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                           _senhaError = cuidador.validateSenha(value) ?? '';
                         });
                       },
-                      obscureText: (mostrarSenha == true ? false : true),
+                      obscureText: !_mostrarSenha,
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.key_sharp,
@@ -148,24 +148,21 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                             color: Colors.white,
                           ),
                         ),
-                        errorText: _senhaError.isNotEmpty ? _senhaError : null,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: mostrarSenha,
-                          onChanged: (newValue) {
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _mostrarSenha
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Color.fromARGB(255, 2, 84, 109),
+                          ),
+                          onPressed: () {
                             setState(() {
-                              mostrarSenha = newValue!;
+                              _mostrarSenha = !_mostrarSenha;
                             });
                           },
                         ),
-                        const Text(
-                          "Mostrar senha",
-                          style: TextStyle(color: Colors.white, fontSize: 12),
-                        )
-                      ],
+                        errorText: _senhaError.isNotEmpty ? _senhaError : null,
+                      ),
                     ),
                   ],
                 ),

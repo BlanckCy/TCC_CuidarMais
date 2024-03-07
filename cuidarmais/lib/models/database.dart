@@ -2,41 +2,46 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class Database {
-  static Future<List<dynamic>> buscarDadosGet(
+  static Future<String> buscarDadosGet(
       String endpoint, Map<String, String> parametros) async {
-    var url = Uri.http(':8070', endpoint, parametros); // adicionar IP da máquina
+    var url =
+        Uri.http(':8070', endpoint, parametros); // adicionar IP da máquina
     try {
       var resposta = await http.get(url);
 
       if (resposta.statusCode == 200) {
-        return json.decode(resposta.body);
+        return jsonEncode(
+            {'resposta': 'ok', 'dados': utf8.decode(resposta.bodyBytes)});
       } else {
-        throw Exception(
-            'Falha ao buscar dados. Código de status: ${resposta.statusCode}');
+        return jsonEncode({
+          'resposta': 'erro',
+          'mensagem':
+              'Informação não econtrada. Código de status: ${resposta.statusCode}'
+        });
       }
     } catch (e) {
-      // Se ocorrer algum erro durante a solicitação, imprimir o erro no console e retornar uma lista vazia
-      print('Erro ao buscar dados: $e');
-      return [];
+      return jsonEncode({'resposta': 'erro', 'mensagem': '$e'});
     }
   }
 
-  static Future<List<dynamic>> buscarDadosPost(
+  static Future<String> buscarDadosPost(
       String endpoint, Map<String, String> parametros) async {
-    var url = Uri.http(':8070', endpoint, parametros); // adicionar IP da máquina
+    var url = Uri.http(':8070', endpoint); // adicionar IP da máquina
     try {
-      var resposta = await http.get(url);
+      var resposta = await http.post(url, body: parametros);
 
       if (resposta.statusCode == 200) {
-        return json.decode(resposta.body);
+        return jsonEncode(
+            {'resposta': 'ok', 'dados': utf8.decode(resposta.bodyBytes)});
       } else {
-        throw Exception(
-            'Falha ao buscar dados. Código de status: ${resposta.statusCode}');
+        return jsonEncode({
+          'resposta': 'erro',
+          'mensagem':
+              'Informação não econtrada. Código de status: ${resposta.statusCode}'
+        });
       }
     } catch (e) {
-      // Se ocorrer algum erro durante a solicitação, imprimir o erro no console e retornar uma lista vazia
-      print('Erro ao buscar dados: $e');
-      return [];
+      return jsonEncode({'resposta': 'erro', 'mensagem': '$e'});
     }
   }
 }

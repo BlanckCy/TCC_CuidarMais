@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cuidarmais/models/database.dart';
 
 class Cuidador {
@@ -64,10 +66,16 @@ class Cuidador {
     try {
       var dados = await Database.buscarDadosPost(
           '/cuidadores/login', {'email': email, 'senha': senha});
-      print('Dados recebidos: $dados');
+
+      var resposta = jsonDecode(dados);
+      print(resposta['resposta']);
+
+      if (resposta['resposta'] == 'erro') {
+        return false;
+      }
+
       return true;
     } catch (error) {
-      print('Erro ao buscar dados: $error');
       return false;
     }
   }
