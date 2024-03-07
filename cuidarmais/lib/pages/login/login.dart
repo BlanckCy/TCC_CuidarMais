@@ -12,7 +12,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool continueConnected = false;
+  bool _continueConnected = false;
+  bool _mostrarSenha = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -94,7 +95,8 @@ class _LoginPageState extends State<LoginPage> {
                         }),
                     TextFormField(
                       controller: senhaController,
-                      decoration: const InputDecoration(
+                      obscureText: !_mostrarSenha,
+                      decoration:  InputDecoration(
                         prefixIcon: Icon(
                           Icons.vpn_key_sharp,
                           color: Color.fromARGB(255, 2, 84, 109),
@@ -112,6 +114,19 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide: BorderSide(
                             color: Colors.white,
                           ),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _mostrarSenha
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Color.fromARGB(255, 2, 84, 109),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _mostrarSenha = !_mostrarSenha;
+                            });
+                          },
                         ),
                       ),
                       validator: (value) {
@@ -139,10 +154,10 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 children: [
                   Checkbox(
-                    value: continueConnected,
+                    value: _continueConnected,
                     onChanged: (newValue) {
                       setState(() {
-                        continueConnected = newValue!;
+                        _continueConnected = newValue!;
                       });
                     },
                   ),
