@@ -1,7 +1,8 @@
 import 'package:cuidarmais/models/cuidador.dart';
 import 'package:cuidarmais/pages/home/home.dart';
-import 'package:flutter/material.dart';
 import 'package:cuidarmais/pages/sign_up/sign_up_cuidador.dart';
+import 'package:cuidarmais/pages/password_recovery/password_recovery.dart'; 
+import 'package:flutter/material.dart';
 import 'package:cuidarmais/constants/custom_colors.dart';
 
 class LoginPage extends StatefulWidget {
@@ -96,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                     TextFormField(
                       controller: senhaController,
                       obscureText: !_mostrarSenha,
-                      decoration:  InputDecoration(
+                      decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.vpn_key_sharp,
                           color: Color.fromARGB(255, 2, 84, 109),
@@ -143,7 +144,14 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.only(bottom: 10),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PasswordRecoveryPage(),
+                    ),
+                  );
+                },
                 child: const Text(
                   "Esqueceu a senha?",
                   style: TextStyle(color: Colors.white, fontSize: 12),
