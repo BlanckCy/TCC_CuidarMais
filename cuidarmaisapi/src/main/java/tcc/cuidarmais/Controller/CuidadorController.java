@@ -27,10 +27,20 @@ public class CuidadorController {
         return new ResponseEntity<>(cuidadores, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<CuidadorEntity> criarCuidador(@RequestBody CuidadorEntity cuidador) {
         CuidadorEntity novoCuidador = cuidadorService.salvarCuidador(cuidador);
         return new ResponseEntity<>(novoCuidador, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/cuidador/{email}")
+    public ResponseEntity<CuidadorEntity> encontrarCuidador(String email) {
+        CuidadorEntity cuidador = cuidadorService.encontrarCuidadorPorEmail(email);
+        if (cuidador != null) {
+            return new ResponseEntity<>(cuidador, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @PostMapping("/login")
@@ -43,7 +53,7 @@ public class CuidadorController {
         }
     }
 
-    @PutMapping("/{email}")
+    @PutMapping("/update/{email}")
     public ResponseEntity<CuidadorEntity> atualizarCuidador(@PathVariable String email, @RequestBody CuidadorEntity cuidadorAtualizado) {
         CuidadorEntity cuidador = cuidadorService.encontrarCuidadorPorEmail(email);
         if (cuidador != null) {
@@ -60,7 +70,7 @@ public class CuidadorController {
         }
     }
 
-    @DeleteMapping("/{email}/{id}")
+    @DeleteMapping("/delete/{email}/{id}")
     public ResponseEntity<Void> deletarCuidador(@PathVariable String email, int id) {
         CuidadorEntity cuidador = cuidadorService.encontrarCuidadorPorEmail(email);
         if (cuidador != null) {
