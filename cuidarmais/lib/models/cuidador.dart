@@ -63,10 +63,12 @@ class Cuidador {
   }
 
   Future<bool> isValid(String email, String senha) async {
-    try {
-      var dados = await Database.buscarDadosPost(
-          '/cuidadores/login', {'email': email, 'senha': senha});
+    var database = Database();
 
+    try {
+      var dados = await database
+          .buscarDadosPost('/cuidador/login', {'email': email, 'senha': senha});
+          
       var resposta = jsonDecode(dados);
       print(resposta['resposta']);
 

@@ -9,6 +9,7 @@ import tcc.cuidarmais.Entity.CuidadorEntity;
 import tcc.cuidarmais.Service.CuidadorService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cuidador")
@@ -44,7 +45,13 @@ public class CuidadorController {
     }    
 
     @PostMapping("/login")
-    public ResponseEntity<CuidadorEntity> fazerLogin(@RequestBody String email, @RequestBody String senha) {
+    public ResponseEntity<CuidadorEntity> fazerLogin(@RequestBody Map<String, String> corpo) {
+        String email = corpo.get("email");
+        String senha = corpo.get("senha");
+
+        System.out.println(email);
+        System.out.println(senha);
+
         CuidadorEntity cuidador = cuidadorService.validateLogin(email, senha);
         if (cuidador != null) {
             return new ResponseEntity<>(cuidador, HttpStatus.OK);

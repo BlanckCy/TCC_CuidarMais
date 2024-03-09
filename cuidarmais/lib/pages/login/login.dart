@@ -13,7 +13,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool _continueConnected = false;
+  // bool _continueConnected = false;
   bool _mostrarSenha = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -142,9 +142,7 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(bottom: 10),
-              ),
+              const SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -160,8 +158,8 @@ class _LoginPageState extends State<LoginPage> {
                   textAlign: TextAlign.right,
                 ),
               ),
-              const Padding(padding: EdgeInsets.only(bottom: 10)),
-              Row(
+              const SizedBox(height: 40),
+              /* Row(
                 children: [
                   Checkbox(
                     value: _continueConnected,
@@ -176,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(color: Colors.white, fontSize: 12),
                   )
                 ],
-              ),
+              ), */
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState != null &&
