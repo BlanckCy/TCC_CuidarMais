@@ -1,7 +1,8 @@
 import 'package:cuidarmais/models/cuidador.dart';
 import 'package:cuidarmais/pages/home/home.dart';
-import 'package:flutter/material.dart';
 import 'package:cuidarmais/pages/sign_up/sign_up_cuidador.dart';
+import 'package:cuidarmais/pages/password_recovery/password_recovery.dart';
+import 'package:flutter/material.dart';
 import 'package:cuidarmais/constants/custom_colors.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,8 +13,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool continueConnected = false;
+  bool _continueConnected = false;
+  bool _mostrarSenha = false;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final Cuidador cuidador = Cuidador();
 
   final TextEditingController emailController = TextEditingController();
@@ -24,7 +28,8 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
-        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 75),
+        padding:
+            const EdgeInsets.only(left: 25, right: 25, bottom: 25, top: 50),
         decoration: BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -44,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
                   bottom: 7,
                 ),
                 child: Image.asset(
-                  "assets/logoTeste2.png",
+                  "assets/logo-vertical.png",
                   height: 200,
                 ),
               ),
@@ -67,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                       decoration: const InputDecoration(
                         prefixIcon: Icon(
                           Icons.email_outlined,
-                          color: Color.fromARGB(255, 2, 84, 109),
+                          color: Color(0XFF1C51A1),
                         ),
                         labelText: "E-mail:",
                         labelStyle: TextStyle(color: Colors.white),
@@ -84,13 +89,20 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor, digite seu e-mail';
+                        }
+                        return null;
+                      },
                     ),
                     TextFormField(
                       controller: senhaController,
+                      obscureText: !_mostrarSenha,
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.vpn_key_sharp,
-                          color: Color.fromARGB(255, 2, 84, 109),
+                          color: Color(0XFF1C51A1),
                         ),
                         labelText: "Senha:",
                         labelStyle: TextStyle(color: Colors.white),
@@ -106,7 +118,26 @@ class _LoginPageState extends State<LoginPage> {
                             color: Colors.white,
                           ),
                         ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _mostrarSenha
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: const Color(0XFF1C51A1),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _mostrarSenha = !_mostrarSenha;
+                            });
+                          },
+                        ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor, digite sua senha';
+                        }
+                        return null;
+                      },
                     ),
                   ],
                 ),
@@ -115,7 +146,14 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.only(bottom: 10),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PasswordRecoveryPage(),
+                    ),
+                  );
+                },
                 child: const Text(
                   "Esqueceu a senha?",
                   style: TextStyle(color: Colors.white, fontSize: 12),
@@ -126,10 +164,10 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 children: [
                   Checkbox(
-                    value: continueConnected,
+                    value: _continueConnected,
                     onChanged: (newValue) {
                       setState(() {
-                        continueConnected = newValue!;
+                        _continueConnected = newValue!;
                       });
                     },
                   ),
@@ -141,10 +179,10 @@ class _LoginPageState extends State<LoginPage> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  print(emailController.text);
-                  print(senhaController.text);
-                  if (_formKey.currentState!.validate()) {
-                    bool isValidLogin = await cuidador.isValid(emailController.text, senhaController.text);
+                  if (_formKey.currentState != null &&
+                      _formKey.currentState!.validate()) {
+                    bool isValidLogin = await cuidador.isValid(
+                        emailController.text, senhaController.text);
                     if (isValidLogin) {
                       Navigator.push(
                         context,
@@ -162,21 +200,20 @@ class _LoginPageState extends State<LoginPage> {
                   }
                 },
                 style: TextButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 2, 84, 109),
+                    backgroundColor: const Color(0XFF1C51A1),
                     foregroundColor: Colors.white),
                 child: const Text("Login"),
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 15),
                 child: Divider(
-                  color: Color.fromARGB(255, 2, 84, 109),
+                  color: Color(0XFF1C51A1),
                 ),
               ),
               const Text(
                 "Ainda não tem uma conta?",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Color.fromARGB(255, 2, 84, 109), fontSize: 12),
+                style: TextStyle(color: Color(0XFF1C51A1), fontSize: 12),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
@@ -189,6 +226,10 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     );
                   },
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0XFF1C51A1),
+                  ),
                   child: const Text("Cadastre-se"),
                 ),
               ),

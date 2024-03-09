@@ -16,7 +16,8 @@ class CustomColors {
   }
 
   Color getBackBottomColor() {
-    Color backBottomColor = const Color.fromARGB(255, 24, 147, 189);
+    // Color backBottomColor = const Color.fromARGB(255, 24, 147, 189);
+    Color backBottomColor = const Color.fromARGB(255, 35, 99, 195);
     return backBottomColor;
   }
 }
