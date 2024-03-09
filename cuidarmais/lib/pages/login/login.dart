@@ -28,7 +28,8 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
-        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 75),
+        padding:
+            const EdgeInsets.only(left: 25, right: 25, bottom: 25, top: 50),
         decoration: BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -66,34 +67,35 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   children: [
                     TextFormField(
-                        controller: emailController,
-                        autofocus: true,
-                        decoration: const InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.email_outlined,
-                            color: Color(0XFF1C51A1),
-                          ),
-                          labelText: "E-mail:",
-                          labelStyle: TextStyle(color: Colors.white),
-                          hintText: "Digite seu e-mail",
-                          hintStyle: TextStyle(color: Colors.white),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
+                      controller: emailController,
+                      autofocus: true,
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.email_outlined,
+                          color: Color(0XFF1C51A1),
+                        ),
+                        labelText: "E-mail:",
+                        labelStyle: TextStyle(color: Colors.white),
+                        hintText: "Digite seu e-mail",
+                        hintStyle: TextStyle(color: Colors.white),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
                           ),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor, digite seu e-mail';
-                          }
-                          return null;
-                        }),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor, digite seu e-mail';
+                        }
+                        return null;
+                      },
+                    ),
                     TextFormField(
                       controller: senhaController,
                       obscureText: !_mostrarSenha,
