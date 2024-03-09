@@ -1,3 +1,5 @@
+create database cuidarmais;
+
 create table cuidador(
 	idcuidador int auto_increment primary key,
     nome varchar(100),
@@ -8,27 +10,21 @@ create table cuidador(
     genero char(2)
 );
 
+create table nivelCuidado(
+	idnivelCuidado int auto_increment primary key,
+    descricao varchar(255)
+);
+
 create table paciente(
 	idpaciente int auto_increment primary key,
     nome varchar(100),
     email_responsavel varchar(100),
     nome_responsavel  varchar(100),
     idade int,
-    genero char(2)
-);
-
-create table nivelCuidado(
-	idnivelCuidado int auto_increment primary key,
-    descricao varchar(255)
-);
-
-create table vincularPaciente(
-	idvincularPaciente int auto_increment primary key,
+    genero char(2),
     idcuidador int,
-	idpaciente int,
     idnivelCuidado int,
     foreign key (idcuidador) references cuidador(idcuidador),
-    foreign key (idpaciente) references paciente(idpaciente),
     foreign key (idnivelCuidado) references nivelCuidado(idnivelCuidado)
 );
 
@@ -106,70 +102,3 @@ create table cuidadoEquipamentoLista(
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );
-
-/*
-
--- acho que não precisa
-create table cuidadoRefeicao(
-	idcuidadoRefeicao int auto_increment primary key,
-    data_hora timestamp,
-    acao varchar(255) -- qual a refeicao
-);
-
--- acho que não precisa
-create table cuidadoAtividadeFisica(
-	idcuidadoAtividadeFisica int auto_increment primary key,
-    data_hora timestamp,
-    acao varchar(255) -- qual a atividade
-);
-
--- acho que não precisa - poderia ser uma lista que o cuidador adiciona medicamentos
-create table cuidadoMedicacao(
-	idcuidadoMedicacao int auto_increment primary key,
-    data_hora timestamp,
-    medicamento varchar(255),
-    realizou char(1) default 0,
-    idcuidado int,
-    foreign key (idcuidado) references cuidado(idcuidado)
-);
-
--- acho que não precisa
-create table cuidadoHigiene(
-	idcuidadoHigiene int auto_increment primary key,
-    data_hora timestamp,
-    acao varchar(255) -- qual a higiene
-);
-
--- acho que não precisa - poderia ser uma lista que o cuidador adiciona as feridas a serem tratadas
-create table cuidadoFerida(
-	idcuidadoFerida int auto_increment primary key,
-    ferida varchar(255),
-    realizou char(1) default 0,
-    idcuidado int,
-    foreign key (idcuidado) references cuidado(idcuidado)
-);
-
--- acho que não precisa - poderia ser uma lista que o cuidador adiciona os equipamentos a serem trocados
-create table cuidadoEquipamentoMedico(
-	idcuidadoEquipamentoMedico int auto_increment primary key,
-    equipamento varchar(255),
-    realizouTroca char(1) default 0,
-    idcuidado int,
-    foreign key (idcuidado) references cuidado(idcuidado)
-);
-
--- acho que não precisa 
-create table cuidadoDecubito(
-	idcuidadoDecubito int auto_increment primary key,
-    data_hora timestamp,
-    acao varchar(255) -- qual a posicao
-);
-
-*/
-
-
-
-
-
-
-
