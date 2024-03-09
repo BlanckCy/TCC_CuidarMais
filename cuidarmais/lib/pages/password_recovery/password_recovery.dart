@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cuidarmais/pages/PatientDataManagementPage/PatientDataManagementPage.dart'; // Importe o arquivo PatientDataManagementPage.dart
+import 'package:cuidarmais/pages/PatientDataManagementPage/PatientDataManagementPage.dart';
 
 class PasswordRecoveryPage extends StatelessWidget {
   const PasswordRecoveryPage({Key? key}) : super(key: key);
@@ -8,22 +8,21 @@ class PasswordRecoveryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Remover o botão de voltar padrão
-        backgroundColor: Color.fromARGB(255, 24, 147, 189),
+        automaticallyImplyLeading: false,
+        backgroundColor: Color(0xFF1C51A1), // Alterando a cor do AppBar para #1C51A1
         titleSpacing: 0,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(
-                'assets/TesteBar.png', // Caminho para o logotipo
-                height: 40, // Altura do logotipo
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.asset(
+                  'assets/logo-horizontal.png', // Alterando o caminho do logotipo
+                  height: 40,
+                  alignment: Alignment.center,
+                ),
               ),
-            ),
-            Text(
-              'CUIDAR +', // Texto ao lado do logotipo
-              style: TextStyle(color: Colors.white),
             ),
           ],
         ),
@@ -34,48 +33,49 @@ class PasswordRecoveryPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Insira seu e-mail para recuperar a senha:', // Instrução para o usuário
-              style: TextStyle(fontSize: 20),
+              'Insira seu e-mail para recuperar a senha:',
+              style: TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 20), // Espaçamento entre elementos
+            const SizedBox(height: 20),
 
-            // Campo de entrada de e-mail
             Container(
-              margin: EdgeInsets.symmetric(
-                  horizontal: 20), // Margens personalizadas
+              margin: EdgeInsets.symmetric(horizontal: 20),
               child: TextFormField(
                 decoration: InputDecoration(
                   labelText: 'E-mail',
                   hintText: 'Digite seu e-mail',
                   prefixIcon: Icon(Icons.email_outlined,
-                      color: Color.fromARGB(255, 2, 84,
-                          109)), // Ícone de e-mail com cor personalizada
+                      color: Color.fromARGB(255, 2, 84, 109)),
                 ),
               ),
             ),
-            const SizedBox(height: 20), // Espaçamento entre elementos
+            const SizedBox(height: 20),
 
-            // Botão de envio
             ElevatedButton(
               onPressed: () {
                 // Lógica para enviar o e-mail de recuperação de senha
-                // Aqui você implementaria a lógica para enviar o e-mail de recuperação
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF1C51A1),
+                foregroundColor: Colors.white,
+              ),
               child: const Text('Recuperar Senha'),
             ),
 
-            const SizedBox(height: 20), // Espaçamento entre elementos
+            const SizedBox(height: 20),
 
-            // Botão para gerenciar os dados do paciente
             ElevatedButton(
               onPressed: () {
-                // Navegação para a tela de gerenciamento de dados do paciente
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => PatientDataManagementPage()),
                 );
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF1C51A1),
+                foregroundColor: Colors.white,
+              ),
               child: const Text('Gerenciar Dados do Paciente'),
             ),
           ],
