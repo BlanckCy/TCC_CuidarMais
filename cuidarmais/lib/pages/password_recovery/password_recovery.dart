@@ -1,84 +1,109 @@
+import 'package:cuidarmais/constants/custom_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:cuidarmais/pages/PatientDataManagementPage/PatientDataManagementPage.dart'; // Importe o arquivo PatientDataManagementPage.dart
+import 'package:cuidarmais/pages/PatientDataManagementPage/PatientDataManagementPage.dart';
 
-class PasswordRecoveryPage extends StatelessWidget {
-  const PasswordRecoveryPage({Key? key}) : super(key: key);
+class PasswordRecoveryPage extends StatefulWidget {
+  const PasswordRecoveryPage({super.key});
+
+  @override
+  State<PasswordRecoveryPage> createState() => _PasswordRecoveryPageState();
+}
+
+class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Remover o botão de voltar padrão
-        backgroundColor: Color.fromARGB(255, 24, 147, 189),
+        automaticallyImplyLeading: false,
+        backgroundColor: Color(0xFF1C51A1),
         titleSpacing: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(
-                'assets/TesteBar.png', // Caminho para o logotipo
-                height: 40, // Altura do logotipo
-              ),
+        title: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              'assets/logo-horizontal.png',
+              height: 40,
+              alignment: Alignment.center,
             ),
-            Text(
-              'CUIDAR +', // Texto ao lado do logotipo
-              style: TextStyle(color: Colors.white),
-            ),
-          ],
+          ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Insira seu e-mail para recuperar a senha:', // Instrução para o usuário
-              style: TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 20), // Espaçamento entre elementos
-
-            // Campo de entrada de e-mail
-            Container(
-              margin: EdgeInsets.symmetric(
-                  horizontal: 20), // Margens personalizadas
-              child: TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'E-mail',
-                  hintText: 'Digite seu e-mail',
-                  prefixIcon: Icon(Icons.email_outlined,
-                      color: Color.fromARGB(255, 2, 84,
-                          109)), // Ícone de e-mail com cor personalizada
+      body: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Insira seu e-mail para recuperar a senha:',
+                style: TextStyle(fontSize: 16),
+              ),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.email_outlined,
+                            color: Color(0xFF1C51A1),
+                          ),
+                          labelText: 'E-mail:',
+                          labelStyle: TextStyle(color: Colors.black),
+                          hintText: 'Digite seu e-mail',
+                          hintStyle: TextStyle(color: Colors.black),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.black,
+                            ),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.black,
+                            ),
+                          )),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            const SizedBox(height: 20), // Espaçamento entre elementos
-
-            // Botão de envio
-            ElevatedButton(
-              onPressed: () {
-                // Lógica para enviar o e-mail de recuperação de senha
-                // Aqui você implementaria a lógica para enviar o e-mail de recuperação
-              },
-              child: const Text('Recuperar Senha'),
-            ),
-
-            const SizedBox(height: 20), // Espaçamento entre elementos
-
-            // Botão para gerenciar os dados do paciente
-            ElevatedButton(
-              onPressed: () {
-                // Navegação para a tela de gerenciamento de dados do paciente
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PatientDataManagementPage()),
-                );
-              },
-              child: const Text('Gerenciar Dados do Paciente'),
-            ),
-          ],
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Lógica para enviar o e-mail de recuperação de senha
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF1C51A1),
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Recuperar Senha'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PatientDataManagementPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF1C51A1),
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Gerenciar Dados do Paciente'),
+              ),
+            ],
+          ),
         ),
       ),
     );
