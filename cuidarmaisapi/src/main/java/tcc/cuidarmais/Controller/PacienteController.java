@@ -33,9 +33,10 @@ public class PacienteController {
         return new ResponseEntity<>(pacientes, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{idcuidador}")
     public ResponseEntity<PacienteEntity> buscarPacientePorId(@PathVariable int idcuidador) {
         PacienteEntity paciente = pacienteService.buscarPacientePorId(idcuidador);
+        System.out.println(idcuidador);
         if (paciente != null) {
             return new ResponseEntity<>(paciente, HttpStatus.OK);
         } else {

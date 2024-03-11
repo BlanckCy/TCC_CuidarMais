@@ -6,17 +6,27 @@ class Cuidador {
   int? idcuidador;
   String? nome;
   String? email;
+  String? telefone;
   String? senha;
   bool? manter;
   String? genero;
   int? idade;
 
-  Cuidador({idcuidador, nome, email, senha, manter, genero, idade});
+  Cuidador(
+      {this.idcuidador,
+      this.nome,
+      this.email,
+      this.telefone,
+      this.senha,
+      this.manter,
+      this.genero,
+      this.idade});
 
   Cuidador.fromJson(Map<String, dynamic> json) {
     idcuidador = json['idcuidador'];
     nome = json['nome'];
     email = json['email'];
+    telefone = json['telefone'];
     senha = json['senha'];
     manter = json['manter'];
     genero = json['genero'];
@@ -62,13 +72,57 @@ class Cuidador {
     return null;
   }
 
+  String? validateTelefone(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira seu número';
+    }
+
+    return null;
+  }
+
   Future<bool> isValid(String email, String senha) async {
     var database = Database();
 
     try {
       var dados = await database
           .buscarDadosPost('/cuidador/login', {'email': email, 'senha': senha});
-          
+
+      var resposta = jsonDecode(dados);
+      print(resposta['resposta']);
+
+      if (resposta['resposta'] == 'erro') {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  Future<bool> cadastrar() async {
+    if (genero!.toLowerCase() == 'masculino') {
+      genero = 'M';
+    } else if (genero!.toLowerCase() == 'feminino') {
+      genero = 'F';
+    } else if (genero!.toLowerCase() == 'outro') {
+      genero = 'O';
+    }
+
+    var database = Database();
+
+    print('email: $email');
+
+    try {
+      var dados = await database.buscarDadosPost('/cuidador/create', {
+        'nome': nome!,
+        'idade': idade.toString(),
+        'genero': genero!,
+        'telefone': telefone!,
+        'email': email!,
+        'senha': senha!,
+      });
+
       var resposta = jsonDecode(dados);
       print(resposta['resposta']);
 

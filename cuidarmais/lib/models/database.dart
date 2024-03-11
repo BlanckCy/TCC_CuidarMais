@@ -4,9 +4,8 @@ import 'dart:convert';
 class Database {
   String? ip = ""; // adicionar IP da máquina
 
-  Future<String> buscarDadosGet(
-      String endpoint, Map<String, String> parametros) async {
-    var url = Uri.http('$ip:8070', endpoint, parametros);
+  Future<String> buscarDadosGet(String endpoint) async {
+    var url = Uri.http('$ip:8070', endpoint);
     try {
       var resposta = await http.get(url);
 
@@ -38,7 +37,7 @@ class Database {
         body: jsonEncode(parametros),
       );
 
-      if (resposta.statusCode == 200) {
+      if (resposta.statusCode == 200 || resposta.statusCode == 201) {
         return jsonEncode(
             {'resposta': 'ok', 'dados': utf8.decode(resposta.bodyBytes)});
       } else {
