@@ -1,13 +1,15 @@
 // arquivo signup.dart completo
 
+import 'package:cuidarmais/pages/PatientDataManagementPage/PatientDataManagementPage.dart';
 import 'package:cuidarmais/pages/sign_up/sign_up_paciente.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/models/paciente.dart';
 
 class ListaPacientePage extends StatefulWidget {
-  const ListaPacientePage({Key? key});
+  final Paciente paciente;
 
+  const ListaPacientePage({Key? key, required this.paciente}) : super(key: key);
   @override
   State<ListaPacientePage> createState() => _ListaPacientePageState();
 }
@@ -15,16 +17,17 @@ class ListaPacientePage extends StatefulWidget {
 class _ListaPacientePageState extends State<ListaPacientePage> {
   List<Paciente> pacientes = [];
 
+  Paciente paciente = Paciente();
+
   @override
   void initState() {
     super.initState();
-    _carregarPacientes(); // Chamando a função corretamente
+    _carregarPacientes(idcuidador: widget.paciente.idcuidador ?? 0);
   }
 
-  Future<void> _carregarPacientes() async {
+  Future<void> _carregarPacientes({required int idcuidador}) async {
     try {
-      var listaPacientes = await Paciente()
-          .carregarPacientes(1); // Carregar pacientes assincronamente
+      var listaPacientes = await Paciente().carregarPacientes(idcuidador);
       setState(() {
         pacientes = listaPacientes;
       });
@@ -51,22 +54,23 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: const CustomAppBar(),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 75),
+        padding: const EdgeInsets.all(25),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            
-            SizedBox(height: 16), // Espaçamento entre o texto e o botão
+            SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const SignUpPacientePage(),
+                    builder: (context) => SignUpPacientePage(
+                      paciente: widget.paciente,
+                    ),
                   ),
                 );
               },
@@ -90,10 +94,9 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
                 ],
               ),
             ),
-
             SizedBox(height: 20),
             Text(
-              'MEUS PACIENTES',
+              'Meus Pacientes',
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 18,
@@ -108,19 +111,27 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 4),
                     child: ElevatedButton(
-                        onPressed: () {
-                          // _handlePacienteButtonPress(pacientes[index].idPaciente);
-                        },
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment
-                                .start, // Alinha os ícones à esquerda
-                            children: <Widget>[
-                              Icon(Icons.person), // Ícone
-                              SizedBox(
-                                  width:
-                                      8), // Espaçamento entre o ícone e o texto
-                              Text(pacientes[index].nome ?? " Erro nome"),
-                            ])),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PatientDataManagementPage(
+                              paciente: pacientes[index],
+                            ),
+                          ),
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment
+                            .start, // Alinha os ícones à esquerda
+                        children: <Widget>[
+                          Icon(Icons.person), // Ícone
+                          SizedBox(
+                              width: 8), // Espaçamento entre o ícone e o texto
+                          Text(pacientes[index].nome ?? " Erro nome"),
+                        ],
+                      ),
+                    ),
                   );
                 },
               ),

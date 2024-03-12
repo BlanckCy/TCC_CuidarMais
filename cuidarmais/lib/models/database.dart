@@ -64,6 +64,8 @@ class Database {
         body: jsonEncode(parametros),
       );
 
+      print("pa $parametros");
+
       if (resposta.statusCode == 200) {
         return jsonEncode(
             {'resposta': 'ok', 'dados': utf8.decode(resposta.bodyBytes)});
@@ -84,9 +86,8 @@ class Database {
     try {
       var resposta = await http.delete(url);
 
-      if (resposta.statusCode == 200) {
-        return jsonEncode(
-            {'resposta': 'ok', 'dados': utf8.decode(resposta.bodyBytes)});
+      if (resposta.statusCode == 204) {
+        return jsonEncode({'resposta': 'ok'});
       } else {
         return jsonEncode({
           'resposta': 'erro',
