@@ -2,7 +2,6 @@ import 'package:cuidarmais/models/cuidador.dart';
 import 'package:cuidarmais/pages/login/login.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/material.dart';
-import 'package:cuidarmais/constants/custom_colors.dart';
 
 class SignUpCuidadorPage extends StatefulWidget {
   const SignUpCuidadorPage({super.key});
@@ -43,12 +42,14 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text("Cadastro Cuidador",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center),
+              const Text(
+                "Cadastro Cuidador",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
               Form(
                 key: _formKey,
                 child: Column(

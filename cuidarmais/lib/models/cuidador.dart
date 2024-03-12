@@ -80,7 +80,7 @@ class Cuidador {
     return null;
   }
 
-  Future<bool> isValid(String email, String senha) async {
+  Future<Map<String, dynamic>> isValid(String email, String senha) async {
     var database = Database();
 
     try {
@@ -88,30 +88,28 @@ class Cuidador {
           .buscarDadosPost('/cuidador/login', {'email': email, 'senha': senha});
 
       var resposta = jsonDecode(dados);
+      var dadosCuidador = jsonDecode(resposta['dados']);
+
       print(resposta['resposta']);
 
-      if (resposta['resposta'] == 'erro') {
-        return false;
+      if (resposta['resposta'] == 'ok') {
+        return {
+          'resposta': true,
+          'dados': dadosCuidador,
+        };
+      } else {
+        return {'resposta': false, 'dados': null};
       }
-
-      return true;
     } catch (error) {
-      return false;
+      return {'resposta': false, 'dados': null};
     }
   }
 
   Future<bool> cadastrar() async {
-    if (genero!.toLowerCase() == 'masculino') {
-      genero = 'M';
-    } else if (genero!.toLowerCase() == 'feminino') {
-      genero = 'F';
-    } else if (genero!.toLowerCase() == 'outro') {
-      genero = 'O';
-    }
-
     var database = Database();
 
     print('email: $email');
+    genero = _formatarGenero(genero);
 
     try {
       var dados = await database.buscarDadosPost('/cuidador/create', {
@@ -134,5 +132,18 @@ class Cuidador {
     } catch (error) {
       return false;
     }
+  }
+
+  String? _formatarGenero(String? genero) {
+    if (genero != null) {
+      if (genero.toLowerCase() == 'masculino') {
+        return 'M';
+      } else if (genero.toLowerCase() == 'feminino') {
+        return 'F';
+      } else if (genero.toLowerCase() == 'outro') {
+        return 'O';
+      }
+    }
+    return null;
   }
 }

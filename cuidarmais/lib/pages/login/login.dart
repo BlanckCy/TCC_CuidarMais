@@ -1,5 +1,6 @@
 import 'package:cuidarmais/models/cuidador.dart';
-import 'package:cuidarmais/pages/home/home.dart';
+import 'package:cuidarmais/models/paciente.dart';
+import 'package:cuidarmais/pages/list_paciente.dart';
 import 'package:cuidarmais/pages/sign_up/sign_up_cuidador.dart';
 import 'package:cuidarmais/pages/password_recovery/password_recovery.dart';
 import 'package:flutter/material.dart';
@@ -179,13 +180,17 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () async {
                   if (_formKey.currentState != null &&
                       _formKey.currentState!.validate()) {
-                    bool isValidLogin = await cuidador.isValid(
+                    Map<String, dynamic> loginResult = await cuidador.isValid(
                         emailController.text, senhaController.text);
-                    if (isValidLogin) {
+                    print(loginResult);
+                    if (loginResult['resposta'] == true) {
+                      Paciente paciente = Paciente.fromJson(loginResult['dados']);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const HomePage(),
+                          builder: (context) => ListaPacientePage(
+                            paciente: paciente,
+                          ),
                         ),
                       );
                     } else {
