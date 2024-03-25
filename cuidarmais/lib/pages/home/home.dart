@@ -1,53 +1,84 @@
 import 'package:flutter/material.dart';
-import 'package:cuidarmais/models/database.dart';
+import 'package:cuidarmais/models/paciente.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class SignUpPacientePage extends StatefulWidget {
+  const SignUpPacientePage({Key? key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<SignUpPacientePage> createState() => _SignUpPacientePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  Future<dynamic> _buscarCuidadores() async {
+class _SignUpPacientePageState extends State<SignUpPacientePage> {
+  List<Paciente> pacientes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarPacientes(); // Chamando a função corretamente
+  }
+
+  Future<void> _carregarPacientes() async {
     try {
-      return await Database.buscarDadosGet('/cuidadores/lista', {});
-    } catch (e) {
-      // Tratamento de erro
-      print('Erro ao buscar cuidadores: $e');
-      return null;
+      var listaPacientes = await Paciente()
+          .carregarPacientes(1); // Carregar pacientes assincronamente
+      setState(() {
+        pacientes = listaPacientes;
+      });
+    } catch (error) {
+      print('Erro ao carregar pacientes: $error');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Erro ao carregar pacientes'),
+          content: Text('$error'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.purple,
-        leading: Icon(Icons.menu),
-        title: Text("App"),
-      ),
-      body: FutureBuilder<dynamic>(
-        future: _buscarCuidadores(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError || snapshot.data == null) {
-            return Center(child: Text('Erro ao carregar cuidadores'));
-          } else {
-            final cuidadores = snapshot.data;
-            return ListView.builder(
-              itemCount: cuidadores.length,
-              itemBuilder: (context, index) {
-                final cuidador = cuidadores[index];
-                return ListTile(
-                  title: Text('Nome: ${cuidador['nome']}'),
-                  subtitle: Text('Email: ${cuidador['email']}'),
-                );
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 75),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                // Adicione o código para lidar com o pressionamento do botão aqui
               },
-            );
-          }
-        },
+              child: Text('Botão Antes da Lista'),
+            ),
+            SizedBox(height: 16), // Espaçamento entre o botão e a lista
+            Expanded(
+              child: ListView.builder(
+                itemCount: pacientes.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // _handlePacienteButtonPress(pacientes[index].idPaciente);
+                      },
+                      child: Text(pacientes[index].nome ?? " Erro nome"),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

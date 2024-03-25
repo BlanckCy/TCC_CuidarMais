@@ -1,30 +1,32 @@
-import 'package:cuidarmais/models/cuidador.dart';
-import 'package:cuidarmais/pages/login/login.dart';
+import 'package:cuidarmais/models/paciente.dart';
+import 'package:cuidarmais/pages/list_paciente.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/material.dart';
 
-class SignUpCuidadorPage extends StatefulWidget {
-  const SignUpCuidadorPage({super.key});
+class SignUpPacientePage extends StatefulWidget {
+  final Paciente paciente;
+
+  const SignUpPacientePage({Key? key, required this.paciente})
+      : super(key: key);
 
   @override
-  State<SignUpCuidadorPage> createState() => _SignUpCuidadorPageState();
+  State<SignUpPacientePage> createState() => _SignUpPacientePageState();
 }
 
-class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
-  bool _mostrarSenha = false;
+class _SignUpPacientePageState extends State<SignUpPacientePage> {
   String _emailError = '';
-  String _senhaError = '';
   String _selectedGender = '';
 
   final TextEditingController nomeController = TextEditingController();
-  final TextEditingController idadeController = TextEditingController();
+  final TextEditingController emailResponsavelController =
+      TextEditingController();
   final TextEditingController generoController = TextEditingController();
-  final TextEditingController telefoneController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController senhaController = TextEditingController();
+  final TextEditingController nomeResponsavelController =
+      TextEditingController();
+  final TextEditingController idadeController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final Cuidador cuidador = Cuidador();
+  final Paciente paciente = Paciente();
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +45,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
-                "Cadastro Cuidador",
+                "Cadastro Paciente",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -62,9 +64,9 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                           Icons.person,
                           color: Color(0XFF1C51A1),
                         ),
-                        labelText: "Nome:",
+                        labelText: "Nome completo:",
                         labelStyle: TextStyle(color: Colors.black),
-                        hintText: "Digite seu nome completo",
+                        hintText: "Digite o nome do paciente",
                         hintStyle: TextStyle(color: Colors.black),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -78,11 +80,11 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                         ),
                       ),
                       onSaved: (value) {
-                        cuidador.nome = value;
+                        paciente.nome = value;
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Por favor, digite seu nome';
+                          return 'Por favor, digite o nome do paciente';
                         }
                         return null;
                       },
@@ -97,7 +99,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                         ),
                         labelText: "Idade:",
                         labelStyle: TextStyle(color: Colors.black),
-                        hintText: "Digite sua idade",
+                        hintText: "Digite a idade do paciente",
                         hintStyle: TextStyle(color: Colors.black),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -111,11 +113,11 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                         ),
                       ),
                       onSaved: (value) {
-                        cuidador.idade = int.tryParse(value ?? '');
+                        paciente.idade = int.tryParse(value ?? '');
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Por favor, digite sua idade';
+                          return 'Por favor, digite a idade do paciente';
                         }
                         return null;
                       },
@@ -133,7 +135,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                         return DropdownMenuItem<String>(
                           value: value ?? '',
                           child: Text(
-                            value ?? 'Selecione seu gênero',
+                            value ?? 'Selecione o gênero do paciente',
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                             ),
@@ -145,7 +147,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                           Icons.person_pin_outlined,
                           color: Color(0XFF1C51A1),
                         ),
-                        hintText: 'Selecione seu gênero',
+                        hintText: 'Selecione o gênero do paciente',
                         hintStyle: TextStyle(color: Colors.grey),
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -160,27 +162,25 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                         contentPadding: EdgeInsets.symmetric(vertical: 20.0),
                       ),
                       onSaved: (value) {
-                        cuidador.genero = value;
+                        paciente.genero = value;
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Por favor, selecione seu gênero';
+                          return 'Por favor, selecione o gênero do paciente';
                         }
                         return null;
                       },
                     ),
                     TextFormField(
-                      controller: telefoneController,
-                      maxLength: 11,
-                      keyboardType: TextInputType.number,
+                      controller: nomeResponsavelController,
                       decoration: const InputDecoration(
                         prefixIcon: Icon(
-                          Icons.phone_android,
+                          Icons.person,
                           color: Color(0XFF1C51A1),
                         ),
-                        labelText: "Celular:",
+                        labelText: "Nome do Responsável:",
                         labelStyle: TextStyle(color: Colors.black),
-                        hintText: "(11) 99999-9999",
+                        hintText: "Digite o nome completo do responsável",
                         hintStyle: TextStyle(color: Colors.black),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -194,20 +194,20 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                         ),
                       ),
                       onSaved: (value) {
-                        cuidador.telefone = value;
+                        paciente.nome_responsavel = value;
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Por favor, digite seu número';
+                          return 'Por favor, digite o nome do responsável';
                         }
                         return null;
                       },
                     ),
                     TextFormField(
-                      controller: emailController,
+                      controller: emailResponsavelController,
                       onChanged: (value) {
                         setState(() {
-                          _emailError = cuidador.validateEmail(value) ?? '';
+                          _emailError = paciente.validateEmail(value) ?? '';
                         });
                       },
                       decoration: InputDecoration(
@@ -215,9 +215,9 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                           Icons.email_outlined,
                           color: Color(0XFF1C51A1),
                         ),
-                        labelText: "E-mail:",
+                        labelText: "E-mail do responsável:",
                         labelStyle: TextStyle(color: Colors.black),
-                        hintText: "Digite seu e-mail",
+                        hintText: "Digite o e-mail do responsável",
                         hintStyle: TextStyle(color: Colors.black),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -232,63 +232,11 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                         errorText: _emailError.isNotEmpty ? _emailError : null,
                       ),
                       onSaved: (value) {
-                        cuidador.email = value;
+                        paciente.email_responsavel = value;
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Por favor, digite seu e-mail';
-                        }
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      controller: senhaController,
-                      onChanged: (value) {
-                        setState(() {
-                          _senhaError = cuidador.validateSenha(value) ?? '';
-                        });
-                      },
-                      obscureText: !_mostrarSenha,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.key_sharp,
-                          color: Color(0XFF1C51A1),
-                        ),
-                        labelText: "Senha:",
-                        labelStyle: TextStyle(color: Colors.black),
-                        hintText: "Digite sua senha",
-                        hintStyle: TextStyle(color: Colors.black),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.black,
-                          ),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.black,
-                          ),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _mostrarSenha
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color: Color(0XFF1C51A1),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _mostrarSenha = !_mostrarSenha;
-                            });
-                          },
-                        ),
-                        errorText: _senhaError.isNotEmpty ? _senhaError : null,
-                      ),
-                      onSaved: (value) {
-                        cuidador.senha = value;
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor, digite sua senha';
+                          return 'Por favor, digite o e-mail do responsável';
                         }
                         return null;
                       },
@@ -302,7 +250,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                   if (_formKey.currentState != null &&
                       _formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    bool resultado = await cuidador.cadastrar();
+                    bool resultado = await paciente.cadastrar(widget.paciente.idcuidador ?? 0);
                     if (resultado) {
                       showDialog(
                         context: context,
@@ -310,7 +258,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                           return AlertDialog(
                             title: Text('Cadastro OK'),
                             content:
-                                Text('Seu cadastro foi realizado com sucesso!'),
+                                Text('O cadastro foi realizado com sucesso!'),
                             actions: [
                               TextButton(
                                 onPressed: () {
@@ -318,7 +266,9 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                                   Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const LoginPage(),
+                                      builder: (context) => ListaPacientePage(
+                                        paciente: widget.paciente,
+                                      ),
                                     ),
                                     (route) => false,
                                   );
@@ -334,9 +284,9 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('Atenção'),
-                            content:
-                                Text('O cadastro com este e-mail já existe.'),
+                            title: Text('Erro'),
+                            content: Text(
+                                'Erro ao criar cadastro. Tente novamente.'),
                             actions: [
                               TextButton(
                                 onPressed: () {

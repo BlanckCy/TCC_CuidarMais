@@ -1,5 +1,6 @@
 import 'package:cuidarmais/models/cuidador.dart';
-import 'package:cuidarmais/pages/home/home.dart';
+import 'package:cuidarmais/models/paciente.dart';
+import 'package:cuidarmais/pages/list_paciente.dart';
 import 'package:cuidarmais/pages/sign_up/sign_up_cuidador.dart';
 import 'package:cuidarmais/pages/password_recovery/password_recovery.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool _continueConnected = false;
+  // bool _continueConnected = false;
   bool _mostrarSenha = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -142,9 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(bottom: 10),
-              ),
+              const SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -160,8 +159,8 @@ class _LoginPageState extends State<LoginPage> {
                   textAlign: TextAlign.right,
                 ),
               ),
-              const Padding(padding: EdgeInsets.only(bottom: 10)),
-              Row(
+              const SizedBox(height: 40),
+              /* Row(
                 children: [
                   Checkbox(
                     value: _continueConnected,
@@ -176,18 +175,22 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(color: Colors.white, fontSize: 12),
                   )
                 ],
-              ),
+              ), */
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState != null &&
                       _formKey.currentState!.validate()) {
-                    bool isValidLogin = await cuidador.isValid(
+                    Map<String, dynamic> loginResult = await cuidador.isValid(
                         emailController.text, senhaController.text);
-                    if (isValidLogin) {
+                    print(loginResult);
+                    if (loginResult['resposta'] == true) {
+                      Paciente paciente = Paciente.fromJson(loginResult['dados']);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const HomePage(),
+                          builder: (context) => ListaPacientePage(
+                            paciente: paciente,
+                          ),
                         ),
                       );
                     } else {

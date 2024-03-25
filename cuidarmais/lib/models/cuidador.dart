@@ -6,17 +6,27 @@ class Cuidador {
   int? idcuidador;
   String? nome;
   String? email;
+  String? telefone;
   String? senha;
   bool? manter;
   String? genero;
   int? idade;
 
-  Cuidador({idcuidador, nome, email, senha, manter, genero, idade});
+  Cuidador(
+      {this.idcuidador,
+      this.nome,
+      this.email,
+      this.telefone,
+      this.senha,
+      this.manter,
+      this.genero,
+      this.idade});
 
   Cuidador.fromJson(Map<String, dynamic> json) {
     idcuidador = json['idcuidador'];
     nome = json['nome'];
     email = json['email'];
+    telefone = json['telefone'];
     senha = json['senha'];
     manter = json['manter'];
     genero = json['genero'];
@@ -62,10 +72,54 @@ class Cuidador {
     return null;
   }
 
-  Future<bool> isValid(String email, String senha) async {
+  String? validateTelefone(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira seu número';
+    }
+
+    return null;
+  }
+
+  Future<Map<String, dynamic>> isValid(String email, String senha) async {
+    var database = Database();
+
     try {
-      var dados = await Database.buscarDadosPost(
-          '/cuidadores/login', {'email': email, 'senha': senha});
+      var dados = await database
+          .buscarDadosPost('/cuidador/login', {'email': email, 'senha': senha});
+
+      var resposta = jsonDecode(dados);
+      var dadosCuidador = jsonDecode(resposta['dados']);
+
+      print(resposta['resposta']);
+
+      if (resposta['resposta'] == 'ok') {
+        return {
+          'resposta': true,
+          'dados': dadosCuidador,
+        };
+      } else {
+        return {'resposta': false, 'dados': null};
+      }
+    } catch (error) {
+      return {'resposta': false, 'dados': null};
+    }
+  }
+
+  Future<bool> cadastrar() async {
+    var database = Database();
+
+    print('email: $email');
+    genero = _formatarGenero(genero);
+
+    try {
+      var dados = await database.buscarDadosPost('/cuidador/create', {
+        'nome': nome!,
+        'idade': idade.toString(),
+        'genero': genero!,
+        'telefone': telefone!,
+        'email': email!,
+        'senha': senha!,
+      });
 
       var resposta = jsonDecode(dados);
       print(resposta['resposta']);
@@ -78,5 +132,18 @@ class Cuidador {
     } catch (error) {
       return false;
     }
+  }
+
+  String? _formatarGenero(String? genero) {
+    if (genero != null) {
+      if (genero.toLowerCase() == 'masculino') {
+        return 'M';
+      } else if (genero.toLowerCase() == 'feminino') {
+        return 'F';
+      } else if (genero.toLowerCase() == 'outro') {
+        return 'O';
+      }
+    }
+    return null;
   }
 }

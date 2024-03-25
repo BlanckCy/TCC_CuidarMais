@@ -9,6 +9,7 @@ import tcc.cuidarmais.Entity.CuidadorEntity;
 import tcc.cuidarmais.Service.CuidadorService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cuidador")
@@ -29,6 +30,7 @@ public class CuidadorController {
 
     @GetMapping("/{email}")
     public ResponseEntity<CuidadorEntity> encontrarCuidador(@PathVariable String email) {
+        System.out.println(email);
         CuidadorEntity cuidador = cuidadorService.encontrarCuidadorPorEmail(email);
         if (cuidador != null) {
             return new ResponseEntity<>(cuidador, HttpStatus.OK);
@@ -39,12 +41,27 @@ public class CuidadorController {
 
     @PostMapping("/create")
     public ResponseEntity<CuidadorEntity> criarCuidador(@RequestBody CuidadorEntity cuidador) {
-        CuidadorEntity novoCuidador = cuidadorService.salvarCuidador(cuidador);
-        return new ResponseEntity<>(novoCuidador, HttpStatus.CREATED);
-    }    
+        System.out.println(cuidador.getEmail());
+
+        CuidadorEntity cuidadorExistente = cuidadorService.encontrarCuidadorPorEmail(cuidador.getEmail());
+        System.out.println(cuidadorExistente);
+
+        if (cuidadorExistente == null) {
+            CuidadorEntity novoCuidador = cuidadorService.salvarCuidador(cuidador);
+            return new ResponseEntity<>(novoCuidador, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }   
 
     @PostMapping("/login")
-    public ResponseEntity<CuidadorEntity> fazerLogin(@RequestBody String email, @RequestBody String senha) {
+    public ResponseEntity<CuidadorEntity> fazerLogin(@RequestBody Map<String, String> corpo) {
+        String email = corpo.get("email");
+        String senha = corpo.get("senha");
+
+        System.out.println(email);
+        System.out.println(senha);
+
         CuidadorEntity cuidador = cuidadorService.validateLogin(email, senha);
         if (cuidador != null) {
             return new ResponseEntity<>(cuidador, HttpStatus.OK);
