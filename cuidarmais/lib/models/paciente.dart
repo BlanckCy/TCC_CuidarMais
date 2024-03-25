@@ -148,7 +148,8 @@ class Paciente {
         'genero': genero!,
         'nome_responsavel': nome_responsavel!,
         'email_responsavel': email_responsavel!,
-        'idcuidador': idcuidador.toString()
+        'idcuidador': idcuidador.toString(),
+        'idnivelcuidado': '1'
       });
 
       var resposta = jsonDecode(dados);

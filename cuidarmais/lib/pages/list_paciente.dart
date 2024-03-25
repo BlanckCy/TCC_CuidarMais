@@ -94,16 +94,17 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             Text(
               'Meus Pacientes',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 63, 81, 181)),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 30),
             Expanded(
               child: ListView.builder(
                 itemCount: pacientes.length,
@@ -111,6 +112,10 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 4),
                     child: ElevatedButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: Color.fromARGB(255, 210, 228, 255),
+                        foregroundColor: Colors.black,
+                      ),
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -128,7 +133,11 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
                           Icon(Icons.person), // Ícone
                           SizedBox(
                               width: 8), // Espaçamento entre o ícone e o texto
-                          Text(pacientes[index].nome ?? " Erro nome"),
+                          Expanded(
+                            child: Text(
+                              pacientes[index].nome ?? "Erro nome",
+                            ),
+                          ),
                         ],
                       ),
                     ),
