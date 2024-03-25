@@ -171,7 +171,6 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                     ),
                     TextFormField(
                       controller: telefoneController,
-                      maxLength: 11,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
                         prefixIcon: Icon(
@@ -355,7 +354,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                   foregroundColor: Colors.white,
                   backgroundColor: const Color(0XFF1C51A1),
                 ),
-                child: const Text("Cadastre-se"),
+                child: const Text("Cadastrar"),
               ),
             ],
           ),

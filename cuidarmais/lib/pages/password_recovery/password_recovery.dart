@@ -39,24 +39,25 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                   children: [
                     TextFormField(
                       decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.email_outlined,
-                            color: Color(0xFF1C51A1),
+                        prefixIcon: Icon(
+                          Icons.email_outlined,
+                          color: Color(0xFF1C51A1),
+                        ),
+                        labelText: 'E-mail:',
+                        labelStyle: TextStyle(color: Colors.black),
+                        hintText: 'Digite seu e-mail',
+                        hintStyle: TextStyle(color: Colors.black),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.black,
                           ),
-                          labelText: 'E-mail:',
-                          labelStyle: TextStyle(color: Colors.black),
-                          hintText: 'Digite seu e-mail',
-                          hintStyle: TextStyle(color: Colors.black),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black,
-                            ),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.black,
                           ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black,
-                            ),
-                          )),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -71,21 +72,6 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Recuperar Senha'),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  /* Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PatientDataManagementPage()),
-                  ); */
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF1C51A1),
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('Gerenciar Dados do Paciente'),
               ),
             ],
           ),
