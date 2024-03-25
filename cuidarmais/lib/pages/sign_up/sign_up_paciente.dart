@@ -305,7 +305,7 @@ class _SignUpPacientePageState extends State<SignUpPacientePage> {
                   foregroundColor: Colors.white,
                   backgroundColor: const Color(0XFF1C51A1),
                 ),
-                child: const Text("Cadastre-se"),
+                child: const Text("Cadastrar"),
               ),
             ],
           ),
