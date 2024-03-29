@@ -1,85 +1,61 @@
-import 'package:flutter/material.dart';
 import 'package:cuidarmais/models/paciente.dart';
+import 'package:cuidarmais/pages/principal/PrincipalPage.dart';
+import 'package:flutter/material.dart';
+import 'package:cuidarmais/widgets/customAppBar.dart';
+import 'package:cuidarmais/widgets/customBottomBar.dart';
 
-class SignUpPacientePage extends StatefulWidget {
-  const SignUpPacientePage({Key? key});
+class HomePage extends StatefulWidget {
+  final Paciente paciente;
+
+  const HomePage({Key? key, required this.paciente}) : super(key: key);
 
   @override
-  State<SignUpPacientePage> createState() => _SignUpPacientePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _SignUpPacientePageState extends State<SignUpPacientePage> {
-  List<Paciente> pacientes = [];
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 1;
 
-  @override
-  void initState() {
-    super.initState();
-    _carregarPacientes(); // Chamando a função corretamente
-  }
-
-  Future<void> _carregarPacientes() async {
-    try {
-      var listaPacientes = await Paciente()
-          .carregarPacientes(1); // Carregar pacientes assincronamente
-      setState(() {
-        pacientes = listaPacientes;
-      });
-    } catch (error) {
-      print('Erro ao carregar pacientes: $error');
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Erro ao carregar pacientes'),
-          content: Text('$error'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-    }
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 75),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                // Adicione o código para lidar com o pressionamento do botão aqui
-              },
-              child: Text('Botão Antes da Lista'),
-            ),
-            SizedBox(height: 16), // Espaçamento entre o botão e a lista
-            Expanded(
-              child: ListView.builder(
-                itemCount: pacientes.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // _handlePacienteButtonPress(pacientes[index].idPaciente);
-                      },
-                      child: Text(pacientes[index].nome ?? " Erro nome"),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+      appBar: const CustomAppBar(),
+      body: _getBody(_selectedIndex),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
       ),
+    );
+  }
+
+  Widget _getBody(int index) {
+    switch (index) {
+      case 0:
+        return _buildRegistrarRotina();
+      case 1:
+        return PrincipalPage(paciente: widget.paciente,);
+      case 2:
+        return _buildBotaoEmergencia();
+      default:
+        return Container();
+    }
+  }
+
+  Widget _buildRegistrarRotina() {
+    return const Center(
+      child: Text('Registrar Rotina'),
+    );
+  }
+
+  Widget _buildBotaoEmergencia() {
+    return const Center(
+      child: Text('Botão Emergência'),
     );
   }
 }

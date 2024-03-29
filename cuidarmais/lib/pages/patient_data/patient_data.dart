@@ -1,20 +1,18 @@
 import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/list_paciente.dart';
+import 'package:cuidarmais/pages/list_patient/list_paciente.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/material.dart';
 
-class PatientDataManagementPage extends StatefulWidget {
+class PatientDataPage extends StatefulWidget {
   final Paciente paciente;
 
-  const PatientDataManagementPage({Key? key, required this.paciente})
-      : super(key: key);
+  const PatientDataPage({Key? key, required this.paciente}) : super(key: key);
 
   @override
-  State<PatientDataManagementPage> createState() =>
-      _PatientDataManagementPage();
+  State<PatientDataPage> createState() => _PatientDataPage();
 }
 
-class _PatientDataManagementPage extends State<PatientDataManagementPage> {
+class _PatientDataPage extends State<PatientDataPage> {
   bool isEditing = false;
   final Paciente paciente = Paciente();
 
