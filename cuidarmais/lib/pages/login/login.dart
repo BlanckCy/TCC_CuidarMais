@@ -1,6 +1,6 @@
 import 'package:cuidarmais/models/cuidador.dart';
 import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/list_paciente.dart';
+import 'package:cuidarmais/pages/list_patient/list_paciente.dart';
 import 'package:cuidarmais/pages/sign_up/sign_up_cuidador.dart';
 import 'package:cuidarmais/pages/password_recovery/password_recovery.dart';
 import 'package:flutter/material.dart';
@@ -101,20 +101,20 @@ class _LoginPageState extends State<LoginPage> {
                       controller: senhaController,
                       obscureText: !_mostrarSenha,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(
+                        prefixIcon: const Icon(
                           Icons.vpn_key_sharp,
-                          color: Color(0XFF1C51A1),
+                          color:  Color(0XFF1C51A1),
                         ),
                         labelText: "Senha:",
-                        labelStyle: TextStyle(color: Colors.white),
+                        labelStyle: const TextStyle(color: Colors.white),
                         hintText: "Digite sua senha",
-                        hintStyle: TextStyle(color: Colors.white),
-                        enabledBorder: UnderlineInputBorder(
+                        hintStyle: const TextStyle(color: Colors.white),
+                        enabledBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.white,
                           ),
                         ),
-                        focusedBorder: UnderlineInputBorder(
+                        focusedBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.white,
                           ),
