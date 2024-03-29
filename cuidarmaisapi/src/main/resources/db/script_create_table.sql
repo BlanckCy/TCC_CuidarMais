@@ -1,3 +1,4 @@
+drop database cuidarmais;
 create database cuidarmais;
 
 create table cuidador(
@@ -11,7 +12,7 @@ create table cuidador(
 );
 
 create table nivelCuidado(
-	idnivelCuidado int auto_increment primary key,
+	idnivelcuidado int auto_increment primary key,
     descricao varchar(255)
 );
 
@@ -23,9 +24,9 @@ create table paciente(
     idade int,
     genero char(2),
     idcuidador int,
-    idnivelCuidado int,
+    idnivelcuidado int,
     foreign key (idcuidador) references cuidador(idcuidador),
-    foreign key (idnivelCuidado) references nivelCuidado(idnivelCuidado)
+    foreign key (idnivelcuidado) references nivelCuidado(idnivelcuidado)
 );
 
 create table listaCompra(
@@ -67,7 +68,7 @@ create table cuidado(
     data_hora timestamp,
     realizado boolean default 0,
     tipo_cuidado int,
-    cuidado varchar(255), 
+    descricao varchar(255), 
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );

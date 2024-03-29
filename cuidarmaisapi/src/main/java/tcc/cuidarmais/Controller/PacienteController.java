@@ -33,9 +33,10 @@ public class PacienteController {
         return new ResponseEntity<>(pacientes, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{idcuidador}")
     public ResponseEntity<PacienteEntity> buscarPacientePorId(@PathVariable int idcuidador) {
         PacienteEntity paciente = pacienteService.buscarPacientePorId(idcuidador);
+        System.out.println(idcuidador);
         if (paciente != null) {
             return new ResponseEntity<>(paciente, HttpStatus.OK);
         } else {
@@ -43,28 +44,30 @@ public class PacienteController {
         }
     }
 
-    @GetMapping("/por-cuidador/{idCuidador}")
-    public ResponseEntity<List<PacienteEntity>> buscarPacientesPorIdCuidador(@PathVariable int idCuidador) {
-        List<PacienteEntity> pacientes = pacienteService.buscarPacientesPorIdCuidador(idCuidador);
+    @GetMapping("/por-cuidador/{idcuidador}")
+    public ResponseEntity<List<PacienteEntity>> buscarPacientesPorIdCuidador(@PathVariable int idcuidador) {
+        List<PacienteEntity> pacientes = pacienteService.buscarPacientesPorIdCuidador(idcuidador);
         return new ResponseEntity<>(pacientes, HttpStatus.OK);
     }
 
     @PostMapping("/create")
     public ResponseEntity<PacienteEntity> salvarPaciente(@RequestBody PacienteEntity paciente) {
+
         PacienteEntity pacienteSalvo = pacienteService.salvarPaciente(paciente);
         return new ResponseEntity<>(pacienteSalvo, HttpStatus.CREATED);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<PacienteEntity> atualizarPaciente(@PathVariable int idPaciente, @RequestBody PacienteEntity pacienteAtualizado) {
-        PacienteEntity paciente = pacienteService.buscarPacientePorId(idPaciente);
+    @PutMapping("/update/{idpaciente}")
+    public ResponseEntity<PacienteEntity> atualizarPaciente(@PathVariable int idpaciente, @RequestBody PacienteEntity pacienteAtualizado) {
+        PacienteEntity paciente = pacienteService.buscarPacientePorId(idpaciente);
+        System.out.println(pacienteAtualizado.getEmail_responsavel());
         if (paciente != null) {
             paciente.setNome(pacienteAtualizado.getNome());
             paciente.setEmail_responsavel(pacienteAtualizado.getEmail_responsavel());
             paciente.setNome_responsavel(pacienteAtualizado.getNome_responsavel());
             paciente.setIdade(pacienteAtualizado.getIdade());
             paciente.setGenero(pacienteAtualizado.getGenero());
-            paciente.setIdnivelCuidado(pacienteAtualizado.getIdnivelCuidado());
+            // paciente.setidnivelcuidado(paciente.getidnivelcuidado());
             PacienteEntity pacienteAtualizadoDb = pacienteService.salvarPaciente(paciente);
             return new ResponseEntity<>(pacienteAtualizadoDb, HttpStatus.OK);
         } else {
@@ -72,9 +75,10 @@ public class PacienteController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarPacientePorId(@PathVariable int id) {
-        pacienteService.deletarPacientePorId(id);
+    @DeleteMapping("/delete/{idpaciente}")
+    public ResponseEntity<Void> deletarPacientePorId(@PathVariable int idpaciente) {
+        System.out.println(idpaciente);
+        pacienteService.deletarPacientePorId(idpaciente);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
