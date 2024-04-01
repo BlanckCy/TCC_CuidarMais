@@ -11,7 +11,7 @@ import tcc.cuidarmais.Service.ContatoEmergenciaService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/contatoEmergencia")
+@RequestMapping("/contatoemergencia")
 public class ContatoEmergenciaController {
 
     private final ContatoEmergenciaService contatoEmergenciaService;
@@ -27,6 +27,22 @@ public class ContatoEmergenciaController {
         return new ResponseEntity<>(contatos, HttpStatus.OK);
     }
 
+    @GetMapping("/{idcontato_emergencia}")
+    public ResponseEntity<ContatoEmergenciaEntity> buscarContatosPoridcontato_emergencia(@PathVariable int idcontato_emergencia) {
+        ContatoEmergenciaEntity contato = contatoEmergenciaService.buscarPorIdcontato_emergencia(idcontato_emergencia);
+        if (contato != null) {
+            return ResponseEntity.ok(contato);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/por-paciente/{idpaciente}")
+    public ResponseEntity<List<ContatoEmergenciaEntity>> buscarContatosPorIdPaciente(@PathVariable int idpaciente) {
+        List<ContatoEmergenciaEntity> contatos = contatoEmergenciaService.buscarContatosPorIdPaciente(idpaciente);
+        return new ResponseEntity<>(contatos, HttpStatus.OK);
+    }
+
     @PostMapping("/create")
     public ResponseEntity<ContatoEmergenciaEntity> salvarCuidado(@RequestBody ContatoEmergenciaEntity contatoEmergencia) {
         try {
@@ -37,9 +53,9 @@ public class ContatoEmergenciaController {
         }
     }   
 
-    @PutMapping("/update/{idcontatoEmergencia}")
-    public ResponseEntity<ContatoEmergenciaEntity> atualizarCuidador(@PathVariable int idcontatoEmergencia, @RequestBody ContatoEmergenciaEntity contatoAtualizado) {
-        ContatoEmergenciaEntity contatoEmergencia = contatoEmergenciaService.buscarPorIdcontatoEmergencia(idcontatoEmergencia);
+    @PutMapping("/update/{idcontato_emergencia}")
+    public ResponseEntity<ContatoEmergenciaEntity> atualizarCuidador(@PathVariable int idcontato_emergencia, @RequestBody ContatoEmergenciaEntity contatoAtualizado) {
+        ContatoEmergenciaEntity contatoEmergencia = contatoEmergenciaService.buscarPorIdcontato_emergencia(idcontato_emergencia);
         if (contatoEmergencia != null) {
             contatoEmergencia.setNome(contatoAtualizado.getNome());
             contatoEmergencia.setTelefone(contatoAtualizado.getTelefone());
@@ -51,10 +67,10 @@ public class ContatoEmergenciaController {
         }
     }
 
-    @DeleteMapping("/delete/{idcontatoEmergencia}")
-    public ResponseEntity<Void> deletarContato(int idcontatoEmergencia) {
+    @DeleteMapping("/delete/{idcontato_emergencia}")
+    public ResponseEntity<Void> deletarContato(@PathVariable int idcontato_emergencia) {
         try {
-            contatoEmergenciaService.deletarContato(idcontatoEmergencia);
+            contatoEmergenciaService.deletarContato(idcontato_emergencia);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

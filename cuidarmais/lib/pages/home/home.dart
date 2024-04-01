@@ -1,4 +1,5 @@
 import 'package:cuidarmais/models/paciente.dart';
+import 'package:cuidarmais/pages/emergency_contacts/emergency_contacts.dart';
 import 'package:cuidarmais/pages/principal/PrincipalPage.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
@@ -6,15 +7,26 @@ import 'package:cuidarmais/widgets/customBottomBar.dart';
 
 class HomePage extends StatefulWidget {
   final Paciente paciente;
+  final int selectedIndex;
 
-  const HomePage({Key? key, required this.paciente}) : super(key: key);
+  const HomePage({
+    Key? key,
+    required this.paciente,
+    this.selectedIndex = 1,
+  }) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 1;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.selectedIndex;
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -39,9 +51,9 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return _buildRegistrarRotina();
       case 1:
-        return PrincipalPage(paciente: widget.paciente,);
+        return PrincipalPage(paciente: widget.paciente);
       case 2:
-        return _buildBotaoEmergencia();
+        return EmergencyContactsPage(paciente: widget.paciente);
       default:
         return Container();
     }
@@ -50,12 +62,6 @@ class _HomePageState extends State<HomePage> {
   Widget _buildRegistrarRotina() {
     return const Center(
       child: Text('Registrar Rotina'),
-    );
-  }
-
-  Widget _buildBotaoEmergencia() {
-    return const Center(
-      child: Text('Botão Emergência'),
     );
   }
 }
