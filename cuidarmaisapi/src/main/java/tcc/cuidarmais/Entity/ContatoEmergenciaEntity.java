@@ -1,7 +1,5 @@
 package tcc.cuidarmais.Entity;
 
-import java.security.Timestamp;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,22 +7,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "contatoEmergencia")
+@Table(name = "contato_emergencia")
 public class ContatoEmergenciaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-    private int idcontatoEmergencia;
+    private int idcontato_emergencia;
     private String nome;
     private String telefone;
     private String parentesco;
     private int idpaciente;
 
-    public int getIdcontatoEmergencia() {
-        return idcontatoEmergencia;
+    public int getidcontato_emergencia() {
+        return idcontato_emergencia;
     }
-    public void setIdcontatoEmergencia(int idcontatoEmergencia) {
-        this.idcontatoEmergencia = idcontatoEmergencia;
+    public void setidcontato_emergencia(int idcontato_emergencia) {
+        this.idcontato_emergencia = idcontato_emergencia;
     }
     public String getNome() {
         return nome;

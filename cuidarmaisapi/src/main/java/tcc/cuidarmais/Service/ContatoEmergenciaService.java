@@ -22,15 +22,19 @@ public class ContatoEmergenciaService {
         return contatoEmergenciaRepository.findAll();
     }
 
-    public ContatoEmergenciaEntity buscarPorIdcontatoEmergencia(int idcontatoEmergencia) {
-        return contatoEmergenciaRepository.findByIdcontatoEmergencia(idcontatoEmergencia);
+    public ContatoEmergenciaEntity buscarPorIdcontato_emergencia(int idcontato_emergencia) {
+        return contatoEmergenciaRepository.findByIdcontato_emergencia(idcontato_emergencia);
+    }
+
+    public List<ContatoEmergenciaEntity> buscarContatosPorIdPaciente(int idpaciente) {
+        return contatoEmergenciaRepository.findByIdpaciente(idpaciente);
     }
 
     public ContatoEmergenciaEntity salvarContato(ContatoEmergenciaEntity contato) {
         return contatoEmergenciaRepository.save(contato);
     }
 
-    public void deletarContato(int idcontatoEmergencia) {
-        contatoEmergenciaRepository.deleteById(idcontatoEmergencia);
+    public void deletarContato(int idcontato_emergencia) {
+        contatoEmergenciaRepository.deleteById(idcontato_emergencia);
     }
 }
