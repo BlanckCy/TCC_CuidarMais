@@ -48,27 +48,30 @@ create table contatoEmergencia(
 
 create table escala(
 	idescala int auto_increment primary key,
-    data_hora timestamp,
+    data_hora datetime,
     dia_semana varchar(50),
-    dtAlteracao timestamp,
+    dtAlteracao datetime,
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );
 
 create table pontoEletronico(
 	idpontoEletronico int auto_increment primary key,
-    data_hora_entrada timestamp,
-    data_hora_saida timestamp,
+    data_hora_entrada datetime,
+    data_hora_saida datetime,
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );
 
 create table cuidado(
 	idcuidado int auto_increment primary key,
-    data_hora timestamp,
+    data_hora datetime,
     realizado boolean default 0,
+    horario_realizado time,
     tipo_cuidado int,
+    cuidado varchar(255),
     descricao varchar(255), 
+    avaliacao boolean,
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );

@@ -1,6 +1,7 @@
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/pages/emergency_contacts/emergency_contacts.dart';
 import 'package:cuidarmais/pages/principal/PrincipalPage.dart';
+import 'package:cuidarmais/pages/registrar_rotina/registrar_rotina.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:cuidarmais/widgets/customBottomBar.dart';
@@ -49,7 +50,7 @@ class _HomePageState extends State<HomePage> {
   Widget _getBody(int index) {
     switch (index) {
       case 0:
-        return _buildRegistrarRotina();
+        return RegistrarRotinaPage(paciente: widget.paciente);
       case 1:
         return PrincipalPage(paciente: widget.paciente);
       case 2:
@@ -57,11 +58,5 @@ class _HomePageState extends State<HomePage> {
       default:
         return Container();
     }
-  }
-
-  Widget _buildRegistrarRotina() {
-    return const Center(
-      child: Text('Registrar Rotina'),
-    );
   }
 }

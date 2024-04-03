@@ -23,8 +23,21 @@ public class CuidadoController {
 
     @GetMapping("/lista")
     public ResponseEntity<List<CuidadoEntity>> listarCuidados() {
-        List<CuidadoEntity> cuidadores = cuidadoService.listarCuidados();
-        return new ResponseEntity<>(cuidadores, HttpStatus.OK);
+        List<CuidadoEntity> cuidados = cuidadoService.listarCuidados();
+        return new ResponseEntity<>(cuidados, HttpStatus.OK);
+    }
+
+    @GetMapping("/lista/{tipo}/{data}")
+    public ResponseEntity<List<CuidadoEntity>> listarCuidadosPorTipoData(@PathVariable int tipo, @PathVariable String data) {
+        System.out.println(tipo);
+        System.out.println(data);
+        try {
+            List<CuidadoEntity> cuidados = cuidadoService.listarCuidadosPorTipoData(tipo,data);
+            System.err.println(cuidados);
+            return new ResponseEntity<>(cuidados, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }        
     }
 
     @PostMapping("/create")

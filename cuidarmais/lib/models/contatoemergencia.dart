@@ -89,7 +89,7 @@ class Contatoemergencia {
 
     try {
       print(idpaciente);
-      if (idpaciente! > 0) {
+      if (idpaciente > 0) {
         var dados =
             await database.buscarDadosPost('/contatoemergencia/create', {
           'nome': nome!,
