@@ -1,6 +1,5 @@
 import 'package:cuidarmais/models/contatoEmergencia.dart';
 import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/emergency_contacts/emergency_contacts.dart';
 import 'package:cuidarmais/pages/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
