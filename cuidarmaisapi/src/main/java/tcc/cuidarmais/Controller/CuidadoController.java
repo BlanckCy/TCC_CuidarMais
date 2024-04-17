@@ -29,8 +29,6 @@ public class CuidadoController {
 
     @GetMapping("/lista/{tipo}/{data}")
     public ResponseEntity<List<CuidadoEntity>> listarCuidadosPorTipoData(@PathVariable int tipo, @PathVariable String data) {
-        System.out.println(tipo);
-        System.out.println(data);
         try {
             List<CuidadoEntity> cuidados = cuidadoService.listarCuidadosPorTipoData(tipo,data);
             System.err.println(cuidados);
@@ -51,13 +49,13 @@ public class CuidadoController {
     }   
 
     @PutMapping("/update/{idcuidado}")
-    public ResponseEntity<CuidadoEntity> atualizarCuidador(@PathVariable int idcuidado, @RequestBody CuidadoEntity cuidadoAtualizado) {
+    public ResponseEntity<CuidadoEntity> atualizarCuidado(@PathVariable int idcuidado, @RequestBody CuidadoEntity cuidadoAtualizado) {
         CuidadoEntity cuidado = cuidadoService.buscarPorIdcuidado(idcuidado);
         if (cuidado != null) {
             cuidado.setData_hora(cuidadoAtualizado.getData_hora());
-            cuidado.setRealizado(cuidadoAtualizado.isRealizado());
-            cuidado.setTipo_cuidado(cuidadoAtualizado.getTipo_cuidado());
             cuidado.setDescricao(cuidadoAtualizado.getDescricao());
+            cuidado.setHorario_realizado(cuidadoAtualizado.getHorario_realizado());
+            cuidado.setAvaliacao(cuidadoAtualizado.isAvaliacao());
             CuidadoEntity cuidadorAtualizadoDb = cuidadoService.salvarCuidado(cuidado);
             return new ResponseEntity<>(cuidadorAtualizadoDb, HttpStatus.OK);
         } else {
