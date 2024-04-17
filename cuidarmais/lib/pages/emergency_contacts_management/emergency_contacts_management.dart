@@ -1,6 +1,7 @@
 import 'package:cuidarmais/models/contatoEmergencia.dart';
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/pages/home/home.dart';
+import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 
@@ -34,19 +35,21 @@ class _EmergencyContactsManagementPageState
   @override
   void initState() {
     super.initState();
-    contatoemergencia = Contatoemergencia();
+    contatoemergencia = Contatoemergencia(
+      idcontato_emergencia: widget.idcontato_emergencia,
+      idpaciente: widget.paciente.idpaciente,
+    );
 
     _isLoading = false;
     if (widget.idcontato_emergencia != null) {
       _isLoading = true;
-      _informacoesContato(idcontato_emergencia: widget.idcontato_emergencia!);
+      _informacoesContato();
     }
   }
 
-  Future<void> _informacoesContato({required int idcontato_emergencia}) async {
+  Future<void> _informacoesContato() async {
     try {
-      var informacoes = await Contatoemergencia()
-          .carregarInformacoesContato(idcontato_emergencia);
+      var informacoes = await contatoemergencia.carregarInformacoesContato();
       setState(() {
         infoContato = informacoes;
         nomeController.text = infoContato?.nome ?? '';
@@ -56,22 +59,101 @@ class _EmergencyContactsManagementPageState
       });
     } catch (error) {
       print('Erro ao carregar dados: $error');
-      showDialog(
+      await showConfirmationDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Erro'),
-          content: Text('Erro ao carregar os dados.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
+        title: 'Erro',
+        message: 'Erro ao carregar os dados.',
+        onConfirm: () {
+          // Navigator.of(context).pop();
+        },
       );
     }
+  }
+
+  Future<void> _atualizarDados() async {
+    contatoemergencia.nome = nomeController.text;
+    contatoemergencia.parentesco = parentescoController.text;
+    contatoemergencia.telefone = telefoneController.text;
+
+    bool atualizacaoSucesso = await contatoemergencia.atualizarDados();
+
+    showConfirmationDialog(
+      context: context,
+      title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+      message: atualizacaoSucesso
+          ? 'Os dados foram atualizados com sucesso!'
+          : 'Houve um erro ao atualizar os dados. Por favor, tente novamente.',
+      onConfirm: () {
+        // Navigator.of(context).pop();
+      },
+    );
+  }
+
+  Future<void> _deletarDados() async {
+    showConfirmationDialog(
+      context: context,
+      title: 'Confirmação',
+      message: 'Deseja realmente deletar?',
+      confirmButtonText: 'Sim',
+      onCancel: () => Navigator.of(context).pop(),
+      onConfirm: () async {
+        contatoemergencia.idcontato_emergencia = widget.idcontato_emergencia;
+        bool resultado = await contatoemergencia.deletarContatoEmergencia();
+
+        showConfirmationDialog(
+          context: context,
+          title: resultado ? 'OK' : 'Erro',
+          message: resultado
+              ? 'O cadastro foi deletado com sucesso!'
+              : 'Ocorreu um erro ao deletar o cadastro.',
+          confirmButtonText: 'OK',
+          onConfirm: () {
+            if (resultado) {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(
+                    paciente: widget.paciente,
+                    selectedIndex: 2,
+                  ),
+                ),
+              );
+            }
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _cadastrar() async {
+    contatoemergencia.nome = nomeController.text;
+    contatoemergencia.parentesco = parentescoController.text;
+    contatoemergencia.telefone = telefoneController.text;
+
+    bool atualizacaoSucesso = await contatoemergencia.cadastrar();
+
+    showConfirmationDialog(
+      context: context,
+      title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+      message: atualizacaoSucesso
+          ? 'O cadastro foi realizado com sucesso!'
+          : 'Houve um erro ao realizar o cadastro. Por favor, tente novamente.',
+      onConfirm: () {
+        if (atualizacaoSucesso) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(
+                paciente: widget.paciente,
+                selectedIndex: 2,
+              ),
+            ),
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -165,44 +247,12 @@ class _EmergencyContactsManagementPageState
                 if (_formKey.currentState != null &&
                     _formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  bool resultado = await contatoemergencia
-                      .cadastrar(widget.paciente.idpaciente ?? 0);
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(resultado ? 'Cadastro OK' : 'Erro'),
-                        content: Text(
-                          resultado
-                              ? 'O cadastro foi realizado com sucesso!'
-                              : 'Ocorreu um erro ao realizar o cadastro.',
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              if (resultado) {
-                                Navigator.of(context)
-                                    .popUntil((route) => route.isFirst);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomePage(
-                                      paciente: widget.paciente,
-                                      selectedIndex: 2,
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                Navigator.of(context).pop();
-                              }
-                            },
-                            child: Text('OK'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+
+                  if (infoContato != null) {
+                    _atualizarDados();
+                  } else {
+                    _cadastrar();
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -217,44 +267,7 @@ class _EmergencyContactsManagementPageState
             if (infoContato != null)
               ElevatedButton(
                 onPressed: () async {
-                  bool resultado = await contatoemergencia
-                      .deletarContatoEmergencia(infoContato?.idcontato_emergencia ?? 0);
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(resultado ? 'OK' : 'Erro'),
-                        content: Text(
-                          resultado
-                              ? 'O cadastro foi deletado com sucesso!'
-                              : 'Ocorreu um erro ao realizar ao deletar cadastro.',
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              if (resultado) {
-                                Navigator.of(context)
-                                    .popUntil((route) => route.isFirst);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomePage(
-                                      paciente: widget.paciente,
-                                      selectedIndex: 2,
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                Navigator.of(context).pop();
-                              }
-                            },
-                            child: Text('OK'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  _deletarDados();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
