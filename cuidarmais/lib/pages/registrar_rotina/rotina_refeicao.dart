@@ -1,5 +1,6 @@
 import 'package:cuidarmais/models/cuidado.dart';
 import 'package:cuidarmais/models/paciente.dart';
+import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:intl/intl.dart';
@@ -41,20 +42,18 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
     super.initState();
     String dataFormatada = DateFormat('yyyy-MM-dd').format(DateTime.now());
     _carregarRotina(
-      idpaciente: widget.paciente.idpaciente ?? 0,
       tipo_cuidado: widget.tipoCuidado,
       data: dataFormatada,
     );
+    Cuidado cuidado = Cuidado();
   }
 
   Future<void> _carregarRotina({
-    required int idpaciente,
     required int tipo_cuidado,
     required String data,
   }) async {
     try {
       var listaCuidados = await Cuidado().carregarRotina(
-        idpaciente,
         tipo_cuidado,
         data,
       );
@@ -92,23 +91,18 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
       });
     } catch (error) {
       print('Erro ao carregar rotina: $error');
-      showDialog(
+      showConfirmationDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Erro ao carregar rotina'),
-          content: Text('$error'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
+        title: 'Erro',
+        message: 'Erro ao carregar informações da rotina',
+        onConfirm: () {
+          Navigator.of(context).pop();
+        },
       );
     }
   }
+
+  bool mensagemExibida = false;
 
   Future<void> _cadastrarRefeicoes() async {
     // Cadastrar café da manhã
@@ -134,6 +128,32 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
       horario_realizado: _jantarHorarioSelecionado,
       nomeCuidado: 'Jantar',
     );
+
+    // Exibir a mensagem apenas uma vez após todos os cadastros
+    if (!mensagemExibida) {
+      mensagemExibida = true;
+      _exibirMensagem();
+    }
+  }
+
+  void _exibirMensagem() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('OK'),
+          content: Text('Os dados foram salvos com sucesso!'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _cadastrarRefeicao(
@@ -151,7 +171,7 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
       idpaciente: widget.paciente.idpaciente,
     );
 
-    await cuidado.cadastrar();
+    bool salvarSucesso = await cuidado.cadastrar();
   }
 
   Widget _buildMealWidget(
@@ -237,6 +257,25 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
       ],
     );
   }
+
+  /* Future<void> _atualizarDados() async {
+    cuidado.av = nomeController.text;
+    contatoemergencia.parentesco = parentescoController.text;
+    contatoemergencia.telefone = telefoneController.text;
+
+    bool atualizacaoSucesso = await contatoemergencia.atualizarDados();
+
+    showConfirmationDialog(
+      context: context,
+      title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+      message: atualizacaoSucesso
+          ? 'Os dados foram atualizados com sucesso!'
+          : 'Houve um erro ao atualizar os dados. Por favor, tente novamente.',
+      onConfirm: () {
+        // Navigator.of(context).pop();
+      },
+    );
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -340,15 +379,17 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
-                if (_cafeManhaBoa != null &&
-                    _almocoBoa != null &&
+                if (_cafeManhaBoa != null ||
+                    _almocoBoa != null ||
                     _jantarBoa != null) {
-                  _cadastrarRefeicoes();
+                  if (rotina.isEmpty) {
+                    _cadastrarRefeicoes();
+                  } else {}
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text(
-                          'Por favor, selecione se o paciente se alimentou bem ou mal em todas as refeições.'),
+                          'Por favor, selecione se o paciente se alimentou bem ou mal e o hórario em pelo menos uma das refeições.'),
                     ),
                   );
                 }

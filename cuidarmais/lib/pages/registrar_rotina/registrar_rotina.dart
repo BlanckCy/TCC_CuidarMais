@@ -5,7 +5,6 @@ import 'package:cuidarmais/pages/registrar_rotina/rotina_higiene.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_refeicao.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_sinais_vitais.dart';
 import 'package:flutter/material.dart';
-import 'package:cuidarmais/widgets/customAppBar.dart';
 
 class RegistrarRotinaPage extends StatefulWidget {
   final Paciente paciente;
@@ -58,8 +57,38 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
                       AtividadeFisicaPage()),
                   const SizedBox(height: 30),
                   _buildButton('Higiene', Icons.shower, HigienePage()),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  _buildButtonFinalizar(),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildButtonFinalizar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: ElevatedButton(
+        onPressed: () {},
+        style: TextButton.styleFrom(
+          backgroundColor: const Color.fromARGB(255, 66, 141, 69),
+          foregroundColor: Colors.white,
+          minimumSize: const Size(250, 50),
+        ),
+        child: const Row(
+          children: [
+            Icon(Icons.check_circle_rounded),
+            SizedBox(width: 20),
+            Text(
+              'Finalizar Rotina',
+              textAlign: TextAlign.left,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 18),
             ),
           ],
         ),

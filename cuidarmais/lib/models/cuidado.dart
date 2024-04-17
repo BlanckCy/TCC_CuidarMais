@@ -57,7 +57,7 @@ class Cuidado {
       case 2:
         return 'Sinais Vitais';
       case 3:
-        return 'Ativavaliacao Fisica';
+        return 'Atividade Fisica';
       case 4:
         return 'Equipamentos Medicos';
       case 5:
@@ -112,8 +112,7 @@ class Cuidado {
     }
   }
 
-  Future<List<Cuidado>> carregarRotina(
-      int idpaciente, int tipo_cuidado, String data) async {
+  Future<List<Cuidado>> carregarRotina(int tipo_cuidado, String data) async {
     var database = Database();
 
     print('/cuidado/lista/$tipo_cuidado/$data');
@@ -149,5 +148,29 @@ class Cuidado {
       timeOfDay?.hour ?? 0,
       timeOfDay?.minute ?? 0,
     );
+  }
+
+  Future<bool> atualizarDados() async {
+    var database = Database();
+
+    Map<String, dynamic> cuidadoData = toJson();
+
+    print("aqui $cuidadoData");
+
+    try {
+      var dados = await database.buscarDadosPut(
+          '/cuidado/update/$idcuidado', cuidadoData);
+
+      var resposta = jsonDecode(dados);
+      print(resposta);
+
+      if (resposta['resposta'] == 'erro') {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

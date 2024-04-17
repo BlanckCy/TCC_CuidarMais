@@ -29,12 +29,12 @@ class Contatoemergencia {
     data['idcontato_emergencia'] = idcontato_emergencia;
     data['nome'] = nome;
     data['parentesco'] = parentesco;
+    data['telefone'] = telefone;
     data['idpaciente'] = idpaciente;
     return data;
   }
 
-  Future<Contatoemergencia> carregarInformacoesContato(
-      int idcontato_emergencia) async {
+  Future<Contatoemergencia> carregarInformacoesContato() async {
     var database = Database();
     var dados = await database
         .buscarDadosGet('/contatoemergencia/$idcontato_emergencia');
@@ -84,12 +84,12 @@ class Contatoemergencia {
     }
   }
 
-  Future<bool> cadastrar(int idpaciente) async {
+  Future<bool> cadastrar() async {
     var database = Database();
 
     try {
       print(idpaciente);
-      if (idpaciente > 0) {
+      if (idpaciente != null && idpaciente! > 0) {
         var dados =
             await database.buscarDadosPost('/contatoemergencia/create', {
           'nome': nome!,
@@ -113,7 +113,31 @@ class Contatoemergencia {
     }
   }
 
-  Future<bool> deletarContatoEmergencia(int idcontato_emergencia) async {
+  Future<bool> atualizarDados() async {
+    var database = Database();
+
+    Map<String, dynamic> contatoData = toJson();
+
+    print("aqui $contatoData");
+
+    try {
+      var dados = await database.buscarDadosPut(
+          '/contatoemergencia/update/$idcontato_emergencia', contatoData);
+
+      var resposta = jsonDecode(dados);
+      print(resposta);
+
+      if (resposta['resposta'] == 'erro') {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  Future<bool> deletarContatoEmergencia() async {
     print(idcontato_emergencia);
     var database = Database();
 
