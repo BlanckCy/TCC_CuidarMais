@@ -37,6 +37,8 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
 
   List<Cuidado> rotina = [];
 
+  late Cuidado cuidado = Cuidado();
+
   @override
   void initState() {
     super.initState();
@@ -45,7 +47,6 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
       tipo_cuidado: widget.tipoCuidado,
       data: dataFormatada,
     );
-    Cuidado cuidado = Cuidado();
   }
 
   Future<void> _carregarRotina({
@@ -57,8 +58,6 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
         tipo_cuidado,
         data,
       );
-
-      print(listaCuidados);
 
       if (listaCuidados.isEmpty) {
         setState(() {
@@ -73,17 +72,17 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
           if (cuidado.cuidado == 'Café da Manhã') {
             _observacoesCafeManhaController.text = cuidado.descricao ?? '';
             _cafeManhaBoa = cuidado.avaliacao;
-            _cafeManhaHorarioSelecionado = cuidado.horario_realizado ?? '';
+            _cafeManhaHorarioSelecionado = cuidado.horario_realizado ?? '00:00';
           }
           if (cuidado.cuidado == 'Almoço') {
             _observacoesAlmocoController.text = cuidado.descricao ?? '';
             _almocoBoa = cuidado.avaliacao;
-            _almocoHorarioSelecionado = cuidado.horario_realizado ?? '';
+            _almocoHorarioSelecionado = cuidado.horario_realizado ?? '00:00';
           }
           if (cuidado.cuidado == 'Jantar') {
             _observacoesJantarController.text = cuidado.descricao ?? '';
             _jantarBoa = cuidado.avaliacao;
-            _jantarHorarioSelecionado = cuidado.horario_realizado ?? '';
+            _jantarHorarioSelecionado = cuidado.horario_realizado ?? '00:00';
           }
         }
 
@@ -103,75 +102,132 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
   }
 
   bool mensagemExibida = false;
+  bool sucesso = false;
 
-  Future<void> _cadastrarRefeicoes() async {
+  Future<void> _cadastrarRefeicoes(bool isUpdate) async {    
     // Cadastrar café da manhã
-    await _cadastrarRefeicao(
-      descricao: _observacoesCafeManhaController.text,
-      avaliacao: _cafeManhaBoa!,
-      horario_realizado: _cafeManhaHorarioSelecionado,
-      nomeCuidado: "Café da Manhã",
-    );
+    if (_cafeManhaBoa != null) {
+      bool achou = false;
+      if (isUpdate) {
+        for (Cuidado item in rotina) {
+          if (item.cuidado == "Café da Manhã") {
+            cuidado = item;
+            achou = true;
+            break;
+          }
+        }
+      }
+
+      if (!achou) {
+        isUpdate = false;
+      }
+
+      sucesso = await _cadastrarRefeicao(
+        descricao: _observacoesCafeManhaController.text,
+        avaliacao: _cafeManhaBoa!,
+        horario_realizado: _cafeManhaHorarioSelecionado,
+        nomeCuidado: "Café da Manhã",
+        isUpdate: isUpdate,
+      );
+    }
 
     // Cadastrar almoço
-    await _cadastrarRefeicao(
-      descricao: _observacoesAlmocoController.text,
-      avaliacao: _almocoBoa!,
-      horario_realizado: _almocoHorarioSelecionado,
-      nomeCuidado: "Almoço",
-    );
+    if (_almocoBoa != null) {
+      bool achou = false;
+      if (isUpdate) {
+        for (Cuidado item in rotina) {
+          if (item.cuidado == "Almoço") {
+            cuidado = item;
+            achou = true;
+            break;
+          }
+        }
+      }
+
+      if (!achou) {
+        isUpdate = false;
+      }
+
+      sucesso = await _cadastrarRefeicao(
+        descricao: _observacoesAlmocoController.text,
+        avaliacao: _almocoBoa!,
+        horario_realizado: _almocoHorarioSelecionado,
+        nomeCuidado: "Almoço",
+        isUpdate: isUpdate,
+      );
+    }
 
     // Cadastrar jantar
-    await _cadastrarRefeicao(
-      descricao: _observacoesJantarController.text,
-      avaliacao: _jantarBoa!,
-      horario_realizado: _jantarHorarioSelecionado,
-      nomeCuidado: 'Jantar',
-    );
+    if (_jantarBoa != null) {
+      bool achou = false;
+      if (isUpdate) {
+        for (Cuidado item in rotina) {
+          if (item.cuidado == "Jantar") {
+            cuidado = item;
+            achou = true;
+            break;
+          }
+        }
+      }
+
+      if (!achou) {
+        isUpdate = false;
+      }
+
+      sucesso = await _cadastrarRefeicao(
+        descricao: _observacoesJantarController.text,
+        avaliacao: _jantarBoa!,
+        horario_realizado: _jantarHorarioSelecionado,
+        nomeCuidado: 'Jantar',
+        isUpdate: isUpdate,
+      );
+    }
 
     // Exibir a mensagem apenas uma vez após todos os cadastros
     if (!mensagemExibida) {
       mensagemExibida = true;
-      _exibirMensagem();
+      showConfirmationDialog(
+        context: context,
+        title: sucesso ? 'Sucesso' : 'Erro',
+        message: sucesso
+            ? 'Os dados foram salvos com sucesso!'
+            : 'Houve um erro ao atualizar os dados. Por favor, tente novamente.',
+        onConfirm: () {
+          if (sucesso) {
+            Navigator.of(context).pop();
+          }
+        },
+      );
     }
   }
 
-  void _exibirMensagem() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('OK'),
-          content: Text('Os dados foram salvos com sucesso!'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  Future<bool> _cadastrarRefeicao({
+    required String descricao,
+    required bool avaliacao,
+    required String horario_realizado,
+    required String nomeCuidado,
+    required bool isUpdate,
+  }) async {
+    print("update $isUpdate");
+    if (!isUpdate) {
+      Cuidado cuidado = Cuidado(
+        data_hora: DateTime.now().toString(),
+        avaliacao: avaliacao,
+        tipo_cuidado: widget.tipoCuidado,
+        descricao: descricao,
+        horario_realizado: horario_realizado,
+        cuidado: nomeCuidado,
+        idpaciente: widget.paciente.idpaciente,
+      );
 
-  Future<void> _cadastrarRefeicao(
-      {required String descricao,
-      required bool avaliacao,
-      required String horario_realizado,
-      required String nomeCuidado}) async {
-    Cuidado cuidado = Cuidado(
-      data_hora: DateTime.now().toString(),
-      avaliacao: avaliacao,
-      tipo_cuidado: widget.tipoCuidado,
-      descricao: descricao,
-      horario_realizado: horario_realizado,
-      cuidado: nomeCuidado,
-      idpaciente: widget.paciente.idpaciente,
-    );
+      return await cuidado.cadastrar();
+    } else {
+      cuidado.avaliacao = avaliacao;
+      cuidado.horario_realizado = horario_realizado;
+      cuidado.descricao = descricao;
 
-    bool salvarSucesso = await cuidado.cadastrar();
+      return await cuidado.atualizarDados();
+    }
   }
 
   Widget _buildMealWidget(
@@ -257,25 +313,6 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
       ],
     );
   }
-
-  /* Future<void> _atualizarDados() async {
-    cuidado.av = nomeController.text;
-    contatoemergencia.parentesco = parentescoController.text;
-    contatoemergencia.telefone = telefoneController.text;
-
-    bool atualizacaoSucesso = await contatoemergencia.atualizarDados();
-
-    showConfirmationDialog(
-      context: context,
-      title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-      message: atualizacaoSucesso
-          ? 'Os dados foram atualizados com sucesso!'
-          : 'Houve um erro ao atualizar os dados. Por favor, tente novamente.',
-      onConfirm: () {
-        // Navigator.of(context).pop();
-      },
-    );
-  } */
 
   @override
   Widget build(BuildContext context) {
@@ -383,8 +420,10 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
                     _almocoBoa != null ||
                     _jantarBoa != null) {
                   if (rotina.isEmpty) {
-                    _cadastrarRefeicoes();
-                  } else {}
+                    _cadastrarRefeicoes(false);
+                  } else {
+                    _cadastrarRefeicoes(true);
+                  }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

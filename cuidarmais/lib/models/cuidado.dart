@@ -47,6 +47,7 @@ class Cuidado {
     data['horario_realizado'] = horario_realizado;
     data['avaliacao'] = avaliacao;
     data['cuidado'] = cuidado;
+    data['tipo_cuidado'] = tipo_cuidado;
     return data;
   }
 
@@ -74,7 +75,6 @@ class Cuidado {
   Future<bool> cadastrar() async {
     var database = Database();
     String dataHora = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-    // String hora = horario_realizado;
 
     print({
       'data_hora': dataHora,
@@ -139,23 +139,12 @@ class Cuidado {
     return [];
   }
 
-  DateTime converterDatas(TimeOfDay? timeOfDay) {
-    DateTime now = DateTime.now();
-    return DateTime(
-      now.year,
-      now.month,
-      now.day,
-      timeOfDay?.hour ?? 0,
-      timeOfDay?.minute ?? 0,
-    );
-  }
-
   Future<bool> atualizarDados() async {
     var database = Database();
 
     Map<String, dynamic> cuidadoData = toJson();
-
-    print("aqui $cuidadoData");
+    cuidadoData['data_hora'] =
+        DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
 
     try {
       var dados = await database.buscarDadosPut(
@@ -172,5 +161,16 @@ class Cuidado {
     } catch (error) {
       return false;
     }
+  }
+
+  DateTime converterDatas(TimeOfDay? timeOfDay) {
+    DateTime now = DateTime.now();
+    return DateTime(
+      now.year,
+      now.month,
+      now.day,
+      timeOfDay?.hour ?? 0,
+      timeOfDay?.minute ?? 0,
+    );
   }
 }
