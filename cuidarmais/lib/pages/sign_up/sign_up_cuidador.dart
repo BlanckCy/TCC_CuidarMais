@@ -302,52 +302,34 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                       _formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     bool resultado = await cuidador.cadastrar();
-                    if (resultado) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Cadastro OK'),
-                            content:
-                                Text('Seu cadastro foi realizado com sucesso!'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const LoginPage(),
-                                    ),
-                                    (route) => false,
-                                  );
-                                },
-                                child: Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Atenção'),
-                            content:
-                                Text('O cadastro com este e-mail já existe.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(resultado ? 'Cadastro OK' : 'Erro'),
+                          content: Text(
+                            resultado
+                                ? 'O cadastro foi realizado com sucesso!'
+                                : 'Ocorreu um erro ao realizar o cadastro.',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginPage(),
+                                  ),
+                                  (route) => false,
+                                );
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   }
                 },
                 style: TextButton.styleFrom(

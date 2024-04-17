@@ -1,5 +1,5 @@
 import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/list_paciente.dart';
+import 'package:cuidarmais/pages/list_patient/list_paciente.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/material.dart';
 
@@ -136,7 +136,7 @@ class _SignUpPacientePageState extends State<SignUpPacientePage> {
                           value: value ?? '',
                           child: Text(
                             value ?? 'Selecione o gênero do paciente',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -211,20 +211,20 @@ class _SignUpPacientePageState extends State<SignUpPacientePage> {
                         });
                       },
                       decoration: InputDecoration(
-                        prefixIcon: Icon(
+                        prefixIcon: const Icon(
                           Icons.email_outlined,
                           color: Color(0XFF1C51A1),
                         ),
                         labelText: "E-mail do responsável:",
-                        labelStyle: TextStyle(color: Colors.black),
+                        labelStyle: const TextStyle(color: Colors.black),
                         hintText: "Digite o e-mail do responsável",
-                        hintStyle: TextStyle(color: Colors.black),
-                        enabledBorder: UnderlineInputBorder(
+                        hintStyle: const TextStyle(color: Colors.black),
+                        enabledBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.black,
                           ),
                         ),
-                        focusedBorder: UnderlineInputBorder(
+                        focusedBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.black,
                           ),
