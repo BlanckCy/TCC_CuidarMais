@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 
-class HigienePage extends StatefulWidget {
+class RotinaDecubitoPage extends StatefulWidget {
   @override
-  _HigienePageState createState() => _HigienePageState();
+  _RotinaDecubitoPageState createState() => _RotinaDecubitoPageState();
 }
 
-class _HigienePageState extends State<HigienePage> {
+class _RotinaDecubitoPageState extends State<RotinaDecubitoPage> {
   List<String?> _selectedTasks = [];
-  final List<String> _taskOptions = ['Troca de Fraldas', 'Corte das Unhas', 'Banho'];
+final List<String> _taskOptions = [
+  'Decúbito Dorsal (ou Supino)',
+  'Decúbito Lateral Esquerdo',
+  'Decúbito Lateral Direito',
+  'Decúbito Ventral (ou Prono)',
+  'Posição de Trendelenburg',
+  'Posição de Fowler',
+  'Posição de Sims',
+  'Posição de Litotomia'
+];
   List<Widget> _taskRows = [];
   List<TextEditingController> _timeControllers = [];
 
@@ -28,7 +37,7 @@ class _HigienePageState extends State<HigienePage> {
           const SizedBox(height: 12),
           Center(
             child: Text(
-              "Tarefas de Higiene",
+              "Mudança de Decúbito",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -56,7 +65,7 @@ class _HigienePageState extends State<HigienePage> {
                   onPressed: () {
                     _addTaskRow();
                   },
-                  child: Text("Adicionar Tarefa"),
+                  child: Text("Adicionar Mudança"),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0XFF1C51A1),
                     foregroundColor: Colors.white,
@@ -91,7 +100,7 @@ class _HigienePageState extends State<HigienePage> {
           Expanded(
             flex: 2,
             child: Text(
-              'Tarefa:',
+              'Mudança:',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
