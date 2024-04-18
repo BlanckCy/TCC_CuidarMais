@@ -1,9 +1,14 @@
+import 'package:cuidarmais/models/paciente.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 
 class MedicacaoPage extends StatefulWidget {
+  final Paciente paciente;
+
+  const MedicacaoPage({Key? key, required this.paciente}) : super(key: key);
+
   @override
-  _MedicacaoPageState createState() => _MedicacaoPageState();
+  State<MedicacaoPage> createState() => _MedicacaoPageState();
 }
 
 class _MedicacaoPageState extends State<MedicacaoPage> {

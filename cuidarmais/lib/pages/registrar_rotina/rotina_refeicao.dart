@@ -104,7 +104,7 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
   bool mensagemExibida = false;
   bool sucesso = false;
 
-  Future<void> _cadastrarRefeicoes(bool isUpdate) async {    
+  Future<void> _cadastrarRefeicoes(bool isUpdate) async {
     // Cadastrar café da manhã
     if (_cafeManhaBoa != null) {
       bool achou = false;
@@ -208,7 +208,6 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
     required String nomeCuidado,
     required bool isUpdate,
   }) async {
-    print("update $isUpdate");
     if (!isUpdate) {
       Cuidado cuidado = Cuidado(
         data_hora: DateTime.now().toString(),

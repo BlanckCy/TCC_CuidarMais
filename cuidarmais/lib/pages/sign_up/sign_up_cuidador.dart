@@ -2,6 +2,7 @@ import 'package:cuidarmais/models/cuidador.dart';
 import 'package:cuidarmais/pages/login/login.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class SignUpCuidadorPage extends StatefulWidget {
   const SignUpCuidadorPage({super.key});
@@ -25,6 +26,11 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final Cuidador cuidador = Cuidador();
+
+  final _telefoneMaskFormatter =
+      MaskTextInputFormatter(mask: '(##) ####-####', filter: {
+    "#": RegExp(r'[0-9]'),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +140,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                           value: value ?? '',
                           child: Text(
                             value ?? 'Selecione seu gênero',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -172,6 +178,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                     TextFormField(
                       controller: telefoneController,
                       keyboardType: TextInputType.number,
+                      inputFormatters: [_telefoneMaskFormatter],
                       decoration: const InputDecoration(
                         prefixIcon: Icon(
                           Icons.phone_android,
@@ -179,7 +186,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                         ),
                         labelText: "Celular:",
                         labelStyle: TextStyle(color: Colors.black),
-                        hintText: "(11) 99999-9999",
+                        hintText: "(XX) XXXXX-XXXX",
                         hintStyle: TextStyle(color: Colors.black),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -200,6 +207,15 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                           return 'Por favor, digite seu número';
                         }
                         return null;
+                      },
+                      onChanged: (text) {
+                        if (text.length >= 14) {
+                          _telefoneMaskFormatter.updateMask(
+                              mask: '(##) #####-####');
+                        } else {
+                          _telefoneMaskFormatter.updateMask(
+                              mask: '(##) ####-####');
+                        }
                       },
                     ),
                     TextFormField(

@@ -241,6 +241,77 @@ class _SignUpPacientePageState extends State<SignUpPacientePage> {
                         return null;
                       },
                     ),
+                    /* DropdownButtonFormField<String>(
+                      value: _selectedGender,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedGender = newValue!;
+                          generoController.text = newValue;
+                        });
+                      },
+                      items: <String?>[
+                        null,
+                        'Cuidado Mínimo',
+                        'Cuidado Intermediário',
+                        'Cuidado Intensificado'
+                      ].map<DropdownMenuItem<String>>((String? value) {
+                        return DropdownMenuItem<String>(
+                          value: value ?? '',
+                          child: Text(
+                            value ?? 'Selecione o nível de cuidado',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.health_and_safety_outlined,
+                          color: Color(0XFF1C51A1),
+                        ),
+                        hintText: 'Selecione o nível de cuidado',
+                        hintStyle: TextStyle(color: Colors.grey),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(vertical: 20.0),
+                      ),
+                      onSaved: (value) {},
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor, selecione o nível de cuidado';
+                        }
+                        return null;
+                      },
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return Container(
+                              height: 200,
+                              child: Center(
+                                child: Text(
+                                  'Informações sobre o nível de cuidado',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      icon: Icon(Icons.info_outline),
+                      color: Colors.blue,
+                    ), */
                   ],
                 ),
               ),
@@ -250,7 +321,8 @@ class _SignUpPacientePageState extends State<SignUpPacientePage> {
                   if (_formKey.currentState != null &&
                       _formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    bool resultado = await paciente.cadastrar(widget.paciente.idcuidador ?? 0);
+                    bool resultado = await paciente
+                        .cadastrar(widget.paciente.idcuidador ?? 0);
                     if (resultado) {
                       showDialog(
                         context: context,
