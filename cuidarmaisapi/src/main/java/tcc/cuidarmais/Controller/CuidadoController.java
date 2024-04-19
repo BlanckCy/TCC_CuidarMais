@@ -27,10 +27,24 @@ public class CuidadoController {
         return new ResponseEntity<>(cuidados, HttpStatus.OK);
     }
 
-    @GetMapping("/lista/{tipo}/{data}")
-    public ResponseEntity<List<CuidadoEntity>> listarCuidadosPorTipoData(@PathVariable int tipo, @PathVariable String data) {
+    @GetMapping("/lista/{idpaciente}/{tipo}/{data}")
+    public ResponseEntity<List<CuidadoEntity>> listarCuidadosPorTipoData(@PathVariable int idpaciente, @PathVariable int tipo, @PathVariable String data) {
         try {
-            List<CuidadoEntity> cuidados = cuidadoService.listarCuidadosPorTipoData(tipo,data);
+            List<CuidadoEntity> cuidados = cuidadoService.listarCuidadosPorTipoData(tipo,data,idpaciente);
+            System.err.println(cuidados);
+            return new ResponseEntity<>(cuidados, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }        
+    }
+
+    @GetMapping("/lista-cuidadomedicacao/{idpaciente}/{tipo}/{idcuidadoMedicacaoLista}")
+    public ResponseEntity<List<CuidadoEntity>> listarCuidadosPorTipoIdcuidadomedicacaolista(@PathVariable int idpaciente, @PathVariable int tipo, @PathVariable int idcuidadoMedicacaoLista) {
+        System.out.println(idpaciente);
+        System.out.println(idcuidadoMedicacaoLista);
+        System.out.println(tipo);
+        try {
+            List<CuidadoEntity> cuidados = cuidadoService.listarCuidadosPorTipoIdcuidadomedicacaolista(tipo,idcuidadoMedicacaoLista,idpaciente);
             System.err.println(cuidados);
             return new ResponseEntity<>(cuidados, HttpStatus.OK);
         } catch (Exception e) {
@@ -56,6 +70,7 @@ public class CuidadoController {
             cuidado.setDescricao(cuidadoAtualizado.getDescricao());
             cuidado.setHorario_realizado(cuidadoAtualizado.getHorario_realizado());
             cuidado.setAvaliacao(cuidadoAtualizado.isAvaliacao());
+            cuidado.setRealizado(cuidadoAtualizado.isRealizado());
             CuidadoEntity cuidadorAtualizadoDb = cuidadoService.salvarCuidado(cuidado);
             return new ResponseEntity<>(cuidadorAtualizadoDb, HttpStatus.OK);
         } else {

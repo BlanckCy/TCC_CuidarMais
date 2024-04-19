@@ -1,6 +1,6 @@
 import 'package:cuidarmais/models/contatoEmergencia.dart';
 import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/emergency_contacts_management/emergency_contacts_management.dart';
+import 'package:cuidarmais/pages/emergency/emergency_contacts_management.dart';
 import 'package:flutter/material.dart';
 
 class EmergencyContactsPage extends StatefulWidget {

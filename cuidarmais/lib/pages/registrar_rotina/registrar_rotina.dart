@@ -39,8 +39,13 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildButton('Medicação', Icons.medical_services_sharp,
-                      MedicacaoPage()),
+                  _buildButton(
+                      'Medicação',
+                      Icons.medical_services_sharp,
+                      MedicacaoPage(
+                        paciente: widget.paciente,
+                        tipoCuidado: 6,
+                      )),
                   const SizedBox(height: 30),
                   _buildButton('Sinais Vitais', Icons.auto_graph_rounded,
                       SinaisVitaisPage()),

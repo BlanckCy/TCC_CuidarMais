@@ -1,11 +1,5 @@
 package tcc.cuidarmais.Entity;
 
-import java.sql.Timestamp;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import java.sql.Time;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,6 +21,7 @@ public class CuidadoEntity {
     private String horario_realizado;
     private boolean avaliacao;
     private int idpaciente;
+    private int idcuidado_medicacao_lista;
 
     public int getIdcuidado() {
         return idcuidado;
@@ -82,6 +77,11 @@ public class CuidadoEntity {
     public void setIdpaciente(int idpaciente) {
         this.idpaciente = idpaciente;
     }
-
+    public int getIdcuidado_medicacao_lista() {
+        return idcuidado_medicacao_lista;
+    }
+    public void setIdcuidado_medicacao_lista(int idcuidado_medicacao_lista) {
+        this.idcuidado_medicacao_lista = idcuidado_medicacao_lista;
+    }
         
 }
