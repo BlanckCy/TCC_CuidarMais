@@ -226,20 +226,20 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                         });
                       },
                       decoration: InputDecoration(
-                        prefixIcon: Icon(
+                        prefixIcon: const Icon(
                           Icons.email_outlined,
                           color: Color(0XFF1C51A1),
                         ),
                         labelText: "E-mail:",
-                        labelStyle: TextStyle(color: Colors.black),
+                        labelStyle: const TextStyle(color: Colors.black),
                         hintText: "Digite seu e-mail",
-                        hintStyle: TextStyle(color: Colors.black),
-                        enabledBorder: UnderlineInputBorder(
+                        hintStyle: const TextStyle(color: Colors.black),
+                        enabledBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.black,
                           ),
                         ),
-                        focusedBorder: UnderlineInputBorder(
+                        focusedBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.black,
                           ),
@@ -265,20 +265,20 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                       },
                       obscureText: !_mostrarSenha,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(
+                        prefixIcon: const Icon(
                           Icons.key_sharp,
                           color: Color(0XFF1C51A1),
                         ),
                         labelText: "Senha:",
-                        labelStyle: TextStyle(color: Colors.black),
+                        labelStyle: const TextStyle(color: Colors.black),
                         hintText: "Digite sua senha",
-                        hintStyle: TextStyle(color: Colors.black),
-                        enabledBorder: UnderlineInputBorder(
+                        hintStyle: const TextStyle(color: Colors.black),
+                        enabledBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.black,
                           ),
                         ),
-                        focusedBorder: UnderlineInputBorder(
+                        focusedBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.black,
                           ),
@@ -288,7 +288,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                             _mostrarSenha
                                 ? Icons.visibility
                                 : Icons.visibility_off,
-                            color: Color(0XFF1C51A1),
+                            color: const Color(0XFF1C51A1),
                           ),
                           onPressed: () {
                             setState(() {

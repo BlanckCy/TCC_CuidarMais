@@ -44,6 +44,7 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
                       Icons.medical_services_sharp,
                       MedicacaoPage(
                         paciente: widget.paciente,
+                        tipoCuidado: 6,
                       )),
                   const SizedBox(height: 30),
                   _buildButton('Sinais Vitais', Icons.auto_graph_rounded,

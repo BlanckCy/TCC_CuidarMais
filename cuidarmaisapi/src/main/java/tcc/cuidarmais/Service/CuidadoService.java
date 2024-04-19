@@ -22,8 +22,12 @@ public class CuidadoService {
         return cuidadoRepository.findAll();
     }
 
-    public List<CuidadoEntity> listarCuidadosPorTipoData(int tipo, String data) {
-        return cuidadoRepository.buscarCuidadoPorTipoData(tipo, data);
+    public List<CuidadoEntity> listarCuidadosPorTipoData(int tipo, String data, int idpaciente) {
+        return cuidadoRepository.buscarCuidadoPorTipoData(tipo, data, idpaciente);
+    }
+
+    public List<CuidadoEntity> listarCuidadosPorTipoIdcuidadomedicacaolista(int tipo, int idcuidadoMedicacaoLista, int idpaciente) {
+        return cuidadoRepository.listarCuidadosPorTipoIdcuidadomedicacaolista(tipo, idcuidadoMedicacaoLista, idpaciente);
     }
 
     public CuidadoEntity buscarPorIdcuidado(int idcuidado) {
