@@ -1,5 +1,5 @@
 import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/list_patient/list_paciente.dart';
+import 'package:cuidarmais/pages/home/home.dart';
 import 'package:cuidarmais/pages/patient_data/patient_data.dart';
 import 'package:flutter/material.dart';
 
@@ -63,8 +63,9 @@ class _HomePageState extends State<PrincipalPage> {
               Icons.book,
               'Registrar Rotina',
               const Color(0xFF1C51A1),
-              (context) => ListaPacientePage(
+              (context) => HomePage(
                 paciente: Paciente(idpaciente: 1),
+                selectedIndex: 0,
               ),
             ),
             const SizedBox(height: 20),
@@ -72,8 +73,9 @@ class _HomePageState extends State<PrincipalPage> {
               Icons.local_hospital,
               'SOS Emergência',
               Colors.red,
-              (context) => ListaPacientePage(
+              (context) => HomePage(
                 paciente: Paciente(idpaciente: 1),
+                selectedIndex: 2,
               ),
             ),
           ],
@@ -83,9 +85,9 @@ class _HomePageState extends State<PrincipalPage> {
   }
 
   Widget _buildProfileButton() {
-    IconData genderIcon = Icons.person_outline; 
+    IconData genderIcon = Icons.person_outline;
     if (widget.paciente.genero == 'F') {
-      genderIcon = Icons.person_2_outlined; 
+      genderIcon = Icons.person_2_outlined;
     }
 
     return GestureDetector(

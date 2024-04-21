@@ -30,7 +30,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.local_hospital),
-          label: 'Botão Emergência',
+          label: 'Emergência',
         ),
       ],
       currentIndex: widget.selectedIndex,

@@ -48,33 +48,48 @@ create table contatoEmergencia(
 
 create table escala(
 	idescala int auto_increment primary key,
-    data_hora timestamp,
+    data_hora datetime,
     dia_semana varchar(50),
-    dtAlteracao timestamp,
+    dtAlteracao datetime,
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );
 
 create table pontoEletronico(
 	idpontoEletronico int auto_increment primary key,
-    data_hora_entrada timestamp,
-    data_hora_saida timestamp,
+    data_hora_entrada datetime,
+    data_hora_saida datetime,
+    idpaciente int,
+    foreign key (idpaciente) references paciente(idpaciente)
+);
+
+create table cuidadomedicao_lista(
+	idcuidadomedicacao_lista int auto_increment primary key,
+    medicamento varchar(255),
+    dosagem varchar(10),
+    hora time,
+    tipo varchar(50),
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );
 
 create table cuidado(
 	idcuidado int auto_increment primary key,
-    data_hora timestamp,
+    data_hora datetime,
     realizado boolean default 0,
+    horario_realizado time,
     tipo_cuidado int,
+    cuidado varchar(255),
     descricao varchar(255), 
+    avaliacao boolean,
     idpaciente int,
-    foreign key (idpaciente) references paciente(idpaciente)
+    foreign key (idpaciente) references paciente(idpaciente),
+    idcuidadomedicacao_lista int,
+    foreign key (idcuidadomedicacao_lista) references cuidadomedicao_lista(idcuidadomedicacao_lista)
 );
 
-create table cuidadoSinalVital(
-	idcuidadoSinalVital int auto_increment primary key,
+create table cuidadosinalvital(
+	idcuidadosinalvital int auto_increment primary key,
     pressao_arterial varchar(100),
     temperatura varchar(100),
     saturacao varchar(100),
@@ -83,22 +98,15 @@ create table cuidadoSinalVital(
     foreign key (idpaciente) references paciente(idpaciente)
 );
 
-create table cuidadoMedicaoLista(
-	idcuidadoMedicacaoLista int auto_increment primary key,
-    medicamento varchar(255),
-    idpaciente int,
-    foreign key (idpaciente) references paciente(idpaciente)
-);
-
-create table cuidadoFeridaLista(
-	idcuidadoFeridaLista int auto_increment primary key,
+create table cuidadoferida_lista(
+	idcuidadoferida_lista int auto_increment primary key,
     ferida varchar(255),
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );
 
-create table cuidadoEquipamentoLista(
-	idcuidadoEquipamentoLista int auto_increment primary key,
+create table cuidadoequipamento_lista(
+	idcuidadoequipamento_lista int auto_increment primary key,
     equipamento varchar(255),
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)

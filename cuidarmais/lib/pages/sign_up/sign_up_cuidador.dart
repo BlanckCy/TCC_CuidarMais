@@ -2,6 +2,7 @@ import 'package:cuidarmais/models/cuidador.dart';
 import 'package:cuidarmais/pages/login/login.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class SignUpCuidadorPage extends StatefulWidget {
   const SignUpCuidadorPage({super.key});
@@ -25,6 +26,11 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final Cuidador cuidador = Cuidador();
+
+  final _telefoneMaskFormatter =
+      MaskTextInputFormatter(mask: '(##) ####-####', filter: {
+    "#": RegExp(r'[0-9]'),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +140,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                           value: value ?? '',
                           child: Text(
                             value ?? 'Selecione seu gênero',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -172,6 +178,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                     TextFormField(
                       controller: telefoneController,
                       keyboardType: TextInputType.number,
+                      inputFormatters: [_telefoneMaskFormatter],
                       decoration: const InputDecoration(
                         prefixIcon: Icon(
                           Icons.phone_android,
@@ -179,7 +186,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                         ),
                         labelText: "Celular:",
                         labelStyle: TextStyle(color: Colors.black),
-                        hintText: "(11) 99999-9999",
+                        hintText: "(XX) XXXXX-XXXX",
                         hintStyle: TextStyle(color: Colors.black),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -201,6 +208,15 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                         }
                         return null;
                       },
+                      onChanged: (text) {
+                        if (text.length >= 14) {
+                          _telefoneMaskFormatter.updateMask(
+                              mask: '(##) #####-####');
+                        } else {
+                          _telefoneMaskFormatter.updateMask(
+                              mask: '(##) ####-####');
+                        }
+                      },
                     ),
                     TextFormField(
                       controller: emailController,
@@ -210,20 +226,20 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                         });
                       },
                       decoration: InputDecoration(
-                        prefixIcon: Icon(
+                        prefixIcon: const Icon(
                           Icons.email_outlined,
                           color: Color(0XFF1C51A1),
                         ),
                         labelText: "E-mail:",
-                        labelStyle: TextStyle(color: Colors.black),
+                        labelStyle: const TextStyle(color: Colors.black),
                         hintText: "Digite seu e-mail",
-                        hintStyle: TextStyle(color: Colors.black),
-                        enabledBorder: UnderlineInputBorder(
+                        hintStyle: const TextStyle(color: Colors.black),
+                        enabledBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.black,
                           ),
                         ),
-                        focusedBorder: UnderlineInputBorder(
+                        focusedBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.black,
                           ),
@@ -249,20 +265,20 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                       },
                       obscureText: !_mostrarSenha,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(
+                        prefixIcon: const Icon(
                           Icons.key_sharp,
                           color: Color(0XFF1C51A1),
                         ),
                         labelText: "Senha:",
-                        labelStyle: TextStyle(color: Colors.black),
+                        labelStyle: const TextStyle(color: Colors.black),
                         hintText: "Digite sua senha",
-                        hintStyle: TextStyle(color: Colors.black),
-                        enabledBorder: UnderlineInputBorder(
+                        hintStyle: const TextStyle(color: Colors.black),
+                        enabledBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.black,
                           ),
                         ),
-                        focusedBorder: UnderlineInputBorder(
+                        focusedBorder: const UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.black,
                           ),
@@ -272,7 +288,7 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                             _mostrarSenha
                                 ? Icons.visibility
                                 : Icons.visibility_off,
-                            color: Color(0XFF1C51A1),
+                            color: const Color(0XFF1C51A1),
                           ),
                           onPressed: () {
                             setState(() {
@@ -302,52 +318,34 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                       _formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     bool resultado = await cuidador.cadastrar();
-                    if (resultado) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Cadastro OK'),
-                            content:
-                                Text('Seu cadastro foi realizado com sucesso!'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const LoginPage(),
-                                    ),
-                                    (route) => false,
-                                  );
-                                },
-                                child: Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Atenção'),
-                            content:
-                                Text('O cadastro com este e-mail já existe.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(resultado ? 'Cadastro OK' : 'Erro'),
+                          content: Text(
+                            resultado
+                                ? 'O cadastro foi realizado com sucesso!'
+                                : 'Ocorreu um erro ao realizar o cadastro.',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginPage(),
+                                  ),
+                                  (route) => false,
+                                );
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   }
                 },
                 style: TextButton.styleFrom(
