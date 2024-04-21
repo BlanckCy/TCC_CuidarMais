@@ -59,7 +59,7 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
                       )),
                   const SizedBox(height: 30),
                   _buildButton('Atividade Física', Icons.accessibility_new,
-                      AtividadeFisicaPage()),
+                      AtividadePage()),
                   const SizedBox(height: 30),
                   _buildButton('Higiene', Icons.shower, HigienePage()),
                   const SizedBox(
