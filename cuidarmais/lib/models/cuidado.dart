@@ -71,7 +71,7 @@ class Cuidado {
       case 6:
         return 'Medicacao';
       case 7:
-        return 'Tratamento de Feridas';
+        return 'Mudança Decúbito';
       default:
         return '';
     }

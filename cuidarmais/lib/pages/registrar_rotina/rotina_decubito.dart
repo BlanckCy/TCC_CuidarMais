@@ -1,247 +1,322 @@
+import 'package:cuidarmais/models/paciente.dart';
+import 'package:cuidarmais/models/tipoCuidado/mudancadecubito.dart';
+import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
+import 'package:intl/intl.dart';
 
 class RotinaDecubitoPage extends StatefulWidget {
+  final Paciente paciente;
+  final int tipoCuidado;
+
+  const RotinaDecubitoPage(
+      {Key? key, required this.paciente, required this.tipoCuidado})
+      : super(key: key);
+
   @override
-  _RotinaDecubitoPageState createState() => _RotinaDecubitoPageState();
+  State<RotinaDecubitoPage> createState() => _RotinaDecubitoPageState();
 }
 
 class _RotinaDecubitoPageState extends State<RotinaDecubitoPage> {
-  List<String?> _selectedTasks = [];
-final List<String> _taskOptions = [
-  'Decúbito Dorsal (ou Supino)',
-  'Decúbito Lateral Esquerdo',
-  'Decúbito Lateral Direito',
-  'Decúbito Ventral (ou Prono)',
-  'Posição de Trendelenburg',
-  'Posição de Fowler',
-  'Posição de Sims',
-  'Posição de Litotomia'
-];
-  List<Widget> _taskRows = [];
-  List<TextEditingController> _timeControllers = [];
+  Map<String, String?> rotinaDecubito = {};
+
+  List<Map<String, String?>> _selectedTasks = [];
+  final List<String?> _taskOptions = [
+    null,
+    'Decúbito Dorsal (ou Supino)',
+    'Decúbito Lateral Esquerdo',
+    'Decúbito Lateral Direito',
+    'Decúbito Ventral (ou Prono)',
+    'Posição de Trendelenburg',
+    'Posição de Fowler',
+    'Posição de Sims',
+    'Posição de Litotomia'
+  ];
+  bool _isLoading = true;
+
+  late MudancaDecubito mudancaDecubito = MudancaDecubito();
 
   @override
   void initState() {
     super.initState();
-    _addTaskRow();
+    _carregarInformacoes();
+  }
+
+  Future<void> _carregarInformacoes() async {
+    try {
+      String dataFormatada = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      mudancaDecubito.idpaciente = widget.paciente.idpaciente;
+      List<MudancaDecubito> listaCuidado =
+          await mudancaDecubito.carregar(dataFormatada);
+
+      setState(() {
+        _selectedTasks = listaCuidado
+            .map(
+                (mudanca) => {'mudanca': mudanca.mudanca, 'hora': mudanca.hora})
+            .toList();
+        _isLoading = false;
+      });
+
+      print("aqui $_selectedTasks");
+
+      if (_selectedTasks.isEmpty) {
+        _addTaskRow();
+      }
+    } catch (error) {
+      setState(() {
+        _isLoading = false;
+      });
+      showConfirmationDialog(
+        context: context,
+        title: 'Erro',
+        message: 'Erro ao carregar informações da rotina',
+        onConfirm: () {
+          Navigator.of(context).pop();
+        },
+      );
+    }
+  }
+
+  Future<void> _salvarInformacoes() async {
+    try {
+      bool atualizacaoSucesso = false;
+      for (var rotina in rotinaDecubito.entries) {
+        MudancaDecubito mudancaDecubito = MudancaDecubito(
+          mudanca: rotina.key,
+          hora: rotina.value,
+          idpaciente: widget.paciente.idpaciente,
+        );
+
+        atualizacaoSucesso = await mudancaDecubito.cadastrar();
+      }
+
+      showConfirmationDialog(
+        context: context,
+        title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+        message: atualizacaoSucesso
+            ? 'As informações foram salvas com sucesso!'
+            : 'Houve um erro ao salvar os dados. Por favor, tente novamente.',
+        onConfirm: () {
+          if (atualizacaoSucesso) {
+            Navigator.of(context).pop();
+          }
+        },
+      );
+    } catch (error) {
+      print('Erro ao salvar os dados: $error');
+      showConfirmationDialog(
+        context: context,
+        title: 'Erro',
+        message: 'Erro ao salvar os dados.',
+        onConfirm: () {},
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 12),
-          Center(
-            child: Text(
-              "Mudança de Decúbito",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          SizedBox(height: 16),
-          _buildTaskHeader(), // Adicionando cabeçalho das tarefas
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Column(
-                  children: _taskRows,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _buildMudancaDecubitoList(),
+    );
+  }
+
+  Widget _buildMudancaDecubitoList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(25),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    _addTaskRow();
-                  },
-                  child: Text("Adicionar Mudança"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0XFF1C51A1),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(250, 50),
-                  ),
-                ),
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    // Salvar
-                  },
-                  child: Text("Salvar"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0XFF1C51A1),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(250, 50),
+                _buildTitle(),
+                const SizedBox(height: 20),
+                Column(
+                  children: List.generate(
+                    _selectedTasks.length,
+                    (index) => _buildTaskRow(index),
                   ),
                 ),
               ],
             ),
           ),
-        ],
-      ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(25),
+          child: _buildButtonsSection(),
+        ),
+      ],
     );
   }
 
-  Widget _buildTaskHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              'Mudança:',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              'Horário:',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ),
-        ],
+  Widget _buildTitle() {
+    return const Text(
+      "Mudança de Decúbito",
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
       ),
     );
   }
 
   Widget _buildTaskRow(int index) {
-    TextEditingController timeController = TextEditingController();
-    _timeControllers.add(timeController);
-
-    if (_selectedTasks.length <= index) {
-      _selectedTasks.add(null);
-    }
+    Map<String?, String?> task = _selectedTasks[index];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Column(
         children: [
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Colors.grey,
-                      width: 1.0,
-                    ),
-                  ),
-                ),
-                child: DropdownButtonFormField<String>(
-                  value: _selectedTasks[index],
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedTasks[index] = newValue;
-                    });
-                  },
-                  items: _taskOptions.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    );
-                  }).toList(),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 8),
-                  ),
-                  dropdownColor: Colors.white,
-                  focusColor: Colors.transparent, // Remover o destaque cinza
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 2,
+                child: Text(
+                  'Mudança',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Colors.grey,
-                      width: 1.0,
-                    ),
-                  ),
+              Expanded(
+                flex: 1,
+                child: Text(
+                  'Horário',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                child: GestureDetector(
-                  onTap: () {
-                    _selectTime(context, index);
-                  },
-                  child: AbsorbPointer(
-                    child: TextField(
-                      controller: timeController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        prefixIcon: Container(
-                          width: 48,
-                          alignment: Alignment.center,
-                          child: Icon(Icons.access_time, color: const Color(0XFF1C51A1)),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: task['mudanca'] == null
+                    ? DropdownButtonFormField<String>(
+                        value: task['mudanca'],
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            task['mudanca'] = newValue;
+                          });
+                        },
+                        items: _taskOptions
+                            .map<DropdownMenuItem<String>>((String? value) {
+                          return DropdownMenuItem<String>(
+                            value: value ?? '',
+                            child: Text(
+                              value ?? 'Selecione a mudança',
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          );
+                        }).toList(),
+                        decoration: const InputDecoration(
+                          hintText: 'Selecione a mudança',
+                          hintStyle: TextStyle(color: Colors.grey),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.transparent,
+                            ),
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.transparent,
+                            ),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(vertical: 20.0),
                         ),
-                        contentPadding: EdgeInsets.symmetric(vertical: 8),
+                        menuMaxHeight: 200,
+                        isExpanded: true,
+                      )
+                    : Text(
+                        task['mudanca']!,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                flex: 1,
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: task['hora'] != null
+                          ? null
+                          : () async {
+                              final selectedTime = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                              );
+                              if (selectedTime != null) {
+                                setState(() {
+                                  task['hora'] = _formatTime(selectedTime);
+                                  if (task['mudanca'] != null) {
+                                    rotinaDecubito[task['mudanca']!] =
+                                        _formatTime(selectedTime);
+                                  }
+                                });
+                              }
+                            },
+                      icon: const Icon(Icons.access_time),
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        task['hora'] ?? '00:00',
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-            ),
+            ],
           ),
+          const Divider(height: 1, color: Colors.black),
+          const SizedBox(height: 10),
         ],
       ),
     );
   }
 
-  void _addTaskRow() {
-    setState(() {
-      int newIndex = _taskRows.length;
-      _taskRows.add(_buildTaskRow(newIndex));
-    });
+  Widget _buildButtonsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildButton("Adicionar Mudança", _addTaskRow),
+        const SizedBox(height: 10),
+        _buildButton("Salvar", _salvarInformacoes),
+      ],
+    );
   }
 
-  Future<void> _selectTime(BuildContext context, int index) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-      helpText: 'Selecione o Horário:',
-      cancelText: 'Cancelar', // Altera o texto do botão de cancelar
-      confirmText: 'Confirmar', // Altera o texto do botão de confirmar
-      hourLabelText: 'Hora', // Altera o rótulo do campo de hora
-      minuteLabelText: 'Minuto', // Altera o rótulo do campo de minuto
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue),
-            dialogBackgroundColor: Colors.white,
-          ),
-          child: child!,
-        );
-      },
+  Widget _buildButton(String label, VoidCallback onPressed) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0XFF1C51A1),
+        foregroundColor: Colors.white,
+        minimumSize: const Size(250, 50),
+      ),
+      child: Text(label),
     );
+  }
 
-    if (picked != null) {
-      _timeControllers[index].text = '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+  String _formatTime(TimeOfDay? time) {
+    if (time != null) {
+      final now = DateTime.now();
+      final DateTime selectedTime =
+          DateTime(now.year, now.month, now.day, time.hour, time.minute);
+      return DateFormat.Hm().format(selectedTime);
+    } else {
+      return '';
     }
+  }
+
+  void _addTaskRow() {
+    setState(() {
+      _selectedTasks.add({'mudanca': null, 'hora': null});
+    });
   }
 }
