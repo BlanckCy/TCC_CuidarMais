@@ -80,8 +80,6 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
     try {
       bool atualizacaoSucesso = false;
 
-      print(_observacoesController.text);
-
       SinaisVitais novoSinalVital = SinaisVitais(
         pressao_diastolica: _selectedDiastolica,
         pressao_sistolica: _selectedSistolica,
@@ -189,9 +187,9 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             const Text(
-              "Como está o paciente hoje?",
+              "Rotina de Sinais Vitais",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,

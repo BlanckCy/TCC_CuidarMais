@@ -155,7 +155,7 @@ class _RotinaDecubitoPageState extends State<RotinaDecubitoPage> {
 
   Widget _buildTitle() {
     return const Text(
-      "Mudança de Decúbito",
+      "Rotina de Mudança de Decúbito",
       textAlign: TextAlign.center,
       style: TextStyle(
         fontSize: 20,
