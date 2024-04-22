@@ -111,3 +111,12 @@ create table cuidadoequipamento_lista(
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );
+
+create table cuidado_mudancadecubito(
+	idcuidado_mudancadecubito int auto_increment primary key,
+    mudanca varchar(255),
+    hora time,
+    data_hora datetime,
+    idpaciente int,
+    foreign key (idpaciente) references paciente(idpaciente)
+);
