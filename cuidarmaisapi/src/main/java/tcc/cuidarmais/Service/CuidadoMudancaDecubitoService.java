@@ -34,8 +34,8 @@ public class CuidadoMudancaDecubitoService {
         return cuidadoMudancaDecubitoRepository.findByIdpaciente(idpaciente);
     }
 
-    public CuidadoMudancaDecubitoEntity salvar(CuidadoMudancaDecubitoEntity contato) {
-        return cuidadoMudancaDecubitoRepository.save(contato);
+    public CuidadoMudancaDecubitoEntity salvar(CuidadoMudancaDecubitoEntity cuidado) {
+        return cuidadoMudancaDecubitoRepository.save(cuidado);
     }
 
     public void deletar(int idcuidado_mudancadecubito) {

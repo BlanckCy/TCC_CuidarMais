@@ -34,8 +34,8 @@ public class CuidadoSinaisVitaisController {
     }
 
     @GetMapping("/{idcuidado_sinaisvitais}")
-    public ResponseEntity<CuidadoSinaisVitaisEntity> buscarContatosPoridcontato_emergencia(@PathVariable int idcuidado_sinaisvitais) {
-        CuidadoSinaisVitaisEntity contato = cuidadosinaisvitaisservice.buscarPorIdcuidado_mudancadecubito(idcuidado_sinaisvitais);
+    public ResponseEntity<CuidadoSinaisVitaisEntity> buscarContatosPoridcuidado_sinaisvitais(@PathVariable int idcuidado_sinaisvitais) {
+        CuidadoSinaisVitaisEntity contato = cuidadosinaisvitaisservice.buscarPorIdcuidado_sinaisvitais(idcuidado_sinaisvitais);
         if (contato != null) {
             return ResponseEntity.ok(contato);
         } else {
@@ -61,7 +61,7 @@ public class CuidadoSinaisVitaisController {
 
     @PutMapping("/update/{idcuidado_sinaisvitais}")
     public ResponseEntity<CuidadoSinaisVitaisEntity> atualizar(@PathVariable int idcuidado_sinaisvitais, @RequestBody CuidadoSinaisVitaisEntity cuidadoAtualizado) {
-        CuidadoSinaisVitaisEntity cuidado = cuidadosinaisvitaisservice.buscarPorIdcuidado_mudancadecubito(idcuidado_sinaisvitais);
+        CuidadoSinaisVitaisEntity cuidado = cuidadosinaisvitaisservice.buscarPorIdcuidado_sinaisvitais(idcuidado_sinaisvitais);
         if (cuidado != null) {
             cuidado.setPressao_sistolica(cuidadoAtualizado.getPressao_sistolica());
             cuidado.setPressao_diastolica(cuidadoAtualizado.getPressao_diastolica());

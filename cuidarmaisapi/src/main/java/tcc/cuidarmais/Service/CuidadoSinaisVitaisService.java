@@ -26,7 +26,7 @@ public class CuidadoSinaisVitaisService {
         return cuidadoSinaisVitaisRepository.listaPorClienteData(idpaciente,data);
     }
 
-    public CuidadoSinaisVitaisEntity buscarPorIdcuidado_mudancadecubito(int idcuidado_sinaisvitais) {
+    public CuidadoSinaisVitaisEntity buscarPorIdcuidado_sinaisvitais(int idcuidado_sinaisvitais) {
         return cuidadoSinaisVitaisRepository.findByIdcuidadoSinaisvitais(idcuidado_sinaisvitais);
     }
 
