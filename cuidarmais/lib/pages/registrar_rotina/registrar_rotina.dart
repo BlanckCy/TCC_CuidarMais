@@ -45,8 +45,13 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
                     tipoCuidado: 6,
                   )),
               const SizedBox(height: 20),
-              _buildButton('Sinais Vitais', Icons.auto_graph_rounded,
-                  SinaisVitaisPage()),
+              _buildButton(
+                  'Sinais Vitais',
+                  Icons.auto_graph_rounded,
+                  SinaisVitaisPage(
+                    paciente: widget.paciente,
+                    tipoCuidado: 2,
+                  )),
               const SizedBox(height: 20),
               _buildButton(
                   'Refeições',

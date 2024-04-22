@@ -88,12 +88,15 @@ create table cuidado(
     foreign key (idcuidadomedicacao_lista) references cuidadomedicao_lista(idcuidadomedicacao_lista)
 );
 
-create table cuidadosinalvital(
-	idcuidadosinalvital int auto_increment primary key,
-    pressao_arterial varchar(100),
-    temperatura varchar(100),
-    saturacao varchar(100),
-    glicose varchar(100),
+create table cuidado_sinaisvitais(
+	idcuidado_sinaisvitais int auto_increment primary key,
+    pressao_sistolica varchar(10),
+    pressao_diastolica varchar(10),
+    temperatura varchar(10),
+    frequencia_respiratoria varchar(10),
+    frequencia_cardiaca varchar(10),
+    data_hora datetime,
+    descricao varchar(255), 
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );
