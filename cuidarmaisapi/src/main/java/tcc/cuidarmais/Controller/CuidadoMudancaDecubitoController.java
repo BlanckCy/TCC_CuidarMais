@@ -34,7 +34,7 @@ public class CuidadoMudancaDecubitoController {
     }
 
     @GetMapping("/{idcuidado_mudancadecubito}")
-    public ResponseEntity<CuidadoMudancaDecubitoEntity> buscarContatosPoridcontato_emergencia(@PathVariable int idcuidado_mudancadecubito) {
+    public ResponseEntity<CuidadoMudancaDecubitoEntity> buscarPorIdcuidado_mudancadecubito(@PathVariable int idcuidado_mudancadecubito) {
         CuidadoMudancaDecubitoEntity contato = cuidadoMudancaDecubitoService.buscarPorIdcuidado_mudancadecubito(idcuidado_mudancadecubito);
         if (contato != null) {
             return ResponseEntity.ok(contato);
@@ -44,7 +44,7 @@ public class CuidadoMudancaDecubitoController {
     }
 
     @GetMapping("/por-paciente/{idpaciente}")
-    public ResponseEntity<List<CuidadoMudancaDecubitoEntity>> buscarContatosPorIdPaciente(@PathVariable int idpaciente) {
+    public ResponseEntity<List<CuidadoMudancaDecubitoEntity>> buscarPorIdPaciente(@PathVariable int idpaciente) {
         List<CuidadoMudancaDecubitoEntity> cuidado = cuidadoMudancaDecubitoService.buscarPorIdPaciente(idpaciente);
         return new ResponseEntity<>(cuidado, HttpStatus.OK);
     }
@@ -52,8 +52,8 @@ public class CuidadoMudancaDecubitoController {
     @PostMapping("/create")
     public ResponseEntity<CuidadoMudancaDecubitoEntity> salvar(@RequestBody CuidadoMudancaDecubitoEntity cuidado) {
         try {
-            CuidadoMudancaDecubitoEntity novoContato = cuidadoMudancaDecubitoService.salvar(cuidado);
-            return new ResponseEntity<>(novoContato, HttpStatus.CREATED);
+            CuidadoMudancaDecubitoEntity novoCuidado = cuidadoMudancaDecubitoService.salvar(cuidado);
+            return new ResponseEntity<>(novoCuidado, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

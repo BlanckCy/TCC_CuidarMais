@@ -45,8 +45,13 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
                     tipoCuidado: 6,
                   )),
               const SizedBox(height: 20),
-              _buildButton('Sinais Vitais', Icons.auto_graph_rounded,
-                  SinaisVitaisPage()),
+              _buildButton(
+                  'Sinais Vitais',
+                  Icons.auto_graph_rounded,
+                  SinaisVitaisPage(
+                    paciente: widget.paciente,
+                    tipoCuidado: 2,
+                  )),
               const SizedBox(height: 20),
               _buildButton(
                   'Refeições',
@@ -59,7 +64,13 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
               _buildButton('Atividade Física', Icons.accessibility_new,
                   AtividadeFisicaPage()),
               const SizedBox(height: 20),
-              _buildButton('Higiene', Icons.shower, HigienePage()),
+              _buildButton(
+                  'Higiene',
+                  Icons.shower,
+                  RotinaHigienePage(
+                    paciente: widget.paciente,
+                    tipoCuidado: 5,
+                  )),
               const SizedBox(height: 20),
               _buildButton(
                 'Mudança Decúbito',

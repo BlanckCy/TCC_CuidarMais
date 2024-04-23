@@ -333,9 +333,9 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              "Como o paciente se alimentou hoje?",
+              "Rotina de Refeição",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,

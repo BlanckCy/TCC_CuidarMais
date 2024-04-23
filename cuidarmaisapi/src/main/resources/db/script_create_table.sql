@@ -88,26 +88,15 @@ create table cuidado(
     foreign key (idcuidadomedicacao_lista) references cuidadomedicao_lista(idcuidadomedicacao_lista)
 );
 
-create table cuidadosinalvital(
-	idcuidadosinalvital int auto_increment primary key,
-    pressao_arterial varchar(100),
-    temperatura varchar(100),
-    saturacao varchar(100),
-    glicose varchar(100),
-    idpaciente int,
-    foreign key (idpaciente) references paciente(idpaciente)
-);
-
-create table cuidadoferida_lista(
-	idcuidadoferida_lista int auto_increment primary key,
-    ferida varchar(255),
-    idpaciente int,
-    foreign key (idpaciente) references paciente(idpaciente)
-);
-
-create table cuidadoequipamento_lista(
-	idcuidadoequipamento_lista int auto_increment primary key,
-    equipamento varchar(255),
+create table cuidado_sinaisvitais(
+	idcuidado_sinaisvitais int auto_increment primary key,
+    pressao_sistolica varchar(10),
+    pressao_diastolica varchar(10),
+    temperatura varchar(10),
+    frequencia_respiratoria varchar(10),
+    frequencia_cardiaca varchar(10),
+    data_hora datetime,
+    descricao varchar(255), 
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );
@@ -115,6 +104,15 @@ create table cuidadoequipamento_lista(
 create table cuidado_mudancadecubito(
 	idcuidado_mudancadecubito int auto_increment primary key,
     mudanca varchar(255),
+    hora time,
+    data_hora datetime,
+    idpaciente int,
+    foreign key (idpaciente) references paciente(idpaciente)
+);
+
+create table cuidado_higiene(
+	idcuidado_higiene int auto_increment primary key,
+    tarefa varchar(255),
     hora time,
     data_hora datetime,
     idpaciente int,
