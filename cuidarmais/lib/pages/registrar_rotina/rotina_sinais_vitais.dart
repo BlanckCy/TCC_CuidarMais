@@ -80,17 +80,29 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
     try {
       bool atualizacaoSucesso = false;
 
-      SinaisVitais novoSinalVital = SinaisVitais(
-        pressao_diastolica: _selectedDiastolica,
-        pressao_sistolica: _selectedSistolica,
-        temperatura: _selectedTemperatura,
-        frequencia_cardiaca: _selectedFrequenciaCardiaca,
-        frequencia_respiratoria: _selectedRespiracao,
-        descricao: _observacoesController.text,
-        idpaciente: widget.paciente.idpaciente,
-      );
+      if (rotina.isNotEmpty) {
+        sinaisvitais.pressao_diastolica = _selectedDiastolica;
+        sinaisvitais.pressao_sistolica = _selectedSistolica;
+        sinaisvitais.temperatura = _selectedTemperatura;
+        sinaisvitais.frequencia_cardiaca = _selectedFrequenciaCardiaca;
+        sinaisvitais.frequencia_respiratoria = _selectedRespiracao;
+        sinaisvitais.descricao = _observacoesController.text;
+        sinaisvitais.idcuidado_sinaisvitais = rotina[0].idcuidado_sinaisvitais;
 
-      atualizacaoSucesso = await novoSinalVital.cadastrar();
+        atualizacaoSucesso = await sinaisvitais.atualizar();
+      } else {
+        SinaisVitais novoSinalVital = SinaisVitais(
+          pressao_diastolica: _selectedDiastolica,
+          pressao_sistolica: _selectedSistolica,
+          temperatura: _selectedTemperatura,
+          frequencia_cardiaca: _selectedFrequenciaCardiaca,
+          frequencia_respiratoria: _selectedRespiracao,
+          descricao: _observacoesController.text,
+          idpaciente: widget.paciente.idpaciente,
+        );
+
+        atualizacaoSucesso = await novoSinalVital.cadastrar();
+      }
 
       showConfirmationDialog(
         context: context,

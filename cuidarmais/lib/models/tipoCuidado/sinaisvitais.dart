@@ -68,7 +68,7 @@ class SinaisVitais {
       'data_hora': dataAtual,
       'idpaciente': idpaciente.toString(),
     });
-    
+
     try {
       var dados =
           await database.buscarDadosPost('/cuidado-sinaisvitais/create', {
@@ -111,7 +111,10 @@ class SinaisVitais {
       List<dynamic> cuidadosData = jsonDecode(resposta['dados']);
 
       List<SinaisVitais> cuidados = cuidadosData.map((cuidadoData) {
-        return SinaisVitais.fromJson(cuidadoData);
+        SinaisVitais sinaisVitais = SinaisVitais.fromJson(cuidadoData);
+        sinaisVitais.idcuidado_sinaisvitais =
+            cuidadoData['idcuidadoSinaisvitais'];
+        return sinaisVitais;
       }).toList();
 
       return cuidados;
@@ -123,9 +126,12 @@ class SinaisVitais {
   Future<bool> atualizar() async {
     var database = Database();
 
+    String dataAtual = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+
     Map<String, dynamic> cuidadoData = toJson();
 
-    print("aqui $cuidadoData");
+    cuidadoData['data_hora'] = dataAtual;
+
     try {
       var dados = await database.buscarDadosPut(
           '/cuidado-sinaisvitais/update/$idcuidado_sinaisvitais', cuidadoData);
