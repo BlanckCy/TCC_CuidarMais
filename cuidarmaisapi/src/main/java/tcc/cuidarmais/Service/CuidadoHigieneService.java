@@ -26,7 +26,7 @@ public class CuidadoHigieneService {
         return cuidadohigienerepository.listarCuidadoIdpacienteData(idpaciente,data);
     }
 
-    public CuidadoHigieneEntity buscarPorIdcuidado_mudancadecubito(int idcuidado_higiene) {
+    public CuidadoHigieneEntity buscarPorIdcuidado_higiene(int idcuidado_higiene) {
         return cuidadohigienerepository.findByIdcuidadoHigiene(idcuidado_higiene);
     }
 

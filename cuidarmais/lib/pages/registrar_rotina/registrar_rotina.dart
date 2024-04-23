@@ -1,7 +1,7 @@
 import 'package:cuidarmais/models/paciente.dart';
+import 'package:cuidarmais/pages/registrar_rotina/rotina_ativ_fisica.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_decubito.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_medicacao.dart';
-import 'package:cuidarmais/pages/registrar_rotina/rotina_ativ_fisica.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_higiene.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_refeicao.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_sinais_vitais.dart';
@@ -62,7 +62,8 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
                   )),
               const SizedBox(height: 20),
               _buildButton('Atividade Física', Icons.accessibility_new,
-                  AtividadeFisicaPage()),
+                  AtividadeFisicaPage(paciente: widget.paciente,
+                    tipoCuidado: 3,)),
               const SizedBox(height: 20),
               _buildButton(
                   'Higiene',

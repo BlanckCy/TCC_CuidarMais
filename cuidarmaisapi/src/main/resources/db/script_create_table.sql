@@ -118,3 +118,13 @@ create table cuidado_higiene(
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );
+
+create table cuidado_atividadefisica(
+	idcuidado_atividadefisica int auto_increment primary key,
+    avaliacao boolean,
+    hora time,
+    descricao varchar(255),
+    data_hora datetime,
+    idpaciente int,
+    foreign key (idpaciente) references paciente(idpaciente)
+);
