@@ -61,8 +61,9 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
                     tipoCuidado: 1,
                   )),
               const SizedBox(height: 20),
-              _buildButton(
-                  'Atividade Física', Icons.accessibility_new, AtividadePage()),
+              _buildButton('Atividade Física', Icons.accessibility_new,
+                  AtividadeFisicaPage(paciente: widget.paciente,
+                    tipoCuidado: 3,)),
               const SizedBox(height: 20),
               _buildButton(
                   'Higiene',

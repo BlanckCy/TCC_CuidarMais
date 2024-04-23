@@ -65,12 +65,10 @@ class Cuidado {
       case 3:
         return 'Atividade Fisica';
       case 4:
-        return 'Equipamentos Medicos';
-      case 5:
         return 'Higiene';
-      case 6:
+      case 5:
         return 'Medicacao';
-      case 7:
+      case 6:
         return 'Mudança Decúbito';
       default:
         return '';

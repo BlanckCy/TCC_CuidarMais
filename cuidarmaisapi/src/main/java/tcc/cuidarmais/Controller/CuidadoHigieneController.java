@@ -34,10 +34,10 @@ public class CuidadoHigieneController {
     }
 
     @GetMapping("/{idcuidado_higiene}")
-    public ResponseEntity<CuidadoHigieneEntity> buscarPorIdcuidado_mudancadecubito(@PathVariable int idcuidado_higiene) {
-        CuidadoHigieneEntity contato = cuidadohigieneservice.buscarPorIdcuidado_mudancadecubito(idcuidado_higiene);
-        if (contato != null) {
-            return ResponseEntity.ok(contato);
+    public ResponseEntity<CuidadoHigieneEntity> buscarPorIdcuidado_higiene(@PathVariable int idcuidado_higiene) {
+        CuidadoHigieneEntity cuidado = cuidadohigieneservice.buscarPorIdcuidado_higiene(idcuidado_higiene);
+        if (cuidado != null) {
+            return ResponseEntity.ok(cuidado);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -61,7 +61,7 @@ public class CuidadoHigieneController {
 
     @PutMapping("/update/{idcuidado_higiene}")
     public ResponseEntity<CuidadoHigieneEntity> atualizar(@PathVariable int idcuidado_higiene, @RequestBody CuidadoHigieneEntity cuidadoAtualizado) {
-        CuidadoHigieneEntity cuidado = cuidadohigieneservice.buscarPorIdcuidado_mudancadecubito(idcuidado_higiene);
+        CuidadoHigieneEntity cuidado = cuidadohigieneservice.buscarPorIdcuidado_higiene(idcuidado_higiene);
         if (cuidado != null) {
             cuidado.setTarefa(cuidadoAtualizado.getTarefa());
             cuidado.setHora(cuidadoAtualizado.getHora());
