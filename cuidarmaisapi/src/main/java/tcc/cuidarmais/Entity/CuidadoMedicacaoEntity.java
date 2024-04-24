@@ -7,47 +7,35 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "cuidadoMedicaoLista")
+@Table(name = "cuidado_medicacao")
 public class CuidadoMedicacaoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idcuidadoMedicacaoLista;
+    private int idcuidadoMedicacao;
     
-    private String medicamento;
-    private String dosagem;
-    private String hora;
-    private String tipo;
+    private String data_hora;
+    private boolean realizado;
+    private int idcuidado_medicacao_lista;
     private int idpaciente;
+    private int idrotina;
 
-    public int getIdcuidadoMedicacaoLista() {
-        return idcuidadoMedicacaoLista;
+    public int getIdcuidadoMedicacao() {
+        return idcuidadoMedicacao;
     }
-    public void setIdcuidadoMedicacaoLista(int idcuidadoMedicacaoLista) {
-        this.idcuidadoMedicacaoLista = idcuidadoMedicacaoLista;
+    public void setIdcuidadoMedicacao(int idcuidadoMedicacao) {
+        this.idcuidadoMedicacao = idcuidadoMedicacao;
     }
-    public String getMedicamento() {
-        return medicamento;
+    public String getData_hora() {
+        return data_hora;
     }
-    public void setMedicamento(String medicamento) {
-        this.medicamento = medicamento;
+    public void setData_hora(String data_hora) {
+        this.data_hora = data_hora;
     }
-    public String getDosagem() {
-        return dosagem;
+    public boolean isRealizado() {
+        return realizado;
     }
-    public void setDosagem(String dosagem) {
-        this.dosagem = dosagem;
-    }
-    public String getHora() {
-        return hora;
-    }
-    public void setHora(String hora) {
-        this.hora = hora;
-    }
-    public String getTipo() {
-        return tipo;
-    }
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setRealizado(boolean realizado) {
+        this.realizado = realizado;
     }
     public int getIdpaciente() {
         return idpaciente;
@@ -55,6 +43,16 @@ public class CuidadoMedicacaoEntity {
     public void setIdpaciente(int idpaciente) {
         this.idpaciente = idpaciente;
     }
-
-    
+    public int getIdrotina() {
+        return idrotina;
+    }
+    public void setIdrotina(int idrotina) {
+        this.idrotina = idrotina;
+    }
+    public int getIdcuidado_medicacao_lista() {
+        return idcuidado_medicacao_lista;
+    }
+    public void setIdcuidado_medicacao_lista(int idcuidado_medicacao_lista) {
+        this.idcuidado_medicacao_lista = idcuidado_medicacao_lista;
+    }
 }

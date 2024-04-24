@@ -27,17 +27,17 @@ public class CuidadoSinaisVitaisController {
         return new ResponseEntity<>(cuidado, HttpStatus.OK);
     }
 
-    @GetMapping("/lista/{idpaciente}/{data}")
-    public ResponseEntity<List<CuidadoSinaisVitaisEntity>> listarCuidadoIdpacienteData(@PathVariable int idpaciente, @PathVariable String data) {
-        List<CuidadoSinaisVitaisEntity> cuidado = cuidadosinaisvitaisservice.listaPorClienteData(idpaciente,data);
+    @GetMapping("/lista/{idpaciente}/{idrotina}")
+    public ResponseEntity<List<CuidadoSinaisVitaisEntity>> listarPorIdpacienteIdrotina(@PathVariable int idpaciente, @PathVariable int idrotina) {
+        List<CuidadoSinaisVitaisEntity> cuidado = cuidadosinaisvitaisservice.listarPorIdpacienteIdrotina(idpaciente,idrotina);
         return new ResponseEntity<>(cuidado, HttpStatus.OK);
     }
 
     @GetMapping("/{idcuidado_sinaisvitais}")
-    public ResponseEntity<CuidadoSinaisVitaisEntity> buscarContatosPoridcuidado_sinaisvitais(@PathVariable int idcuidado_sinaisvitais) {
-        CuidadoSinaisVitaisEntity contato = cuidadosinaisvitaisservice.buscarPorIdcuidado_sinaisvitais(idcuidado_sinaisvitais);
-        if (contato != null) {
-            return ResponseEntity.ok(contato);
+    public ResponseEntity<CuidadoSinaisVitaisEntity> buscarPorIdcuidado_sinaisvitais(@PathVariable int idcuidado_sinaisvitais) {
+        CuidadoSinaisVitaisEntity cuidado = cuidadosinaisvitaisservice.buscarPorIdcuidado_sinaisvitais(idcuidado_sinaisvitais);
+        if (cuidado != null) {
+            return ResponseEntity.ok(cuidado);
         } else {
             return ResponseEntity.notFound().build();
         }

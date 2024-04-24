@@ -12,6 +12,6 @@ public interface CuidadoHigieneRepository extends JpaRepository<CuidadoHigieneEn
 
     java.util.List<CuidadoHigieneEntity> findByIdpaciente(int idpaciente);
 
-    @Query("SELECT c FROM CuidadoHigieneEntity c WHERE c.idpaciente = ?1 AND DATE_FORMAT(c.data_hora, '%Y-%m-%d') = ?2 ")
-    List<CuidadoHigieneEntity> listarCuidadoIdpacienteData(int idpaciente, String data);
+    @Query("SELECT c FROM CuidadoHigieneEntity c WHERE c.idpaciente = ?1 AND c.idrotina = ?2 ")
+    List<CuidadoHigieneEntity> listarCuidadoIdpacienteIdrotina(int idpaciente, int idrotina);
 }

@@ -1,4 +1,5 @@
 import 'package:cuidarmais/models/paciente.dart';
+import 'package:cuidarmais/models/rotina.dart';
 import 'package:cuidarmais/models/tipoCuidado/atividadefisica.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +24,12 @@ class _AtividadeFisicaPageState extends State<AtividadeFisicaPage> {
   bool _isLoading = true;
   bool? _atividadeBoa;
   String _selectedTime = '00:00';
-  List<AtividadeFisica> rotina = [];
+
+  List<AtividadeFisica> listaAtividadeFisica = [];
+  List<Rotina> listaRotina = [];
 
   late AtividadeFisica atividadefisica = AtividadeFisica();
+  late Rotina rotina = Rotina();
 
   @override
   void initState() {
@@ -33,15 +37,48 @@ class _AtividadeFisicaPageState extends State<AtividadeFisicaPage> {
     _carregarInformacoes();
   }
 
+  Future<List<Rotina>> _validarRotina() async {
+    try {
+      Rotina rotina = Rotina(
+        idpaciente: widget.paciente.idpaciente,
+        tipo_cuidado: widget.tipoCuidado,
+        cuidado: 'Sinais Vitais',
+        realizado: false,
+      );
+
+      listaRotina = await rotina.carregar();
+
+      if (listaRotina.isEmpty) {
+        bool cadastrado = await rotina.cadastrar();
+        if (cadastrado) {
+          listaRotina = await rotina.carregar();
+        }
+      }
+      return listaRotina;
+    } catch (error) {
+      showConfirmationDialog(
+        context: context,
+        title: 'Erro',
+        message: 'Erro ao carregar informações da rotina',
+        onConfirm: () {
+          Navigator.of(context).pop();
+        },
+      );
+      return [];
+    }
+  }
+
   Future<void> _carregarInformacoes() async {
     try {
-      String dataFormatada = DateFormat('yyyy-MM-dd').format(DateTime.now());
       atividadefisica.idpaciente = widget.paciente.idpaciente;
-      List<AtividadeFisica> listaCuidado =
-          await atividadefisica.carregar(dataFormatada);
+
+      listaRotina = await _validarRotina();
+      atividadefisica.idrotina = listaRotina[0].idrotina;
+
+      List<AtividadeFisica> listaCuidado = await atividadefisica.carregar();
 
       setState(() {
-        rotina = listaCuidado;
+        listaAtividadeFisica = listaCuidado;
         _isLoading = false;
 
         if (listaCuidado.isNotEmpty) {
@@ -58,7 +95,7 @@ class _AtividadeFisicaPageState extends State<AtividadeFisicaPage> {
       showConfirmationDialog(
         context: context,
         title: 'Erro',
-        message: 'Erro ao carregar informações da rotina',
+        message: 'Erro ao carregar informações da listaAtividadeFisica',
         onConfirm: () {
           Navigator.of(context).pop();
         },
@@ -75,11 +112,12 @@ class _AtividadeFisicaPageState extends State<AtividadeFisicaPage> {
         hora: _selectedTime,
         avaliacao: _atividadeBoa,
         idpaciente: widget.paciente.idpaciente,
+        idrotina: listaRotina[0].idrotina,
       );
 
-      if (rotina.isNotEmpty) {
+      if (listaAtividadeFisica.isNotEmpty) {
         atividadefisica.idcuidado_atividadefisica =
-            rotina[0].idcuidado_atividadefisica;
+            listaAtividadeFisica[0].idcuidado_atividadefisica;
 
         atualizacaoSucesso = await atividadefisica.atualizar();
       } else {

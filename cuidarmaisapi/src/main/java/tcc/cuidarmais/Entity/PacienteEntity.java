@@ -19,7 +19,6 @@ public class PacienteEntity {
     private int idade;
     private String genero;
     private int idcuidador;
-    private int idnivelcuidado;
 
     public int getIdpaciente() {
         return idpaciente;
@@ -62,12 +61,6 @@ public class PacienteEntity {
     }
     public void setIdcuidador(int idcuidador) {
         this.idcuidador = idcuidador;
-    }
-    public int getidnivelcuidado() {
-        return idnivelcuidado;
-    }
-    public void setidnivelcuidado(int idnivelcuidado) {
-        this.idnivelcuidado = idnivelcuidado;
     }
 
     

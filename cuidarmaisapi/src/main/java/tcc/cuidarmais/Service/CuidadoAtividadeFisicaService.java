@@ -22,8 +22,8 @@ public class CuidadoAtividadeFisicaService {
         return cuidadoatividadefisicarepository.findAll();
     }
 
-    public List<CuidadoAtividadeFisicaEntity> listarCuidadoIdpacienteData(int idpaciente, String data) {
-        return cuidadoatividadefisicarepository.listarCuidadoIdpacienteData(idpaciente,data);
+    public List<CuidadoAtividadeFisicaEntity> listarCuidadoIdpacienteIdrotina(int idpaciente, int idrotina) {
+        return cuidadoatividadefisicarepository.listarCuidadoIdpacienteIdrotina(idpaciente,idrotina);
     }
 
     public CuidadoAtividadeFisicaEntity buscarPorIdcuidado_atividadefisica(int idcuidado_atividadefisica) {

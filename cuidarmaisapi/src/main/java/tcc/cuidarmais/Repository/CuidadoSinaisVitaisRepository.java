@@ -12,6 +12,6 @@ public interface CuidadoSinaisVitaisRepository extends JpaRepository<CuidadoSina
 
     java.util.List<CuidadoSinaisVitaisEntity> findByIdpaciente(int idpaciente);
 
-    @Query("SELECT c FROM CuidadoSinaisVitaisEntity c WHERE c.idpaciente = ?1 AND DATE_FORMAT(c.data_hora, '%Y-%m-%d') = ?2 ")
-    List<CuidadoSinaisVitaisEntity> listaPorClienteData(int idpaciente, String data);
+    @Query("SELECT c FROM CuidadoSinaisVitaisEntity c WHERE c.idpaciente = ?1 AND c.idrotina = ?2 ")
+    List<CuidadoSinaisVitaisEntity> listarPorIdpacienteIdrotina(int idpaciente, int idrotina);
 }

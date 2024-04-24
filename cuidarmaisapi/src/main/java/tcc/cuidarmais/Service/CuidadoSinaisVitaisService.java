@@ -22,8 +22,8 @@ public class CuidadoSinaisVitaisService {
         return cuidadoSinaisVitaisRepository.findAll();
     }
 
-    public List<CuidadoSinaisVitaisEntity> listaPorClienteData(int idpaciente, String data) {
-        return cuidadoSinaisVitaisRepository.listaPorClienteData(idpaciente,data);
+    public List<CuidadoSinaisVitaisEntity> listarPorIdpacienteIdrotina(int idpaciente, int idrotina) {
+        return cuidadoSinaisVitaisRepository.listarPorIdpacienteIdrotina(idpaciente,idrotina);
     }
 
     public CuidadoSinaisVitaisEntity buscarPorIdcuidado_sinaisvitais(int idcuidado_sinaisvitais) {

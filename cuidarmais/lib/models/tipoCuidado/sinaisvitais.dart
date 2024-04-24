@@ -14,6 +14,7 @@ class SinaisVitais {
   String? data_hora;
   String? descricao;
   int? idpaciente;
+  int? idrotina;
 
   SinaisVitais({
     this.idcuidado_sinaisvitais,
@@ -25,6 +26,7 @@ class SinaisVitais {
     this.data_hora,
     this.descricao,
     this.idpaciente,
+    this.idrotina,
   });
 
   SinaisVitais.fromJson(Map<String, dynamic> json) {
@@ -37,6 +39,7 @@ class SinaisVitais {
     data_hora = json['data_hora'];
     descricao = json['descricao'];
     idpaciente = json['idpaciente'];
+    idrotina = json['idrotina'];
   }
 
   Map<String, dynamic> toJson() {
@@ -50,6 +53,7 @@ class SinaisVitais {
     data['data_hora'] = data_hora;
     data['descricao'] = descricao;
     data['idpaciente'] = idpaciente;
+    data['idrotina'] = idrotina;
     return data;
   }
 
@@ -67,6 +71,7 @@ class SinaisVitais {
       'descricao': descricao,
       'data_hora': dataAtual,
       'idpaciente': idpaciente.toString(),
+      'idrotina': idrotina.toString()
     });
 
     try {
@@ -80,6 +85,7 @@ class SinaisVitais {
         'descricao': descricao ?? '',
         'data_hora': dataAtual,
         'idpaciente': idpaciente.toString(),
+        'idrotina': idrotina.toString(),
       });
 
       var resposta = jsonDecode(dados);
@@ -95,13 +101,13 @@ class SinaisVitais {
     }
   }
 
-  Future<List<SinaisVitais>> carregar(data) async {
+  Future<List<SinaisVitais>> carregar() async {
     var database = Database();
 
-    print('/cuidado-sinaisvitais/lista/$idpaciente/$data');
+    print('/cuidado-sinaisvitais/lista/$idpaciente/$idrotina');
 
     var dados = await database
-        .buscarDadosGet('/cuidado-sinaisvitais/lista/$idpaciente/$data');
+        .buscarDadosGet('/cuidado-sinaisvitais/lista/$idpaciente/$idrotina');
 
     var resposta = jsonDecode(dados);
 

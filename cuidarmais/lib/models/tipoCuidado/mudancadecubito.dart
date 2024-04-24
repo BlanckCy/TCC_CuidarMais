@@ -10,6 +10,7 @@ class MudancaDecubito {
   String? hora;
   String? data_hora;
   int? idpaciente;
+  int? idrotina;
 
   MudancaDecubito({
     this.idcuidado_mudancadecubito,
@@ -17,6 +18,7 @@ class MudancaDecubito {
     this.hora,
     this.data_hora,
     this.idpaciente,
+    this.idrotina,
   });
 
   MudancaDecubito.fromJson(Map<String, dynamic> json) {
@@ -25,6 +27,7 @@ class MudancaDecubito {
     hora = json['hora'];
     data_hora = json['data_hora'];
     idpaciente = json['idpaciente'];
+    idrotina = json['idrotina'];
   }
 
   Map<String, dynamic> toJson() {
@@ -34,6 +37,7 @@ class MudancaDecubito {
     data['hora'] = hora;
     data['data_hora'] = data_hora;
     data['idpaciente'] = idpaciente;
+    data['idrotina'] = idrotina;
     return data;
   }
 
@@ -49,6 +53,7 @@ class MudancaDecubito {
         'hora': hora ?? '00:00',
         'data_hora': dataAtual,
         'idpaciente': idpaciente.toString(),
+        'idrotina': idrotina.toString(),
       });
 
       var resposta = jsonDecode(dados);
@@ -64,13 +69,13 @@ class MudancaDecubito {
     }
   }
 
-  Future<List<MudancaDecubito>> carregar(data) async {
+  Future<List<MudancaDecubito>> carregar() async {
     var database = Database();
 
-    print('/cuidado-mudancadecubito/lista/$idpaciente/$data');
+    print('/cuidado-mudancadecubito/lista/$idpaciente/$idrotina');
 
     var dados = await database
-        .buscarDadosGet('/cuidado-mudancadecubito/lista/$idpaciente/$data');
+        .buscarDadosGet('/cuidado-mudancadecubito/lista/$idpaciente/$idrotina');
 
     var resposta = jsonDecode(dados);
 
@@ -80,7 +85,10 @@ class MudancaDecubito {
       List<dynamic> cuidadosData = jsonDecode(resposta['dados']);
 
       List<MudancaDecubito> cuidados = cuidadosData.map((cuidadoData) {
-        return MudancaDecubito.fromJson(cuidadoData);
+        MudancaDecubito mudancaDecubito = MudancaDecubito.fromJson(cuidadoData);
+        mudancaDecubito.idcuidado_mudancadecubito =
+            cuidadoData['idcuidadoMudancadecubito'];
+        return mudancaDecubito;
       }).toList();
 
       return cuidados;

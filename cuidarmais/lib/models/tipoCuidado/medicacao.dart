@@ -1,52 +1,52 @@
 import 'dart:convert';
 
 import 'package:cuidarmais/models/database.dart';
+import 'package:intl/intl.dart';
 
 class Medicacao {
-  int? idcuidadoMedicacaoLista;
-  String? medicamento;
-  String? dosagem;
-  String? hora;
-  String? tipo;
+  int? idcuidado_medicacao;
+  String? data_hora;
+  int? idcuidado_medicacao_lista;
+  bool? realizado;
   int? idpaciente;
-  bool? realizada;
+  int? idrotina;
 
   Medicacao({
-    this.idcuidadoMedicacaoLista,
-    this.medicamento,
-    this.dosagem,
-    this.hora,
-    this.tipo,
+    this.idcuidado_medicacao,
+    this.data_hora,
+    this.idcuidado_medicacao_lista,
+    this.realizado,
     this.idpaciente,
-    this.realizada,
+    this.idrotina,
   });
 
   Medicacao.fromJson(Map<String, dynamic> json) {
-    idcuidadoMedicacaoLista = json['idcuidadoMedicacaoLista'];
-    medicamento = json['medicamento'];
-    dosagem = json['dosagem'];
-    hora = json['hora'];
-    tipo = json['tipo'];
+    idcuidado_medicacao = json['idcuidado_medicacao'];
+    data_hora = json['data_hora'];
+    idcuidado_medicacao_lista = json['idcuidado_medicacao_lista'];
+    realizado = json['realizado'];
     idpaciente = json['idpaciente'];
+    idrotina = json['idrotina'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['idcuidadoMedicacaoLista'] = idcuidadoMedicacaoLista;
-    data['medicamento'] = medicamento;
-    data['dosagem'] = dosagem;
+    data['idcuidado_medicacao'] = idcuidado_medicacao;
+    data['data_hora'] = data_hora;
+    data['idcuidado_medicacao_lista'] = idcuidado_medicacao_lista;
+    data['realizado'] = realizado;
     data['idpaciente'] = idpaciente;
-    data['hora'] = hora;
-    data['tipo'] = tipo;
+    data['idrotina'] = idrotina;
     return data;
   }
 
-  Future<List<Medicacao>> carregarMedicamentos(int idpaciente) async {
+  Future<List<Medicacao>> carregar() async {
     var database = Database();
 
-    print('/medicacao/lista/$idpaciente');
+    print('/cuidado-medicacao/lista/$idpaciente/$idrotina');
 
-    var dados = await database.buscarDadosGet('/medicacao/lista/$idpaciente');
+    var dados =
+        await database.buscarDadosGet('/cuidado-medicacao/lista/$idpaciente/$idrotina');
 
     var resposta = jsonDecode(dados);
 
@@ -55,7 +55,9 @@ class Medicacao {
       List<dynamic> cuidadosData = jsonDecode(resposta['dados']);
 
       List<Medicacao> medicamentos = cuidadosData.map((cuidadoData) {
-        return Medicacao.fromJson(cuidadoData);
+        Medicacao medicacao = Medicacao.fromJson(cuidadoData);
+        medicacao.idcuidado_medicacao = cuidadoData['idcuidadoMedicacao'];
+        return medicacao;
       }).toList();
 
       return medicamentos;
@@ -67,13 +69,27 @@ class Medicacao {
   Future<bool> cadastrar() async {
     var database = Database();
 
-    try {
-      var dados = await database.buscarDadosPost('/medicacao/create', {
-        'medicamento': medicamento!,
-        'hora': hora!,
-        'dosagem': dosagem!,
-        'tipo': tipo!,
+    String dataAtual = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+
+    print(
+      {
+        'data_hora': dataAtual,
+        'realizado': realizado.toString(),
+        'idcuidado_medicacao_lista': idcuidado_medicacao_lista.toString(),
         'idpaciente': idpaciente.toString(),
+        'idrotina': idrotina.toString()
+      },
+    );
+
+    // return false;
+
+    try {
+      var dados = await database.buscarDadosPost('/cuidado-medicacao/create', {
+        'data_hora': dataAtual,
+        'realizado': realizado.toString(),
+        'idcuidado_medicacao_lista': idcuidado_medicacao_lista.toString(),
+        'idpaciente': idpaciente.toString(),
+        'idrotina': idrotina.toString(),
       });
 
       var resposta = jsonDecode(dados);
@@ -85,7 +101,33 @@ class Medicacao {
         return false;
       }
     } catch (error) {
-      print('Erro ao cadastrar medicamento: $error');
+      print('Erro ao cadastrar data_hora: $error');
+      return false;
+    }
+  }
+
+  Future<bool> atualizar() async {
+    var database = Database();
+
+    String dataAtual = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+
+    Map<String, dynamic> cuidadoData = toJson();
+    cuidadoData['data_hora'] = dataAtual;
+
+    print("aqui $cuidadoData");
+    try {
+      var dados = await database.buscarDadosPut(
+          '/cuidado-medicacao/update/$idcuidado_medicacao', cuidadoData);
+
+      var resposta = jsonDecode(dados);
+      print(resposta);
+
+      if (resposta['resposta'] == 'erro') {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
       return false;
     }
   }

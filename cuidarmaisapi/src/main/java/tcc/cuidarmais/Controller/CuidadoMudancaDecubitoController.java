@@ -23,21 +23,21 @@ public class CuidadoMudancaDecubitoController {
 
     @GetMapping("/lista")
     public ResponseEntity<List<CuidadoMudancaDecubitoEntity>> listarCuidados() {
-        List<CuidadoMudancaDecubitoEntity> cuidado = cuidadoMudancaDecubitoService.listarContatos();
+        List<CuidadoMudancaDecubitoEntity> cuidado = cuidadoMudancaDecubitoService.listar();
         return new ResponseEntity<>(cuidado, HttpStatus.OK);
     }
 
-    @GetMapping("/lista/{idpaciente}/{data}")
-    public ResponseEntity<List<CuidadoMudancaDecubitoEntity>> listarCuidadoIdpacienteData(@PathVariable int idpaciente, @PathVariable String data) {
-        List<CuidadoMudancaDecubitoEntity> cuidado = cuidadoMudancaDecubitoService.listaPorClienteData(idpaciente,data);
+    @GetMapping("/lista/{idpaciente}/{idrotina}")
+    public ResponseEntity<List<CuidadoMudancaDecubitoEntity>> listarPorIdpacienteIdrotina(@PathVariable int idpaciente, @PathVariable int idrotina) {
+        List<CuidadoMudancaDecubitoEntity> cuidado = cuidadoMudancaDecubitoService.listarPorIdpacienteIdrotina(idpaciente,idrotina);
         return new ResponseEntity<>(cuidado, HttpStatus.OK);
     }
 
     @GetMapping("/{idcuidado_mudancadecubito}")
     public ResponseEntity<CuidadoMudancaDecubitoEntity> buscarPorIdcuidado_mudancadecubito(@PathVariable int idcuidado_mudancadecubito) {
-        CuidadoMudancaDecubitoEntity contato = cuidadoMudancaDecubitoService.buscarPorIdcuidado_mudancadecubito(idcuidado_mudancadecubito);
-        if (contato != null) {
-            return ResponseEntity.ok(contato);
+        CuidadoMudancaDecubitoEntity cuidado = cuidadoMudancaDecubitoService.buscarPorIdcuidado_mudancadecubito(idcuidado_mudancadecubito);
+        if (cuidado != null) {
+            return ResponseEntity.ok(cuidado);
         } else {
             return ResponseEntity.notFound().build();
         }

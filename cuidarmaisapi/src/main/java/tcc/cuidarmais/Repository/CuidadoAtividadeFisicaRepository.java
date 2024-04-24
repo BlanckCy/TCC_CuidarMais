@@ -12,6 +12,6 @@ public interface CuidadoAtividadeFisicaRepository extends JpaRepository<CuidadoA
 
     java.util.List<CuidadoAtividadeFisicaEntity> findByIdpaciente(int idpaciente);
 
-    @Query("SELECT c FROM CuidadoAtividadeFisicaEntity c WHERE c.idpaciente = ?1 AND DATE_FORMAT(c.data_hora, '%Y-%m-%d') = ?2 ")
-    List<CuidadoAtividadeFisicaEntity> listarCuidadoIdpacienteData(int idpaciente, String data);
+    @Query("SELECT c FROM CuidadoAtividadeFisicaEntity c WHERE c.idpaciente = ?1 AND c.idrotina = ?2 ")
+    List<CuidadoAtividadeFisicaEntity> listarCuidadoIdpacienteIdrotina(int idpaciente, int data);
 }

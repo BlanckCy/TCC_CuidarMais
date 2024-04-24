@@ -10,6 +10,7 @@ class Higiene {
   String? hora;
   String? data_hora;
   int? idpaciente;
+  int? idrotina;
 
   Higiene({
     this.idcuidado_higiene,
@@ -17,6 +18,7 @@ class Higiene {
     this.hora,
     this.data_hora,
     this.idpaciente,
+    this.idrotina,
   });
 
   Higiene.fromJson(Map<String, dynamic> json) {
@@ -25,6 +27,7 @@ class Higiene {
     hora = json['hora'];
     data_hora = json['data_hora'];
     idpaciente = json['idpaciente'];
+    idrotina = json['idrotina'];
   }
 
   Map<String, dynamic> toJson() {
@@ -34,6 +37,7 @@ class Higiene {
     data['hora'] = hora;
     data['data_hora'] = data_hora;
     data['idpaciente'] = idpaciente;
+    data['idrotina'] = idrotina;
     return data;
   }
 
@@ -42,12 +46,21 @@ class Higiene {
 
     String dataAtual = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
 
+    print({
+      'tarefa': tarefa ?? '',
+      'hora': hora ?? '00:00',
+      'data_hora': dataAtual,
+      'idpaciente': idpaciente.toString(),
+      'idrotina': idrotina.toString()
+    });
+
     try {
       var dados = await database.buscarDadosPost('/cuidado-higiene/create', {
         'tarefa': tarefa ?? '',
         'hora': hora ?? '00:00',
         'data_hora': dataAtual,
         'idpaciente': idpaciente.toString(),
+        'idrotina': idrotina.toString(),
       });
 
       var resposta = jsonDecode(dados);
@@ -63,13 +76,13 @@ class Higiene {
     }
   }
 
-  Future<List<Higiene>> carregar(data) async {
+  Future<List<Higiene>> carregar() async {
     var database = Database();
 
-    print('/cuidado-higiene/lista/$idpaciente/$data');
+    print('/cuidado-higiene/lista/$idpaciente/$idrotina');
 
     var dados = await database
-        .buscarDadosGet('/cuidado-higiene/lista/$idpaciente/$data');
+        .buscarDadosGet('/cuidado-higiene/lista/$idpaciente/$idrotina');
 
     var resposta = jsonDecode(dados);
 
@@ -79,7 +92,9 @@ class Higiene {
       List<dynamic> cuidadosData = jsonDecode(resposta['dados']);
 
       List<Higiene> cuidados = cuidadosData.map((cuidadoData) {
-        return Higiene.fromJson(cuidadoData);
+        Higiene higiene = Higiene.fromJson(cuidadoData);
+        higiene.idcuidado_higiene = cuidadoData['idcuidadoHigiene'];
+        return higiene;
       }).toList();
 
       return cuidados;

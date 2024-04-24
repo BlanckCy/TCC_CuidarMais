@@ -1,4 +1,5 @@
 import 'package:cuidarmais/models/paciente.dart';
+import 'package:cuidarmais/models/rotina.dart';
 import 'package:cuidarmais/models/tipoCuidado/mudancadecubito.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
@@ -21,20 +22,12 @@ class _RotinaDecubitoPageState extends State<RotinaDecubitoPage> {
   Map<String, String?> rotinaDecubito = {};
 
   List<Map<String, String?>> _selectedTasks = [];
-  final List<String?> _taskOptions = [
-    null,
-    'Decúbito Dorsal (ou Supino)',
-    'Decúbito Lateral Esquerdo',
-    'Decúbito Lateral Direito',
-    'Decúbito Ventral (ou Prono)',
-    'Posição de Trendelenburg',
-    'Posição de Fowler',
-    'Posição de Sims',
-    'Posição de Litotomia'
-  ];
   bool _isLoading = true;
 
   late MudancaDecubito mudancaDecubito = MudancaDecubito();
+  late Rotina rotina = Rotina();
+
+  List<Rotina> listaRotina = [];
 
   @override
   void initState() {
@@ -42,12 +35,46 @@ class _RotinaDecubitoPageState extends State<RotinaDecubitoPage> {
     _carregarInformacoes();
   }
 
+  Future<List<Rotina>> _validarRotina() async {
+    try {
+      Rotina rotina = Rotina(
+        idpaciente: widget.paciente.idpaciente,
+        tipo_cuidado: widget.tipoCuidado,
+        cuidado: 'Mudança Decúbito',
+        realizado: false,
+      );
+
+      listaRotina = await rotina.carregar();
+
+      if (listaRotina.isEmpty) {
+        bool cadastrado = await rotina.cadastrar();
+        if (cadastrado) {
+          listaRotina = await rotina.carregar();
+        }
+      }
+      return listaRotina;
+    } catch (error) {
+      showConfirmationDialog(
+        context: context,
+        title: 'Erro',
+        message: 'Erro ao carregar informações da rotina',
+        onConfirm: () {
+          Navigator.of(context).pop();
+        },
+      );
+      return [];
+    }
+  }
+
   Future<void> _carregarInformacoes() async {
     try {
-      String dataFormatada = DateFormat('yyyy-MM-dd').format(DateTime.now());
       mudancaDecubito.idpaciente = widget.paciente.idpaciente;
-      List<MudancaDecubito> listaCuidado =
-          await mudancaDecubito.carregar(dataFormatada);
+
+      listaRotina = await _validarRotina();
+
+      mudancaDecubito.idrotina = listaRotina[0].idrotina;
+
+      List<MudancaDecubito> listaCuidado = await mudancaDecubito.carregar();
 
       setState(() {
         _selectedTasks = listaCuidado
@@ -85,6 +112,7 @@ class _RotinaDecubitoPageState extends State<RotinaDecubitoPage> {
           mudanca: rotina.key,
           hora: rotina.value,
           idpaciente: widget.paciente.idpaciente,
+          idrotina: listaRotina[0].idrotina,
         );
 
         atualizacaoSucesso = await mudancaDecubito.cadastrar();
@@ -203,8 +231,17 @@ class _RotinaDecubitoPageState extends State<RotinaDecubitoPage> {
                             task['mudanca'] = newValue;
                           });
                         },
-                        items: _taskOptions
-                            .map<DropdownMenuItem<String>>((String? value) {
+                        items: <String?>[
+                          null,
+                          'Decúbito Dorsal (ou Supino)',
+                          'Decúbito Lateral Esquerdo',
+                          'Decúbito Lateral Direito',
+                          'Decúbito Ventral (ou Prono)',
+                          'Posição de Trendelenburg',
+                          'Posição de Fowler',
+                          'Posição de Sims',
+                          'Posição de Litotomia'
+                        ].map<DropdownMenuItem<String>>((String? value) {
                           return DropdownMenuItem<String>(
                             value: value ?? '',
                             child: Text(

@@ -1,11 +1,11 @@
-import 'package:cuidarmais/models/cuidado.dart';
+import 'package:cuidarmais/models/rotina.dart';
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/models/tipoCuidado/medicacao.dart';
+import 'package:cuidarmais/models/tipoCuidado/medicacaolista.dart';
 import 'package:cuidarmais/pages/medication/medication_registration.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
-import 'package:intl/intl.dart';
 
 class MedicacaoPage extends StatefulWidget {
   final Paciente paciente;
@@ -20,48 +20,95 @@ class MedicacaoPage extends StatefulWidget {
 }
 
 class _MedicacaoPageState extends State<MedicacaoPage> {
-  List<Cuidado> cuidadoRealizado = [];
-  List<Medicacao> medicamentos = [];
+  List<Medicacao> medicacaoRealizado = [];
+  List<MedicacaoLista> listaMedicamentos = [];
+  List<Rotina> listaRotina = [];
+  List<dynamic> medicamentos = [];
+
   bool _isLoading = true;
 
-  late Cuidado cuidado = Cuidado();
+  late MedicacaoLista medicacaolista = MedicacaoLista();
   late Medicacao medicacao = Medicacao();
+  late Rotina rotina = Rotina();
 
   @override
   void initState() {
     super.initState();
-    String dataFormatada = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    _carregarMedicamentos(
-        tipo_cuidado: widget.tipoCuidado, data: dataFormatada);
+    _carregarInformacoes();
   }
 
-  Future<void> _carregarMedicamentos({
-    required int tipo_cuidado,
-    required String data,
-  }) async {
+  Future<List<Rotina>> _validarRotina() async {
     try {
-      cuidado.idpaciente = widget.paciente.idpaciente;
-      var listaCuidado = await cuidado.carregarRotina(tipo_cuidado, data);
-      var listaMedicamentos =
-          await medicacao.carregarMedicamentos(widget.paciente.idpaciente ?? 0);
-      setState(() {
-        cuidadoRealizado = listaCuidado;
-        medicamentos = listaMedicamentos;
-        _isLoading = false;
+      Rotina rotina = Rotina(
+        idpaciente: widget.paciente.idpaciente,
+        tipo_cuidado: widget.tipoCuidado,
+        cuidado: 'Medicação',
+        realizado: false,
+      );
 
-        for (var medicamento in medicamentos) {
-          medicamento.realizada = false;
-          for (var cuidado in cuidadoRealizado) {
-            if (cuidado.idcuidado_medicacao_lista ==
-                medicamento.idcuidadoMedicacaoLista) {
-              if (cuidado.realizado == true) {
-                medicamento.realizada = true;
-              }
+      listaRotina = await rotina.carregar();
 
-              break;
+      if (listaRotina.isEmpty) {
+        bool cadastrado = await rotina.cadastrar();
+        if (cadastrado) {
+          listaRotina = await rotina.carregar();
+        }
+      }
+      return listaRotina;
+    } catch (error) {
+      showConfirmationDialog(
+        context: context,
+        title: 'Erro',
+        message: 'Erro ao carregar informações da rotina',
+        onConfirm: () {
+          Navigator.of(context).pop();
+        },
+      );
+      return [];
+    }
+  }
+
+  Future<void> _carregarInformacoes() async {
+    try {
+      medicacao.idpaciente = widget.paciente.idpaciente;
+      medicacaolista.idpaciente = widget.paciente.idpaciente;
+
+      listaRotina = await _validarRotina();
+      medicacao.idrotina = listaRotina[0].idrotina;
+
+      medicacaoRealizado = await medicacao.carregar();
+      listaMedicamentos = await medicacaolista.carregar();
+
+      List<Map<String, dynamic>> dadosComEstado = [];
+
+      for (var listaM in listaMedicamentos) {
+        bool realizado = false;
+
+        for (var medicacaoR in medicacaoRealizado) {
+          if (listaM.idcuidado_medicacao_lista ==
+              medicacaoR.idcuidado_medicacao_lista) {
+            if (medicacaoR.realizado == true) {
+              realizado = true;
             }
+            break;
           }
         }
+
+        dadosComEstado.add({
+          'idcuidado_medicacao_lista': listaM.idcuidado_medicacao_lista,
+          'medicamento': listaM.medicamento ?? '',
+          'dosagem': listaM.dosagem ?? '',
+          'hora': listaM.hora ?? '',
+          'tipo': listaM.tipo ?? '',
+          'realizado': realizado,
+          'idrotina': listaRotina[0].idrotina,
+        });
+      }
+
+      setState(() {
+        _isLoading = false;
+        medicamentos = dadosComEstado;
+        return;
       });
     } catch (error) {
       showConfirmationDialog(
@@ -77,44 +124,42 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
 
   Future<void> _salvarInformacoes() async {
     try {
-      for (var medicamento in medicamentos) {
+      bool mensagem = false;
+
+      for (var i = 0; i < medicamentos.length; i++) {
+        var medicamento = medicamentos[i];
         bool atualizacaoSucesso = false;
 
-        Cuidado cuidado = Cuidado(
-          tipo_cuidado: 6,
-          idcuidado_medicacao_lista: medicamento.idcuidadoMedicacaoLista,
-          realizado: medicamento.realizada,
-          cuidado: "Medicação",
+        Medicacao medicacao = Medicacao(
+          realizado: medicamento['realizado'],
+          idcuidado_medicacao_lista: medicamento['idcuidado_medicacao_lista'],
           idpaciente: widget.paciente.idpaciente,
+          idrotina: medicamento['idrotina'],
         );
 
-        List<Cuidado> cadastroExistente = [];
-
-        cadastroExistente = await cuidado.carregarDadoEspecifico();
-        if (cadastroExistente.isNotEmpty) {
-          cuidado = cadastroExistente.first;
-          cuidado.realizado = medicamento.realizada;
-          atualizacaoSucesso = await cuidado.atualizarDados();
+        if (medicacaoRealizado.isEmpty) {
+          atualizacaoSucesso = await medicacao.cadastrar();
+        } else {
+          medicacao.idcuidado_medicacao =
+              medicacaoRealizado[i].idcuidado_medicacao;
+          atualizacaoSucesso = await medicacao.atualizar();
         }
 
-        if (medicamento.realizada == true) {
-          if (cadastroExistente.isEmpty) {
-            atualizacaoSucesso = await cuidado.cadastrar();
-          }
+        if (!mensagem) {
+          mensagem = true;
+          showConfirmationDialog(
+            context: context,
+            title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+            message: atualizacaoSucesso
+                ? 'As informações foram salvas com sucesso!'
+                : 'Houve um erro ao salvar os dados. Por favor, tente novamente.',
+            onConfirm: () {
+              if (atualizacaoSucesso) {
+                Navigator.of(context).pop();
+              }
+            },
+          );
         }
-
-        showConfirmationDialog(
-          context: context,
-          title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-          message: atualizacaoSucesso
-              ? 'As informações foram salvas com sucesso!'
-              : 'Houve um erro ao salvar os dados. Por favor, tente novamente.',
-          onConfirm: () {
-            if (atualizacaoSucesso) {
-              Navigator.of(context).pop();
-            }
-          },
-        );
       }
     } catch (error) {
       print('Erro ao salvar os dados: $error');
@@ -207,7 +252,7 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        medicamentos[index].medicamento ??
+                                        medicamentos[index]['medicamento'] ??
                                             'Sem nome',
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold),
@@ -215,21 +260,22 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
                                         maxLines: 4,
                                       ),
                                       Text(
-                                        'Dosagem: ${medicamentos[index].dosagem} ${medicamentos[index].tipo}(s)',
+                                        'Dosagem: ${medicamentos[index]['dosagem']} ${medicamentos[index]['tipo']}(s)',
                                       ),
                                     ],
                                   ),
                                 ),
                                 Text(
-                                  medicamentos[index].hora ?? '00:00',
+                                  medicamentos[index]['hora'] ?? '00:00',
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Checkbox(
-                                  value: medicamentos[index].realizada ?? false,
+                                  value:
+                                      medicamentos[index]['realizado'] ?? false,
                                   onChanged: (value) {
                                     setState(() {
-                                      medicamentos[index].realizada =
+                                      medicamentos[index]['realizado'] =
                                           value ?? false;
                                     });
                                   },

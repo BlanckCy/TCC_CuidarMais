@@ -1,4 +1,5 @@
 import 'package:cuidarmais/models/paciente.dart';
+import 'package:cuidarmais/models/rotina.dart';
 import 'package:cuidarmais/models/tipoCuidado/higiene.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
@@ -18,18 +19,16 @@ class RotinaHigienePage extends StatefulWidget {
 }
 
 class _RotinaHigienePageState extends State<RotinaHigienePage> {
-  Map<String, String?> rotinaDecubito = {};
+  Map<String, String?> rotinaNova = {};
 
   List<Map<String, String?>> _selectedTasks = [];
-  final List<String?> _taskOptions = [
-    null,
-    'Banho',
-    'Corte das Unhas',
-    'Troca de Fralda'
-  ];
+
   bool _isLoading = true;
 
   late Higiene higiene = Higiene();
+  late Rotina rotina = Rotina();
+
+  List<Rotina> listaRotina = [];
 
   @override
   void initState() {
@@ -37,11 +36,46 @@ class _RotinaHigienePageState extends State<RotinaHigienePage> {
     _carregarInformacoes();
   }
 
+  Future<List<Rotina>> _validarRotina() async {
+    try {
+      Rotina rotina = Rotina(
+        idpaciente: widget.paciente.idpaciente,
+        tipo_cuidado: widget.tipoCuidado,
+        cuidado: 'Higiene',
+        realizado: false,
+      );
+
+      listaRotina = await rotina.carregar();
+
+      if (listaRotina.isEmpty) {
+        bool cadastrado = await rotina.cadastrar();
+        if (cadastrado) {
+          listaRotina = await rotina.carregar();
+        }
+      }
+      return listaRotina;
+    } catch (error) {
+      showConfirmationDialog(
+        context: context,
+        title: 'Erro',
+        message: 'Erro ao carregar informações da rotina',
+        onConfirm: () {
+          Navigator.of(context).pop();
+        },
+      );
+      return [];
+    }
+  }
+
   Future<void> _carregarInformacoes() async {
     try {
-      String dataFormatada = DateFormat('yyyy-MM-dd').format(DateTime.now());
       higiene.idpaciente = widget.paciente.idpaciente;
-      List<Higiene> listaCuidado = await higiene.carregar(dataFormatada);
+
+      listaRotina = await _validarRotina();
+
+      higiene.idrotina = listaRotina[0].idrotina;
+
+      List<Higiene> listaCuidado = await higiene.carregar();
 
       setState(() {
         _selectedTasks = listaCuidado
@@ -71,11 +105,12 @@ class _RotinaHigienePageState extends State<RotinaHigienePage> {
   Future<void> _salvarInformacoes() async {
     try {
       bool atualizacaoSucesso = false;
-      for (var rotina in rotinaDecubito.entries) {
+      for (var rotina in rotinaNova.entries) {
         Higiene higiene = Higiene(
           tarefa: rotina.key,
           hora: rotina.value,
           idpaciente: widget.paciente.idpaciente,
+          idrotina: listaRotina[0].idrotina,
         );
 
         atualizacaoSucesso = await higiene.cadastrar();
@@ -110,11 +145,11 @@ class _RotinaHigienePageState extends State<RotinaHigienePage> {
       appBar: const CustomAppBar(),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _buildMudancaDecubitoList(),
+          : _buildHigieneList(),
     );
   }
 
-  Widget _buildMudancaDecubitoList() {
+  Widget _buildHigieneList() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -194,8 +229,12 @@ class _RotinaHigienePageState extends State<RotinaHigienePage> {
                             task['tarefa'] = newValue;
                           });
                         },
-                        items: _taskOptions
-                            .map<DropdownMenuItem<String>>((String? value) {
+                        items: <String?>[
+                          null,
+                          'Banho',
+                          'Corte das Unhas',
+                          'Troca de Fralda'
+                        ].map<DropdownMenuItem<String>>((String? value) {
                           return DropdownMenuItem<String>(
                             value: value ?? '',
                             child: Text(
@@ -244,7 +283,7 @@ class _RotinaHigienePageState extends State<RotinaHigienePage> {
                                 setState(() {
                                   task['hora'] = _formatTime(selectedTime);
                                   if (task['tarefa'] != null) {
-                                    rotinaDecubito[task['tarefa']!] =
+                                    rotinaNova[task['tarefa']!] =
                                         _formatTime(selectedTime);
                                   }
                                 });

@@ -27,9 +27,9 @@ public class CuidadoHigieneController {
         return new ResponseEntity<>(cuidado, HttpStatus.OK);
     }
 
-    @GetMapping("/lista/{idpaciente}/{data}")
-    public ResponseEntity<List<CuidadoHigieneEntity>> listarCuidadoIdpacienteData(@PathVariable int idpaciente, @PathVariable String data) {
-        List<CuidadoHigieneEntity> cuidado = cuidadohigieneservice.listarCuidadoIdpacienteData(idpaciente,data);
+    @GetMapping("/lista/{idpaciente}/{idrotina}")
+    public ResponseEntity<List<CuidadoHigieneEntity>> listarCuidadoIdpacienteIdrotina(@PathVariable int idpaciente, @PathVariable int idrotina) {
+        List<CuidadoHigieneEntity> cuidado = cuidadohigieneservice.listarCuidadoIdpacienteIdrotina(idpaciente,idrotina);
         return new ResponseEntity<>(cuidado, HttpStatus.OK);
     }
 

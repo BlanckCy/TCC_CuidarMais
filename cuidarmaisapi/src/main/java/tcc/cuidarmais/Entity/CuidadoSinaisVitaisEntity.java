@@ -21,7 +21,14 @@ public class CuidadoSinaisVitaisEntity {
     private String data_hora;
     private String descricao;
     private int idpaciente;
+    private int idrotina;
 
+    public int getIdrotina() {
+        return idrotina;
+    }
+    public void setIdrotina(int idrotina) {
+        this.idrotina = idrotina;
+    }
     public int getIdcuidadoSinaisvitais() {
         return idcuidadoSinaisvitais;
     }

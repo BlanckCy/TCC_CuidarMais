@@ -12,6 +12,6 @@ public interface CuidadoMudancaDecubitoRepository extends JpaRepository<CuidadoM
 
     java.util.List<CuidadoMudancaDecubitoEntity> findByIdpaciente(int idpaciente);
 
-    @Query("SELECT c FROM CuidadoMudancaDecubitoEntity c WHERE c.idpaciente = ?1 AND DATE_FORMAT(c.data_hora, '%Y-%m-%d') = ?2 ")
-    List<CuidadoMudancaDecubitoEntity> listaPorClienteData(int idpaciente, String data);
+    @Query("SELECT c FROM CuidadoMudancaDecubitoEntity c WHERE c.idpaciente = ?1 AND c.idrotina = ?2 ")
+    List<CuidadoMudancaDecubitoEntity> listarPorIdpacienteIdrotina(int idpaciente, int idrotina);
 }
