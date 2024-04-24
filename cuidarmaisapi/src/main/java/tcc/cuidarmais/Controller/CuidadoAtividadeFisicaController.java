@@ -27,9 +27,9 @@ public class CuidadoAtividadeFisicaController {
         return new ResponseEntity<>(cuidado, HttpStatus.OK);
     }
 
-    @GetMapping("/lista/{idpaciente}/{data}")
-    public ResponseEntity<List<CuidadoAtividadeFisicaEntity>> listarCuidadoIdpacienteData(@PathVariable int idpaciente, @PathVariable String data) {
-        List<CuidadoAtividadeFisicaEntity> cuidado = cuidadoatividadefisicaservice.listarCuidadoIdpacienteData(idpaciente,data);
+    @GetMapping("/lista/{idpaciente}/{idrotina}")
+    public ResponseEntity<List<CuidadoAtividadeFisicaEntity>> listarCuidadoIdpacienteIdrotina(@PathVariable int idpaciente, @PathVariable int idrotina) {
+        List<CuidadoAtividadeFisicaEntity> cuidado = cuidadoatividadefisicaservice.listarCuidadoIdpacienteIdrotina(idpaciente,idrotina);
         return new ResponseEntity<>(cuidado, HttpStatus.OK);
     }
 

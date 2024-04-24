@@ -17,7 +17,14 @@ public class CuidadoMudancaDecubitoEntity {
     private String hora;
     private String data_hora;
     private int idpaciente;
+    private int idrotina;
     
+    public int getIdrotina() {
+        return idrotina;
+    }
+    public void setIdrotina(int idrotina) {
+        this.idrotina = idrotina;
+    }
     public int getIdcuidadoMudancadecubito() {
         return idcuidadoMudancadecubito;
     }

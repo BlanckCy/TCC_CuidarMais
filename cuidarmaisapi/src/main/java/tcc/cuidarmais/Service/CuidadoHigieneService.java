@@ -22,8 +22,8 @@ public class CuidadoHigieneService {
         return cuidadohigienerepository.findAll();
     }
 
-    public List<CuidadoHigieneEntity> listarCuidadoIdpacienteData(int idpaciente, String data) {
-        return cuidadohigienerepository.listarCuidadoIdpacienteData(idpaciente,data);
+    public List<CuidadoHigieneEntity> listarCuidadoIdpacienteIdrotina(int idpaciente, int idrotina) {
+        return cuidadohigienerepository.listarCuidadoIdpacienteIdrotina(idpaciente,idrotina);
     }
 
     public CuidadoHigieneEntity buscarPorIdcuidado_higiene(int idcuidado_higiene) {

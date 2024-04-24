@@ -17,19 +17,23 @@ public class CuidadoMedicacaoService {
         this.cuidadoMedicacaoRepository = cuidadoMedicacaoRepository;
     }
 
-    public List<CuidadoMedicacaoEntity> listarCuidados() {
+    public List<CuidadoMedicacaoEntity> listar() {
         return cuidadoMedicacaoRepository.findAll();
     }
 
-    public CuidadoMedicacaoEntity buscarPorIdcuidadoMedicacaoLista(int idcuidado_medicacao_lista) {
-        return cuidadoMedicacaoRepository.findByIdcuidadoMedicacaoLista(idcuidado_medicacao_lista);
+    public List<CuidadoMedicacaoEntity> listarPorIdpacienteIdrotina(int idpaciente, int idrotina) {
+        return cuidadoMedicacaoRepository.listarPorIdpacienteIdrotina(idpaciente,idrotina);
     }
 
-    public CuidadoMedicacaoEntity salvarCuidadoMedicacao(CuidadoMedicacaoEntity cuidado) {
+    public CuidadoMedicacaoEntity buscarPorIdcuidado_medicacao(int idcuidado_medicacao) {
+        return cuidadoMedicacaoRepository.findByIdcuidadoMedicacao(idcuidado_medicacao);
+    }
+
+    public CuidadoMedicacaoEntity salvar(CuidadoMedicacaoEntity cuidado) {
         return cuidadoMedicacaoRepository.save(cuidado);
     }
 
-    public void deletarCuidadoMedicacao(int idcuidado_medicacao_lista) {
-        cuidadoMedicacaoRepository.deleteById(idcuidado_medicacao_lista);
+    public void deletarCuidadoMedicacao(int idcuidado_medicacao) {
+        cuidadoMedicacaoRepository.deleteById(idcuidado_medicacao);
     }
 }

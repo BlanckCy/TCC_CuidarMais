@@ -1,3 +1,4 @@
+import 'package:cuidarmais/models/rotina.dart';
 import 'package:cuidarmais/models/tipoCuidado/sinaisvitais.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
@@ -29,9 +30,11 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
 
   bool _isLoading = true;
 
-  List<SinaisVitais> rotina = [];
+  List<SinaisVitais> listaSinaisVitais = [];
+  List<Rotina> listaRotina = [];
 
   late SinaisVitais sinaisvitais = SinaisVitais();
+  late Rotina rotina = Rotina();
 
   @override
   void initState() {
@@ -39,15 +42,48 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
     _carregarInformacoes();
   }
 
+  Future<List<Rotina>> _validarRotina() async {
+    try {
+      Rotina rotina = Rotina(
+        idpaciente: widget.paciente.idpaciente,
+        tipo_cuidado: widget.tipoCuidado,
+        cuidado: 'Sinais Vitais',
+        realizado: false,
+      );
+
+      listaRotina = await rotina.carregar();
+
+      if (listaRotina.isEmpty) {
+        bool cadastrado = await rotina.cadastrar();
+        if (cadastrado) {
+          listaRotina = await rotina.carregar();
+        }
+      }
+      return listaRotina;
+    } catch (error) {
+      showConfirmationDialog(
+        context: context,
+        title: 'Erro',
+        message: 'Erro ao carregar informações da rotina',
+        onConfirm: () {
+          Navigator.of(context).pop();
+        },
+      );
+      return [];
+    }
+  }
+
   Future<void> _carregarInformacoes() async {
     try {
-      String dataFormatada = DateFormat('yyyy-MM-dd').format(DateTime.now());
       sinaisvitais.idpaciente = widget.paciente.idpaciente;
-      List<SinaisVitais> listaCuidado =
-          await sinaisvitais.carregar(dataFormatada);
+
+      listaRotina = await _validarRotina();
+      sinaisvitais.idrotina = listaRotina[0].idrotina;
+
+      List<SinaisVitais> listaCuidado = await sinaisvitais.carregar();
 
       setState(() {
-        rotina = listaCuidado;
+        listaSinaisVitais = listaCuidado;
         _isLoading = false;
 
         if (listaCuidado.isNotEmpty) {
@@ -68,7 +104,7 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
       showConfirmationDialog(
         context: context,
         title: 'Erro',
-        message: 'Erro ao carregar informações da rotina',
+        message: 'Erro ao carregar informações da listaSinaisVitais',
         onConfirm: () {
           Navigator.of(context).pop();
         },
@@ -80,28 +116,23 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
     try {
       bool atualizacaoSucesso = false;
 
-      if (rotina.isNotEmpty) {
-        sinaisvitais.pressao_diastolica = _selectedDiastolica;
-        sinaisvitais.pressao_sistolica = _selectedSistolica;
-        sinaisvitais.temperatura = _selectedTemperatura;
-        sinaisvitais.frequencia_cardiaca = _selectedFrequenciaCardiaca;
-        sinaisvitais.frequencia_respiratoria = _selectedRespiracao;
-        sinaisvitais.descricao = _observacoesController.text;
-        sinaisvitais.idcuidado_sinaisvitais = rotina[0].idcuidado_sinaisvitais;
+      SinaisVitais sinaisvitais = SinaisVitais(
+        pressao_diastolica: _selectedDiastolica,
+        pressao_sistolica: _selectedSistolica,
+        temperatura: _selectedTemperatura,
+        frequencia_cardiaca: _selectedFrequenciaCardiaca,
+        frequencia_respiratoria: _selectedRespiracao,
+        descricao: _observacoesController.text,
+        idpaciente: widget.paciente.idpaciente,
+        idrotina: listaRotina[0].idrotina,
+      );
 
+      if (listaSinaisVitais.isNotEmpty) {
+        sinaisvitais.idcuidado_sinaisvitais =
+            listaSinaisVitais[0].idcuidado_sinaisvitais;
         atualizacaoSucesso = await sinaisvitais.atualizar();
       } else {
-        SinaisVitais novoSinalVital = SinaisVitais(
-          pressao_diastolica: _selectedDiastolica,
-          pressao_sistolica: _selectedSistolica,
-          temperatura: _selectedTemperatura,
-          frequencia_cardiaca: _selectedFrequenciaCardiaca,
-          frequencia_respiratoria: _selectedRespiracao,
-          descricao: _observacoesController.text,
-          idpaciente: widget.paciente.idpaciente,
-        );
-
-        atualizacaoSucesso = await novoSinalVital.cadastrar();
+        atualizacaoSucesso = await sinaisvitais.cadastrar();
       }
 
       showConfirmationDialog(

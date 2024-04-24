@@ -18,12 +18,12 @@ public class CuidadoMudancaDecubitoService {
         this.cuidadoMudancaDecubitoRepository = cuidadoMudancaDecubitoRepository;
     }
 
-    public List<CuidadoMudancaDecubitoEntity> listarContatos() {
+    public List<CuidadoMudancaDecubitoEntity> listar() {
         return cuidadoMudancaDecubitoRepository.findAll();
     }
 
-    public List<CuidadoMudancaDecubitoEntity> listaPorClienteData(int idpaciente, String data) {
-        return cuidadoMudancaDecubitoRepository.listaPorClienteData(idpaciente,data);
+    public List<CuidadoMudancaDecubitoEntity> listarPorIdpacienteIdrotina(int idpaciente, int idrotina) {
+        return cuidadoMudancaDecubitoRepository.listarPorIdpacienteIdrotina(idpaciente,idrotina);
     }
 
     public CuidadoMudancaDecubitoEntity buscarPorIdcuidado_mudancadecubito(int idcuidado_mudancadecubito) {

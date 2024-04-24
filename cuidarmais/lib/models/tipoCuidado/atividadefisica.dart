@@ -11,6 +11,7 @@ class AtividadeFisica {
   String? data_hora;
   bool? avaliacao;
   int? idpaciente;
+  int? idrotina;
 
   AtividadeFisica({
     this.idcuidado_atividadefisica,
@@ -19,6 +20,7 @@ class AtividadeFisica {
     this.data_hora,
     this.avaliacao,
     this.idpaciente,
+    this.idrotina,
   });
 
   AtividadeFisica.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class AtividadeFisica {
     data_hora = json['data_hora'];
     avaliacao = json['avaliacao'];
     idpaciente = json['idpaciente'];
+    idrotina = json['idrotina'];
   }
 
   Map<String, dynamic> toJson() {
@@ -38,6 +41,7 @@ class AtividadeFisica {
     data['data_hora'] = data_hora;
     data['avaliacao'] = avaliacao;
     data['idpaciente'] = idpaciente;
+    data['idrotina'] = idrotina;
     return data;
   }
 
@@ -62,6 +66,7 @@ class AtividadeFisica {
         'hora': hora ?? '00:00',
         'data_hora': dataAtual,
         'idpaciente': idpaciente.toString(),
+        'idrotina': idrotina.toString(),
       });
 
       var resposta = jsonDecode(dados);
@@ -77,13 +82,11 @@ class AtividadeFisica {
     }
   }
 
-  Future<List<AtividadeFisica>> carregar(data) async {
+  Future<List<AtividadeFisica>> carregar() async {
     var database = Database();
 
-    print('/cuidado-atividadefisica/lista/$idpaciente/$data');
-
     var dados = await database
-        .buscarDadosGet('/cuidado-atividadefisica/lista/$idpaciente/$data');
+        .buscarDadosGet('/cuidado-atividadefisica/lista/$idpaciente/$idrotina');
 
     var resposta = jsonDecode(dados);
 

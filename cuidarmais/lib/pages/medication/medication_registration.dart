@@ -1,9 +1,9 @@
+import 'package:cuidarmais/models/tipoCuidado/medicacaolista.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_medicacao.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
-import 'package:cuidarmais/models/tipoCuidado/medicacao.dart';
 import 'package:intl/intl.dart';
 
 class MedicationRegistrationPage extends StatefulWidget {
@@ -24,11 +24,11 @@ class _MedicationRegistrationPageState
   String _selectedTime = "00:00";
   String _selectTipoDosagem = "";
 
-  late Medicacao medicacao = Medicacao();
+  late MedicacaoLista medicacaolista = MedicacaoLista();
 
   Future<void> _cadastrar() async {
-    medicacao.idpaciente = widget.paciente.idpaciente;
-    bool atualizacaoSucesso = await medicacao.cadastrar();
+    medicacaolista.idpaciente = widget.paciente.idpaciente;
+    bool atualizacaoSucesso = await medicacaolista.cadastrar();
 
     showConfirmationDialog(
       context: context,
@@ -92,7 +92,7 @@ class _MedicationRegistrationPageState
                     return null;
                   },
                   onSaved: (value) {
-                    medicacao.medicamento = value!;
+                    medicacaolista.medicamento = value!;
                   },
                 ),
                 const SizedBox(height: 20),
@@ -116,7 +116,7 @@ class _MedicationRegistrationPageState
                     return null;
                   },
                   onSaved: (value) {
-                    medicacao.dosagem = value!;
+                    medicacaolista.dosagem = value!;
                   },
                 ),
                 const SizedBox(height: 20),
@@ -169,7 +169,7 @@ class _MedicationRegistrationPageState
                   menuMaxHeight: 200,
                   isExpanded: true,
                   onSaved: (value) {
-                    medicacao.tipo = value;
+                    medicacaolista.tipo = value;
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -191,7 +191,7 @@ class _MedicationRegistrationPageState
                           if (selectedTime != null) {
                             setState(() {
                               _selectedTime = _formatTime(selectedTime);
-                              medicacao.hora = _selectedTime;
+                              medicacaolista.hora = _selectedTime;
                             });
                           }
                         },
@@ -206,7 +206,7 @@ class _MedicationRegistrationPageState
                                 if (selectedTime != null) {
                                   setState(() {
                                     _selectedTime = _formatTime(selectedTime);
-                                    medicacao.hora = _selectedTime;
+                                    medicacaolista.hora = _selectedTime;
                                   });
                                 }
                               },
