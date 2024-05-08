@@ -11,10 +11,10 @@ create table cuidador(
     genero char(2)
 );
 
-create table nivelCuidado(
+/*create table nivelCuidado(
 	idnivelcuidado int auto_increment primary key,
     descricao varchar(255)
-);
+);*/
 
 create table paciente(
 	idpaciente int auto_increment primary key,
@@ -24,9 +24,9 @@ create table paciente(
     idade int,
     genero char(2),
     idcuidador int,
-    idnivelcuidado int,
-    foreign key (idcuidador) references cuidador(idcuidador),
-    foreign key (idnivelcuidado) references nivelCuidado(idnivelcuidado)
+    foreign key (idcuidador) references cuidador(idcuidador)
+    -- idnivelcuidado int,
+    -- foreign key (idnivelcuidado) references nivelCuidado(idnivelcuidado)
 );
 
 create table listaCompra(
@@ -63,46 +63,102 @@ create table pontoEletronico(
     foreign key (idpaciente) references paciente(idpaciente)
 );
 
-create table cuidado(
-	idcuidado int auto_increment primary key,
+create table rotina(
+	idrotina int auto_increment primary key,
     data_hora datetime,
     realizado boolean default 0,
-    horario_realizado time,
     tipo_cuidado int,
     cuidado varchar(255),
-    descricao varchar(255), 
-    avaliacao boolean,
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );
 
-create table cuidadoSinalVital(
-	idcuidadoSinalVital int auto_increment primary key,
-    pressao_arterial varchar(100),
-    temperatura varchar(100),
-    saturacao varchar(100),
-    glicose varchar(100),
-    idpaciente int,
-    foreign key (idpaciente) references paciente(idpaciente)
-);
-
-create table cuidadoMedicaoLista(
-	idcuidadoMedicacaoLista int auto_increment primary key,
+create table cuidado_medicacao_lista(
+	idcuidado_medicacao_lista int auto_increment primary key,
     medicamento varchar(255),
+    dosagem varchar(10),
+    hora time,
+    tipo varchar(50),
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );
 
-create table cuidadoFeridaLista(
-	idcuidadoFeridaLista int auto_increment primary key,
-    ferida varchar(255),
+create table cuidado_medicacao(
+	idcuidado_medicacao int auto_increment primary key,
+    data_hora datetime,
+    realizado boolean default 0,
     idpaciente int,
-    foreign key (idpaciente) references paciente(idpaciente)
+    foreign key (idpaciente) references paciente(idpaciente),
+    idcuidado_medicacao_lista int,
+    foreign key (idcuidado_medicacao_lista) references cuidado_medicacao_lista(idcuidado_medicacao_lista),
+    idrotina int,
+    foreign key (idrotina) references rotina(idrotina)
 );
 
-create table cuidadoEquipamentoLista(
-	idcuidadoEquipamentoLista int auto_increment primary key,
-    equipamento varchar(255),
+create table cuidado_sinaisvitais(
+	idcuidado_sinaisvitais int auto_increment primary key,
+    pressao_sistolica varchar(10),
+    pressao_diastolica varchar(10),
+    temperatura varchar(10),
+    frequencia_respiratoria varchar(10),
+    frequencia_cardiaca varchar(10),
+    data_hora datetime,
+    descricao varchar(255), 
     idpaciente int,
-    foreign key (idpaciente) references paciente(idpaciente)
+    foreign key (idpaciente) references paciente(idpaciente),
+    idrotina int,
+    foreign key (idrotina) references rotina(idrotina)
 );
+
+create table cuidado_mudancadecubito(
+	idcuidado_mudancadecubito int auto_increment primary key,
+    mudanca varchar(255),
+    hora time,
+    data_hora datetime,
+    idpaciente int,
+    foreign key (idpaciente) references paciente(idpaciente),
+    idrotina int,
+    foreign key (idrotina) references rotina(idrotina)
+);
+
+create table cuidado_higiene(
+	idcuidado_higiene int auto_increment primary key,
+    tarefa varchar(255),
+    hora time,
+    data_hora datetime,
+    idpaciente int,
+    foreign key (idpaciente) references paciente(idpaciente),
+    idrotina int,
+    foreign key (idrotina) references rotina(idrotina)
+);
+
+create table cuidado_atividadefisica(
+	idcuidado_atividadefisica int auto_increment primary key,
+    avaliacao boolean,
+    hora time,
+    descricao varchar(255),
+    data_hora datetime,
+    idpaciente int,
+    foreign key (idpaciente) references paciente(idpaciente),
+    idrotina int,
+    foreign key (idrotina) references rotina(idrotina)
+);
+
+create table cuidado_refeicao(
+	idcuidado_refeicao int auto_increment primary key,
+    avaliacao_cafe boolean,
+    hora_cafe time,
+    descricao_cafe varchar(255),
+    avaliacao_almoco boolean,
+    hora_almoco time,
+    descricao_almoco varchar(255),
+    descricao_jantar varchar(255),
+    avaliacao_jantar boolean,
+    hora_jantar time,
+    data_hora datetime,
+    idpaciente int,
+    foreign key (idpaciente) references paciente(idpaciente),
+    idrotina int,
+    foreign key (idrotina) references rotina(idrotina)
+);
+

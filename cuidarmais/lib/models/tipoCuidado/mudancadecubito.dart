@@ -4,42 +4,38 @@ import 'package:cuidarmais/models/database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class AtividadeFisica {
-  int? idcuidado_atividadefisica;
-  String? descricao;
+class MudancaDecubito {
+  int? idcuidado_mudancadecubito;
+  String? mudanca;
   String? hora;
   String? data_hora;
-  bool? avaliacao;
   int? idpaciente;
   int? idrotina;
 
-  AtividadeFisica({
-    this.idcuidado_atividadefisica,
-    this.descricao,
+  MudancaDecubito({
+    this.idcuidado_mudancadecubito,
+    this.mudanca,
     this.hora,
     this.data_hora,
-    this.avaliacao,
     this.idpaciente,
     this.idrotina,
   });
 
-  AtividadeFisica.fromJson(Map<String, dynamic> json) {
-    idcuidado_atividadefisica = json['idcuidado_atividadefisica'];
-    descricao = json['descricao'];
+  MudancaDecubito.fromJson(Map<String, dynamic> json) {
+    idcuidado_mudancadecubito = json['idcuidado_mudancadecubito'];
+    mudanca = json['mudanca'];
     hora = json['hora'];
     data_hora = json['data_hora'];
-    avaliacao = json['avaliacao'];
     idpaciente = json['idpaciente'];
     idrotina = json['idrotina'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['idcuidado_atividadefisica'] = idcuidado_atividadefisica;
-    data['descricao'] = descricao;
+    data['idcuidado_mudancadecubito'] = idcuidado_mudancadecubito;
+    data['mudanca'] = mudanca;
     data['hora'] = hora;
     data['data_hora'] = data_hora;
-    data['avaliacao'] = avaliacao;
     data['idpaciente'] = idpaciente;
     data['idrotina'] = idrotina;
     return data;
@@ -50,19 +46,10 @@ class AtividadeFisica {
 
     String dataAtual = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
 
-    print({
-      'descricao': descricao ?? '',
-      'avaliacao': avaliacao.toString(),
-      'hora': hora ?? '00:00',
-      'data_hora': dataAtual,
-      'idpaciente': idpaciente.toString(),
-    });
-
     try {
       var dados =
-          await database.buscarDadosPost('/cuidado-atividadefisica/create', {
-        'descricao': descricao ?? '',
-        'avaliacao': avaliacao.toString(),
+          await database.buscarDadosPost('/cuidado-mudancadecubito/create', {
+        'mudanca': mudanca ?? '',
         'hora': hora ?? '00:00',
         'data_hora': dataAtual,
         'idpaciente': idpaciente.toString(),
@@ -82,11 +69,13 @@ class AtividadeFisica {
     }
   }
 
-  Future<List<AtividadeFisica>> carregar() async {
+  Future<List<MudancaDecubito>> carregar() async {
     var database = Database();
 
+    print('/cuidado-mudancadecubito/lista/$idpaciente/$idrotina');
+
     var dados = await database
-        .buscarDadosGet('/cuidado-atividadefisica/lista/$idpaciente/$idrotina');
+        .buscarDadosGet('/cuidado-mudancadecubito/lista/$idpaciente/$idrotina');
 
     var resposta = jsonDecode(dados);
 
@@ -95,11 +84,11 @@ class AtividadeFisica {
     if (resposta['resposta'] == 'ok') {
       List<dynamic> cuidadosData = jsonDecode(resposta['dados']);
 
-      List<AtividadeFisica> cuidados = cuidadosData.map((cuidadoData) {
-        AtividadeFisica atividadefisica = AtividadeFisica.fromJson(cuidadoData);
-        atividadefisica.idcuidado_atividadefisica =
-            cuidadoData['idcuidadoAtividadefisica'];
-        return atividadefisica;
+      List<MudancaDecubito> cuidados = cuidadosData.map((cuidadoData) {
+        MudancaDecubito mudancaDecubito = MudancaDecubito.fromJson(cuidadoData);
+        mudancaDecubito.idcuidado_mudancadecubito =
+            cuidadoData['idcuidadoMudancadecubito'];
+        return mudancaDecubito;
       }).toList();
 
       return cuidados;
@@ -111,15 +100,12 @@ class AtividadeFisica {
   Future<bool> atualizar() async {
     var database = Database();
 
-    String dataAtual = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-
     Map<String, dynamic> cuidadoData = toJson();
-    cuidadoData['data_hora'] = dataAtual;
 
     print("aqui $cuidadoData");
     try {
       var dados = await database.buscarDadosPut(
-          '/cuidado-atividadefisica/update/$idcuidado_atividadefisica',
+          '/cuidado-mudancadecubito/update/$idcuidado_mudancadecubito',
           cuidadoData);
 
       var resposta = jsonDecode(dados);

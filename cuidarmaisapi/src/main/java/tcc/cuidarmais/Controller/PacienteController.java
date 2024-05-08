@@ -67,7 +67,6 @@ public class PacienteController {
             paciente.setNome_responsavel(pacienteAtualizado.getNome_responsavel());
             paciente.setIdade(pacienteAtualizado.getIdade());
             paciente.setGenero(pacienteAtualizado.getGenero());
-            // paciente.setidnivelcuidado(paciente.getidnivelcuidado());
             PacienteEntity pacienteAtualizadoDb = pacienteService.salvarPaciente(paciente);
             return new ResponseEntity<>(pacienteAtualizadoDb, HttpStatus.OK);
         } else {

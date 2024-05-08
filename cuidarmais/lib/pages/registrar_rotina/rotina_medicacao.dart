@@ -1,165 +1,326 @@
+import 'package:cuidarmais/models/rotina.dart';
+import 'package:cuidarmais/models/paciente.dart';
+import 'package:cuidarmais/models/tipoCuidado/medicacao.dart';
+import 'package:cuidarmais/models/tipoCuidado/medicacaolista.dart';
+import 'package:cuidarmais/pages/medication/medication_registration.dart';
+import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 
 class MedicacaoPage extends StatefulWidget {
+  final Paciente paciente;
+  final int tipoCuidado;
+
+  const MedicacaoPage(
+      {Key? key, required this.paciente, required this.tipoCuidado})
+      : super(key: key);
+
   @override
-  _MedicacaoPageState createState() => _MedicacaoPageState();
+  State<MedicacaoPage> createState() => _MedicacaoPageState();
 }
 
 class _MedicacaoPageState extends State<MedicacaoPage> {
-  bool _checkboxValue1 = false;
-  bool _checkboxValue2 = false;
-  bool _checkboxValue3 = false;
-  bool _checkboxValue4 = false;
-  bool _checkboxValue5 = false;
-  bool _checkboxValue6 = false;
-  bool _checkboxValue7 = false;
-  bool _checkboxValue8 = false;
-  bool _checkboxValue9 = false;
+  List<Medicacao> medicacaoRealizado = [];
+  List<MedicacaoLista> listaMedicamentos = [];
+  List<Rotina> listaRotina = [];
+  List<dynamic> medicamentos = [];
+
+  bool _isLoading = true;
+
+  late MedicacaoLista medicacaolista = MedicacaoLista();
+  late Medicacao medicacao = Medicacao();
+  late Rotina rotina = Rotina();
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarInformacoes();
+  }
+
+  Future<List<Rotina>> _validarRotina() async {
+    try {
+      Rotina rotina = Rotina(
+        idpaciente: widget.paciente.idpaciente,
+        tipo_cuidado: widget.tipoCuidado,
+        cuidado: 'Medicação',
+        realizado: false,
+      );
+
+      listaRotina = await rotina.carregar();
+
+      if (listaRotina.isEmpty) {
+        bool cadastrado = await rotina.cadastrar();
+        if (cadastrado) {
+          listaRotina = await rotina.carregar();
+        }
+      }
+      return listaRotina;
+    } catch (error) {
+      showConfirmationDialog(
+        context: context,
+        title: 'Erro',
+        message: 'Erro ao carregar informações da rotina',
+        onConfirm: () {
+          Navigator.of(context).pop();
+        },
+      );
+      return [];
+    }
+  }
+
+  Future<void> _carregarInformacoes() async {
+    try {
+      medicacao.idpaciente = widget.paciente.idpaciente;
+      medicacaolista.idpaciente = widget.paciente.idpaciente;
+
+      listaRotina = await _validarRotina();
+      medicacao.idrotina = listaRotina[0].idrotina;
+
+      medicacaoRealizado = await medicacao.carregar();
+      listaMedicamentos = await medicacaolista.carregar();
+
+      List<Map<String, dynamic>> dadosComEstado = [];
+
+      for (var listaM in listaMedicamentos) {
+        bool realizado = false;
+
+        for (var medicacaoR in medicacaoRealizado) {
+          if (listaM.idcuidado_medicacao_lista ==
+              medicacaoR.idcuidado_medicacao_lista) {
+            if (medicacaoR.realizado == true) {
+              realizado = true;
+            }
+            break;
+          }
+        }
+
+        dadosComEstado.add({
+          'idcuidado_medicacao_lista': listaM.idcuidado_medicacao_lista,
+          'medicamento': listaM.medicamento ?? '',
+          'dosagem': listaM.dosagem ?? '',
+          'hora': listaM.hora ?? '',
+          'tipo': listaM.tipo ?? '',
+          'realizado': realizado,
+          'idrotina': listaRotina[0].idrotina,
+        });
+      }
+
+      setState(() {
+        _isLoading = false;
+        medicamentos = dadosComEstado;
+        return;
+      });
+    } catch (error) {
+      showConfirmationDialog(
+        context: context,
+        title: 'Erro',
+        message: 'Erro ao carregar informações da rotina',
+        onConfirm: () {
+          Navigator.of(context).pop();
+        },
+      );
+    }
+  }
+
+  Future<void> _salvarInformacoes() async {
+    try {
+      bool mensagem = false;
+
+      for (var i = 0; i < medicamentos.length; i++) {
+        var medicamento = medicamentos[i];
+        bool atualizacaoSucesso = false;
+
+        Medicacao medicacao = Medicacao(
+          realizado: medicamento['realizado'],
+          idcuidado_medicacao_lista: medicamento['idcuidado_medicacao_lista'],
+          idpaciente: widget.paciente.idpaciente,
+          idrotina: medicamento['idrotina'],
+        );
+
+        if (medicacaoRealizado.isEmpty) {
+          atualizacaoSucesso = await medicacao.cadastrar();
+        } else {
+          medicacao.idcuidado_medicacao =
+              medicacaoRealizado[i].idcuidado_medicacao;
+          atualizacaoSucesso = await medicacao.atualizar();
+        }
+
+        if (!mensagem) {
+          mensagem = true;
+          showConfirmationDialog(
+            context: context,
+            title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+            message: atualizacaoSucesso
+                ? 'As informações foram salvas com sucesso!'
+                : 'Houve um erro ao salvar os dados. Por favor, tente novamente.',
+            onConfirm: () {
+              if (atualizacaoSucesso) {
+                Navigator.of(context).pop();
+              }
+            },
+          );
+        }
+      }
+    } catch (error) {
+      print('Erro ao salvar os dados: $error');
+      showConfirmationDialog(
+        context: context,
+        title: 'Erro',
+        message: 'Erro ao salvar os dados.',
+        onConfirm: () {},
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(
-            height: MediaQuery.of(context).padding.top,
-          ), // Adiciona espaço para acomodar a AppBar
-          Container(
-            padding: const EdgeInsets.all(25),
-            color: Colors.white,
-            child: Center(
-              child: Text(
-                "Rotina de Medicação",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _buildMedicamentosList(),
+    );
+  }
+
+  Widget _buildMedicamentosList() {
+    return Container(
+      padding: const EdgeInsets.all(25),
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            "Rotina de Medicação",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const Text(
+            "Marque os medicamentos que já foram administrados.",
+            style: TextStyle(
+              fontSize: 12,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: Card(
+              color: Colors.transparent,
+              elevation: 0,
+              child: Column(
+                children: [
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(width: 8),
+                      Text(
+                        'Medicação',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(width: 80),
+                      Text(
+                        'Horário',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(width: 20),
+                      Text(
+                        'Realizado?',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: medicamentos.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          elevation: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 14),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.3,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        medicamentos[index]['medicamento'] ??
+                                            'Sem nome',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 4,
+                                      ),
+                                      Text(
+                                        'Dosagem: ${medicamentos[index]['dosagem']} ${medicamentos[index]['tipo']}(s)',
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Text(
+                                  medicamentos[index]['hora'] ?? '00:00',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Checkbox(
+                                  value:
+                                      medicamentos[index]['realizado'] ?? false,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      medicamentos[index]['realizado'] =
+                                          value ?? false;
+                                    });
+                                  },
+                                  activeColor: const Color(0XFF1C51A1),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          Expanded(
-            child: Column(
-              children: <Widget>[
-                Text(
-                  "Rotina da Manhã",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MedicationRegistrationPage(
+                    paciente: widget.paciente,
                   ),
                 ),
-                CheckboxListTile(
-                  title: Text('Medicação 1'),
-                  value: _checkboxValue1,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _checkboxValue1 = value!;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text('Medicação 2'),
-                  value: _checkboxValue2,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _checkboxValue2 = value!;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text('Medicação 3'),
-                  value: _checkboxValue3,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _checkboxValue3 = value!;
-                    });
-                  },
-                ),
-              ],
+              );
+            },
+            style: TextButton.styleFrom(
+              backgroundColor: const Color(0XFF1C51A1),
+              foregroundColor: Colors.white,
+              minimumSize: const Size(250, 50),
             ),
+            child: const Text("Adicionar Novo Medicamento"),
           ),
-
-          Expanded(
-            child: Column(
-              children: <Widget>[
-                Text(
-                  "Rotina da Tarde",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                CheckboxListTile(
-                  title: Text('Medicação 1'),
-                  value: _checkboxValue4,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _checkboxValue4 = value!;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text('Medicação 2'),
-                  value: _checkboxValue5,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _checkboxValue5 = value!;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text('Medicação 3'),
-                  value: _checkboxValue6,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _checkboxValue6 = value!;
-                    });
-                  },
-                ),
-              ],
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              _salvarInformacoes();
+            },
+            style: TextButton.styleFrom(
+              backgroundColor: const Color(0XFF1C51A1),
+              foregroundColor: Colors.white,
+              minimumSize: const Size(250, 50),
             ),
-          ),
-          Expanded(
-            child: Column(
-              children: <Widget>[
-                Text(
-                  "Rotina da Noite",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                CheckboxListTile(
-                  title: Text('Medicação 1'),
-                  value: _checkboxValue7,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _checkboxValue7 = value!;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text('Medicação 2'),
-                  value: _checkboxValue8,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _checkboxValue8 = value!;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text('Medicação 3'),
-                  value: _checkboxValue9,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _checkboxValue9 = value!;
-                    });
-                  },
-                ),
-              ],
-            ),
+            child: const Text("Salvar"),
           ),
         ],
       ),

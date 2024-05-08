@@ -1,5 +1,6 @@
-import 'package:cuidarmais/models/cuidado.dart';
 import 'package:cuidarmais/models/paciente.dart';
+import 'package:cuidarmais/models/rotina.dart';
+import 'package:cuidarmais/models/tipoCuidado/refeicao.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
@@ -35,65 +36,87 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
   String _almocoHorarioSelecionado = '00:00';
   String _jantarHorarioSelecionado = '00:00';
 
-  List<Cuidado> rotina = [];
+  List<Refeicao> listaRefeicao = [];
+  List<Rotina> listaRotina = [];
 
-  late Cuidado cuidado = Cuidado();
+  late Refeicao refeicao = Refeicao();
+  late Rotina rotina = Rotina();
 
   @override
   void initState() {
     super.initState();
-    String dataFormatada = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    _carregarRotina(
-      tipo_cuidado: widget.tipoCuidado,
-      data: dataFormatada,
-    );
+    _carregarInformacoes();
   }
 
-  Future<void> _carregarRotina({
-    required int tipo_cuidado,
-    required String data,
-  }) async {
+  Future<List<Rotina>> _validarRotina() async {
     try {
-      var listaCuidados = await Cuidado().carregarRotina(
-        tipo_cuidado,
-        data,
+      Rotina rotina = Rotina(
+        idpaciente: widget.paciente.idpaciente,
+        tipo_cuidado: widget.tipoCuidado,
+        cuidado: 'Sinais Vitais',
+        realizado: false,
       );
 
-      if (listaCuidados.isEmpty) {
-        setState(() {
-          _isLoading = false;
-        });
-        return;
-      }
+      listaRotina = await rotina.carregar();
 
-      setState(() {
-        rotina = listaCuidados;
-        for (var cuidado in rotina) {
-          if (cuidado.cuidado == 'Café da Manhã') {
-            _observacoesCafeManhaController.text = cuidado.descricao ?? '';
-            _cafeManhaBoa = cuidado.avaliacao;
-            _cafeManhaHorarioSelecionado = cuidado.horario_realizado ?? '00:00';
-          }
-          if (cuidado.cuidado == 'Almoço') {
-            _observacoesAlmocoController.text = cuidado.descricao ?? '';
-            _almocoBoa = cuidado.avaliacao;
-            _almocoHorarioSelecionado = cuidado.horario_realizado ?? '00:00';
-          }
-          if (cuidado.cuidado == 'Jantar') {
-            _observacoesJantarController.text = cuidado.descricao ?? '';
-            _jantarBoa = cuidado.avaliacao;
-            _jantarHorarioSelecionado = cuidado.horario_realizado ?? '00:00';
-          }
+      if (listaRotina.isEmpty) {
+        bool cadastrado = await rotina.cadastrar();
+        if (cadastrado) {
+          listaRotina = await rotina.carregar();
         }
-
-        _isLoading = false;
-      });
+      }
+      return listaRotina;
     } catch (error) {
-      print('Erro ao carregar rotina: $error');
       showConfirmationDialog(
         context: context,
         title: 'Erro',
         message: 'Erro ao carregar informações da rotina',
+        onConfirm: () {
+          Navigator.of(context).pop();
+        },
+      );
+      return [];
+    }
+  }
+
+  Future<void> _carregarInformacoes() async {
+    try {
+      refeicao.idpaciente = widget.paciente.idpaciente;
+
+      listaRotina = await _validarRotina();
+      refeicao.idrotina = listaRotina[0].idrotina;
+
+      List<Refeicao> listaCuidado = await refeicao.carregar();
+
+      setState(() {
+        listaRefeicao = listaCuidado;
+        _isLoading = false;
+
+        if (listaCuidado.isNotEmpty) {
+          _observacoesCafeManhaController.text =
+              listaRefeicao[0].descricao_cafe ?? '';
+          _cafeManhaBoa = listaRefeicao[0].avaliacao_cafe;
+          _cafeManhaHorarioSelecionado = listaRefeicao[0].hora_cafe ?? '00:00';
+
+          _observacoesAlmocoController.text =
+              listaRefeicao[0].descricao_almoco ?? '';
+          _almocoBoa = listaRefeicao[0].avaliacao_almoco;
+          _almocoHorarioSelecionado = listaRefeicao[0].hora_almoco ?? '00:00';
+
+          _observacoesJantarController.text =
+              listaRefeicao[0].descricao_jantar ?? '';
+          _jantarBoa = listaRefeicao[0].avaliacao_jantar;
+          _jantarHorarioSelecionado = listaRefeicao[0].hora_jantar ?? '00:00';
+        }
+      });
+    } catch (error) {
+      setState(() {
+        _isLoading = false;
+      });
+      showConfirmationDialog(
+        context: context,
+        title: 'Erro',
+        message: 'Erro ao carregar informações da listaRefeicao',
         onConfirm: () {
           Navigator.of(context).pop();
         },
@@ -104,130 +127,43 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
   bool mensagemExibida = false;
   bool sucesso = false;
 
-  Future<void> _cadastrarRefeicoes(bool isUpdate) async {    
-    // Cadastrar café da manhã
-    if (_cafeManhaBoa != null) {
-      bool achou = false;
-      if (isUpdate) {
-        for (Cuidado item in rotina) {
-          if (item.cuidado == "Café da Manhã") {
-            cuidado = item;
-            achou = true;
-            break;
-          }
-        }
-      }
+  Future<void> _salvarInformacoes() async {
+    bool atualizacaoSucesso = false;
 
-      if (!achou) {
-        isUpdate = false;
-      }
+    Refeicao refeicao = Refeicao(
+      avaliacao_cafe: _cafeManhaBoa,
+      hora_cafe: _cafeManhaHorarioSelecionado,
+      descricao_cafe: _observacoesCafeManhaController.text,
+      avaliacao_almoco: _almocoBoa,
+      hora_almoco: _almocoHorarioSelecionado,
+      descricao_almoco: _observacoesAlmocoController.text,
+      avaliacao_jantar: _jantarBoa,
+      hora_jantar: _jantarHorarioSelecionado,
+      descricao_jantar: _observacoesJantarController.text,
+      idpaciente: widget.paciente.idpaciente,
+      idrotina: listaRotina[0].idrotina,
+    );
 
-      sucesso = await _cadastrarRefeicao(
-        descricao: _observacoesCafeManhaController.text,
-        avaliacao: _cafeManhaBoa!,
-        horario_realizado: _cafeManhaHorarioSelecionado,
-        nomeCuidado: "Café da Manhã",
-        isUpdate: isUpdate,
-      );
-    }
+    if (listaRefeicao.isNotEmpty) {
+      refeicao.idcuidado_refeicao = listaRefeicao[0].idcuidado_refeicao;
 
-    // Cadastrar almoço
-    if (_almocoBoa != null) {
-      bool achou = false;
-      if (isUpdate) {
-        for (Cuidado item in rotina) {
-          if (item.cuidado == "Almoço") {
-            cuidado = item;
-            achou = true;
-            break;
-          }
-        }
-      }
-
-      if (!achou) {
-        isUpdate = false;
-      }
-
-      sucesso = await _cadastrarRefeicao(
-        descricao: _observacoesAlmocoController.text,
-        avaliacao: _almocoBoa!,
-        horario_realizado: _almocoHorarioSelecionado,
-        nomeCuidado: "Almoço",
-        isUpdate: isUpdate,
-      );
-    }
-
-    // Cadastrar jantar
-    if (_jantarBoa != null) {
-      bool achou = false;
-      if (isUpdate) {
-        for (Cuidado item in rotina) {
-          if (item.cuidado == "Jantar") {
-            cuidado = item;
-            achou = true;
-            break;
-          }
-        }
-      }
-
-      if (!achou) {
-        isUpdate = false;
-      }
-
-      sucesso = await _cadastrarRefeicao(
-        descricao: _observacoesJantarController.text,
-        avaliacao: _jantarBoa!,
-        horario_realizado: _jantarHorarioSelecionado,
-        nomeCuidado: 'Jantar',
-        isUpdate: isUpdate,
-      );
-    }
-
-    // Exibir a mensagem apenas uma vez após todos os cadastros
-    if (!mensagemExibida) {
-      mensagemExibida = true;
-      showConfirmationDialog(
-        context: context,
-        title: sucesso ? 'Sucesso' : 'Erro',
-        message: sucesso
-            ? 'Os dados foram salvos com sucesso!'
-            : 'Houve um erro ao atualizar os dados. Por favor, tente novamente.',
-        onConfirm: () {
-          if (sucesso) {
-            Navigator.of(context).pop();
-          }
-        },
-      );
-    }
-  }
-
-  Future<bool> _cadastrarRefeicao({
-    required String descricao,
-    required bool avaliacao,
-    required String horario_realizado,
-    required String nomeCuidado,
-    required bool isUpdate,
-  }) async {
-    print("update $isUpdate");
-    if (!isUpdate) {
-      Cuidado cuidado = Cuidado(
-        data_hora: DateTime.now().toString(),
-        avaliacao: avaliacao,
-        tipo_cuidado: widget.tipoCuidado,
-        descricao: descricao,
-        horario_realizado: horario_realizado,
-        cuidado: nomeCuidado,
-        idpaciente: widget.paciente.idpaciente,
-      );
-
-      return await cuidado.cadastrar();
+      atualizacaoSucesso = await refeicao.atualizar();
     } else {
-      cuidado.avaliacao = avaliacao;
-      cuidado.horario_realizado = horario_realizado;
-      cuidado.descricao = descricao;
-
-      return await cuidado.atualizarDados();
+      atualizacaoSucesso = await refeicao.cadastrar();
     }
+
+    showConfirmationDialog(
+      context: context,
+      title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+      message: atualizacaoSucesso
+          ? 'As informações foram salvas com sucesso!'
+          : 'Houve um erro ao atualizar os dados. Por favor, tente novamente.',
+      onConfirm: () {
+        if (atualizacaoSucesso) {
+          Navigator.of(context).pop();
+        }
+      },
+    );
   }
 
   Widget _buildMealWidget(
@@ -334,9 +270,9 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              "Como o paciente se alimentou hoje?",
+              "Rotina de Refeição",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
@@ -354,20 +290,16 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
               _observacoesCafeManhaController,
               _cafeManhaBoa,
               (bool? status) {
-                if (status != null) {
-                  setState(
-                    () {
-                      _cafeManhaBoa = status;
-                    },
-                  );
-                }
+                setState(
+                  () {
+                    _cafeManhaBoa = status;
+                  },
+                );
               },
               (TimeOfDay? selectedTime) {
-                if (selectedTime != null) {
-                  setState(() {
-                    _cafeManhaHorarioSelecionado = _formatTime(selectedTime);
-                  });
-                }
+                setState(() {
+                  _cafeManhaHorarioSelecionado = _formatTime(selectedTime);
+                });
               },
               _cafeManhaHorarioSelecionado,
             ),
@@ -377,18 +309,14 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
               _observacoesAlmocoController,
               _almocoBoa,
               (bool? status) {
-                if (status != null) {
-                  setState(() {
-                    _almocoBoa = status;
-                  });
-                }
+                setState(() {
+                  _almocoBoa = status;
+                });
               },
               (TimeOfDay? selectedTime) {
-                if (selectedTime != null) {
-                  setState(() {
-                    _almocoHorarioSelecionado = _formatTime(selectedTime);
-                  });
-                }
+                setState(() {
+                  _almocoHorarioSelecionado = _formatTime(selectedTime);
+                });
               },
               _almocoHorarioSelecionado,
             ),
@@ -398,32 +326,27 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
               _observacoesJantarController,
               _jantarBoa,
               (bool? status) {
-                if (status != null) {
-                  setState(() {
-                    _jantarBoa = status;
-                  });
-                }
+                setState(() {
+                  _jantarBoa = status;
+                });
               },
               (TimeOfDay? selectedTime) {
-                if (selectedTime != null) {
-                  setState(() {
-                    _jantarHorarioSelecionado = _formatTime(selectedTime);
-                  });
-                }
+                setState(() {
+                  _jantarHorarioSelecionado = _formatTime(selectedTime);
+                });
               },
               _jantarHorarioSelecionado,
             ),
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
-                if (_cafeManhaBoa != null ||
-                    _almocoBoa != null ||
-                    _jantarBoa != null) {
-                  if (rotina.isEmpty) {
-                    _cadastrarRefeicoes(false);
-                  } else {
-                    _cadastrarRefeicoes(true);
-                  }
+                if ((_cafeManhaBoa != null &&
+                        _cafeManhaHorarioSelecionado != '00:00') ||
+                    (_almocoBoa != null &&
+                        _almocoHorarioSelecionado != '00:00') ||
+                    (_jantarBoa != null &&
+                        _jantarHorarioSelecionado != '00:00')) {
+                  _salvarInformacoes();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

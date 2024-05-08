@@ -1,5 +1,5 @@
 import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/emergency_contacts/emergency_contacts.dart';
+import 'package:cuidarmais/pages/emergency/emergency_contacts.dart';
 import 'package:cuidarmais/pages/principal/principal.dart';
 import 'package:cuidarmais/pages/registrar_rotina/registrar_rotina.dart';
 import 'package:flutter/material.dart';
