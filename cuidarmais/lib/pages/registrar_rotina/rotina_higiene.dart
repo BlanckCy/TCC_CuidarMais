@@ -1,6 +1,7 @@
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/models/rotina.dart';
 import 'package:cuidarmais/models/tipoCuidado/higiene.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
@@ -30,10 +31,23 @@ class _RotinaHigienePageState extends State<RotinaHigienePage> {
 
   List<Rotina> listaRotina = [];
 
+  late Paciente paciente = Paciente();
+
   @override
   void initState() {
     super.initState();
-    _carregarInformacoes();
+    _recuperarPaciente();
+  }
+
+  Future<void> _recuperarPaciente() async {
+    final pacienteRecuperado =
+        await PacienteSharedPreferences.recuperarPaciente();
+    if (pacienteRecuperado != null) {
+      setState(() {
+        paciente = pacienteRecuperado;
+      });
+      _carregarInformacoes();
+    } else {}
   }
 
   Future<List<Rotina>> _validarRotina() async {

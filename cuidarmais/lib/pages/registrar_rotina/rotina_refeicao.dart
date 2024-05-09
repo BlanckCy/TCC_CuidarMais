@@ -1,18 +1,16 @@
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/models/rotina.dart';
 import 'package:cuidarmais/models/tipoCuidado/refeicao.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:intl/intl.dart';
 
 class RefeicaoPage extends StatefulWidget {
-  final Paciente paciente;
   final int tipoCuidado;
 
-  const RefeicaoPage(
-      {Key? key, required this.paciente, required this.tipoCuidado})
-      : super(key: key);
+  const RefeicaoPage({Key? key, required this.tipoCuidado}) : super(key: key);
 
   @override
   State<RefeicaoPage> createState() => _RefeicaoPageState();
@@ -41,19 +39,31 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
 
   late Refeicao refeicao = Refeicao();
   late Rotina rotina = Rotina();
+  late Paciente paciente = Paciente();
 
   @override
   void initState() {
     super.initState();
-    _carregarInformacoes();
+    _recuperarPaciente();
+  }
+
+  Future<void> _recuperarPaciente() async {
+    final pacienteRecuperado =
+        await PacienteSharedPreferences.recuperarPaciente();
+    if (pacienteRecuperado != null) {
+      setState(() {
+        paciente = pacienteRecuperado;
+      });
+      _carregarInformacoes();
+    } else {}
   }
 
   Future<List<Rotina>> _validarRotina() async {
     try {
       Rotina rotina = Rotina(
-        idpaciente: widget.paciente.idpaciente,
+        idpaciente: paciente.idpaciente,
         tipo_cuidado: widget.tipoCuidado,
-        cuidado: 'Sinais Vitais',
+        cuidado: 'Refeição',
         realizado: false,
       );
 
@@ -81,7 +91,7 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
 
   Future<void> _carregarInformacoes() async {
     try {
-      refeicao.idpaciente = widget.paciente.idpaciente;
+      refeicao.idpaciente = paciente.idpaciente;
 
       listaRotina = await _validarRotina();
       refeicao.idrotina = listaRotina[0].idrotina;
@@ -140,7 +150,7 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
       avaliacao_jantar: _jantarBoa,
       hora_jantar: _jantarHorarioSelecionado,
       descricao_jantar: _observacoesJantarController.text,
-      idpaciente: widget.paciente.idpaciente,
+      idpaciente: paciente.idpaciente,
       idrotina: listaRotina[0].idrotina,
     );
 

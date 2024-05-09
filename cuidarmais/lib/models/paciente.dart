@@ -9,7 +9,6 @@ class Paciente {
   int? idade;
   String? genero;
   int? idcuidador;
-  int? idnivelcuidado;
 
   Paciente({
     this.idpaciente,
@@ -19,7 +18,6 @@ class Paciente {
     this.idade,
     this.genero,
     this.idcuidador,
-    this.idnivelcuidado,
   });
 
   Paciente.fromJson(Map<String, dynamic> json) {
@@ -30,7 +28,6 @@ class Paciente {
     idade = json['idade'];
     genero = json['genero'];
     idcuidador = json['idcuidador'];
-    idnivelcuidado = json['idnivelcuidado'];
   }
 
   Map<String, dynamic> toJson() {
@@ -42,7 +39,6 @@ class Paciente {
     data['idade'] = idade;
     data['genero'] = _formatarGeneroInicial(genero);
     data['idcuidador'] = idcuidador;
-    data['idnivelcuidado'] = idnivelcuidado;
     return data;
   }
 
@@ -57,19 +53,17 @@ class Paciente {
     return null;
   }
 
-  Future<List<Paciente>> carregarPacientes(int idcuidador) async {
+  Future<List<Paciente>> carregarPacientes() async {
     var database = Database();
     var dados =
         await database.buscarDadosGet('/paciente/por-cuidador/$idcuidador');
 
     var resposta = jsonDecode(dados);
 
-    print(resposta);
+    print("paciente: $resposta");
 
     if (resposta['resposta'] == 'ok') {
       List<dynamic> pacientesData = jsonDecode(resposta['dados']);
-
-      print(pacientesData);
 
       List<Paciente> pacientes = [];
       for (var pacienteData in pacientesData) {
@@ -83,7 +77,6 @@ class Paciente {
           idade: pacienteData['idade'],
           genero: generoFormatado,
           idcuidador: pacienteData['idcuidador'],
-          idnivelcuidado: pacienteData['idnivelcuidado'],
         ));
       }
       return pacientes;
@@ -92,27 +85,28 @@ class Paciente {
     }
   }
 
-  Future<bool> salvarDados(int idpaciente) async {
+  Future<Map<String, dynamic>> salvarDados() async {
     var database = Database();
 
     Map<String, dynamic> pacienteData = toJson();
-    pacienteData['idpaciente'] = idpaciente;
 
     try {
       var dados = await database.buscarDadosPut(
           '/paciente/update/$idpaciente', pacienteData);
 
-      print(idpaciente);
       var resposta = jsonDecode(dados);
-      print(resposta['resposta']);
+      var dadosPaciente = jsonDecode(resposta['dados']);
+      dadosPaciente['genero'] = _formatarGenero(dadosPaciente['genero']);
+
+      print("aqui $dadosPaciente");
 
       if (resposta['resposta'] == 'erro') {
-        return false;
+        return {'resposta': false, 'dados': []};
       }
 
-      return true;
+      return {'resposta': true, 'dados': dadosPaciente};
     } catch (error) {
-      return false;
+      return {'resposta': false, 'dados': []};
     }
   }
 
@@ -148,8 +142,7 @@ class Paciente {
         'genero': genero!,
         'nome_responsavel': nome_responsavel!,
         'email_responsavel': email_responsavel!,
-        'idcuidador': idcuidador.toString(),
-        'idnivelcuidado': '1'
+        'idcuidador': idcuidador.toString()
       });
 
       var resposta = jsonDecode(dados);
@@ -173,6 +166,9 @@ class Paciente {
         return 'Feminino';
       } else if (genero.toLowerCase() == 'o') {
         return 'Outro';
+      } else if (genero.length > 1) {
+        genero = _formatarGeneroInicial(genero);
+        return _formatarGenero(genero);
       }
     }
     return null;
@@ -186,6 +182,9 @@ class Paciente {
         return 'M';
       } else if (genero.toLowerCase() == 'outro') {
         return 'O';
+      } else if (genero.length == 1) {
+        genero = _formatarGenero(genero);
+        return _formatarGeneroInicial(genero);
       }
     }
     return null;

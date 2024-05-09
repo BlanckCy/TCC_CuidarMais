@@ -1,18 +1,17 @@
 import 'package:cuidarmais/models/contatoEmergencia.dart';
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/pages/home/home.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class EmergencyContactsManagementPage extends StatefulWidget {
-  final Paciente paciente;
   final int? idcontato_emergencia;
 
   const EmergencyContactsManagementPage({
     Key? key,
-    required this.paciente,
     this.idcontato_emergencia,
   }) : super(key: key);
 
@@ -38,20 +37,30 @@ class _EmergencyContactsManagementPageState
   });
 
   late Contatoemergencia contatoemergencia = Contatoemergencia();
+  late Paciente paciente = Paciente();
 
   @override
   void initState() {
     super.initState();
-    contatoemergencia = Contatoemergencia(
-      idcontato_emergencia: widget.idcontato_emergencia,
-      idpaciente: widget.paciente.idpaciente,
-    );
+    _recuperarPaciente();
+  }
 
-    _isLoading = false;
-    if (widget.idcontato_emergencia != null) {
-      _isLoading = true;
-      _informacoesContato();
-    }
+  Future<void> _recuperarPaciente() async {
+    final pacienteRecuperado =
+        await PacienteSharedPreferences.recuperarPaciente();
+    if (pacienteRecuperado != null) {
+      setState(() {
+        paciente = pacienteRecuperado;
+      });
+      contatoemergencia.idcontato_emergencia = widget.idcontato_emergencia;
+      contatoemergencia.idpaciente = paciente.idpaciente;
+
+      _isLoading = false;
+      if (widget.idcontato_emergencia != null) {
+        _isLoading = true;
+        _informacoesContato();
+      }
+    } else {}
   }
 
   Future<void> _informacoesContato() async {
@@ -70,9 +79,7 @@ class _EmergencyContactsManagementPageState
         context: context,
         title: 'Erro',
         message: 'Erro ao carregar os dados.',
-        onConfirm: () {
-          // Navigator.of(context).pop();
-        },
+        onConfirm: () {},
       );
     }
   }
@@ -89,9 +96,7 @@ class _EmergencyContactsManagementPageState
       message: atualizacaoSucesso
           ? 'Os dados foram atualizados com sucesso!'
           : 'Houve um erro ao atualizar os dados. Por favor, tente novamente.',
-      onConfirm: () {
-        // Navigator.of(context).pop();
-      },
+      onConfirm: () {},
     );
   }
 
@@ -120,7 +125,6 @@ class _EmergencyContactsManagementPageState
                 context,
                 MaterialPageRoute(
                   builder: (context) => HomePage(
-                    paciente: widget.paciente,
                     selectedIndex: 2,
                   ),
                 ),
@@ -151,7 +155,6 @@ class _EmergencyContactsManagementPageState
             context,
             MaterialPageRoute(
               builder: (context) => HomePage(
-                paciente: widget.paciente,
                 selectedIndex: 2,
               ),
             ),

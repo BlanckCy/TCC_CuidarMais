@@ -1,3 +1,5 @@
+import 'package:cuidarmais/models/cuidador.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/pages/home/home.dart';
@@ -6,9 +8,7 @@ import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/services.dart';
 
 class ListaPacientePage extends StatefulWidget {
-  final Paciente paciente;
-
-  const ListaPacientePage({Key? key, required this.paciente}) : super(key: key);
+  const ListaPacientePage({Key? key}) : super(key: key);
 
   @override
   State<ListaPacientePage> createState() => _ListaPacientePageState();
@@ -17,19 +17,32 @@ class ListaPacientePage extends StatefulWidget {
 class _ListaPacientePageState extends State<ListaPacientePage> {
   List<Paciente> pacientes = [];
   bool _isLoading = true;
+  late Cuidador cuidador = Cuidador();
+  late Paciente paciente = Paciente();
 
   @override
   void initState() {
     super.initState();
-    _carregarPacientes(idcuidador: widget.paciente.idcuidador ?? 0);
+    _recuperarCuidador();
   }
 
-  Future<void> _carregarPacientes({required int idcuidador}) async {
+  Future<void> _recuperarCuidador() async {
+    final cuidadorRecuperado = await CuidadorSharedPreferences.recuperar();
+    if (cuidadorRecuperado != null) {
+      setState(() {
+        cuidador = cuidadorRecuperado;
+      });
+      paciente.idcuidador = cuidador.idcuidador;
+      _carregarPacientes();
+    } else {}
+  }
+
+  Future<void> _carregarPacientes() async {
     try {
-      var listaPacientes = await Paciente().carregarPacientes(idcuidador);
+      var listaPacientes = await paciente.carregarPacientes();
       setState(() {
         pacientes = listaPacientes;
-        _isLoading = false; // Marca o carregamento como concluído
+        _isLoading = false;
       });
     } catch (error) {
       print('Erro ao carregar pacientes: $error');
@@ -41,6 +54,7 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
           actions: [
             TextButton(
               onPressed: () {
+                Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
               child: const Text('OK'),
@@ -58,8 +72,8 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
       child: Scaffold(
         appBar: const CustomAppBar(),
         body: _isLoading
-            ? const Center(child: CircularProgressIndicator()) 
-            : _buildPacientesList(), 
+            ? const Center(child: CircularProgressIndicator())
+            : _buildPacientesList(),
       ),
     );
   }
@@ -76,9 +90,7 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SignUpPacientePage(
-                    paciente: widget.paciente,
-                  ),
+                  builder: (context) => const SignUpPacientePage(),
                 ),
               );
             },
@@ -108,19 +120,19 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      await PacienteSharedPreferences.salvarPaciente(
+                        pacientes[index],
+                      );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomePage(
-                            paciente: pacientes[index],
-                          ),
+                          builder: (context) => const HomePage(),
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color.fromARGB(255, 210, 228, 255),
+                      backgroundColor: const Color.fromARGB(255, 210, 228, 255),
                       foregroundColor: Colors.black,
                       minimumSize: const Size(250, 50),
                     ),

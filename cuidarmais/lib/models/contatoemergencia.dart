@@ -45,7 +45,7 @@ class Contatoemergencia {
       var contatoData = jsonDecode(resposta['dados']);
 
       return Contatoemergencia(
-        idcontato_emergencia: contatoData['idcontato_emergencia'],
+        idcontato_emergencia: contatoData['idcontatoEmergencia'],
         nome: contatoData['nome'],
         parentesco: contatoData['parentesco'],
         telefone: contatoData['telefone'],
@@ -56,7 +56,7 @@ class Contatoemergencia {
     }
   }
 
-  Future<List<Contatoemergencia>> carregarContatos(int idpaciente) async {
+  Future<List<Contatoemergencia>> carregarContatos() async {
     var database = Database();
     var dados = await database
         .buscarDadosGet('/contatoemergencia/por-paciente/$idpaciente');
@@ -66,18 +66,11 @@ class Contatoemergencia {
     if (resposta['resposta'] == 'ok') {
       List<dynamic> contatosData = jsonDecode(resposta['dados']);
 
-      print(contatosData);
-
-      List<Contatoemergencia> contatos = [];
-      for (var contatoData in contatosData) {
-        contatos.add(Contatoemergencia(
-          idcontato_emergencia: contatoData['idcontato_emergencia'],
-          nome: contatoData['nome'],
-          parentesco: contatoData['parentesco'],
-          telefone: contatoData['telefone'],
-          idpaciente: contatoData['idpaciente'],
-        ));
-      }
+      List<Contatoemergencia> contatos = contatosData.map((contatosData) {
+        Contatoemergencia contatos = Contatoemergencia.fromJson(contatosData);
+        contatos.idcontato_emergencia = contatosData['idcontatoEmergencia'];
+        return contatos;
+      }).toList();
       return contatos;
     } else {
       throw Exception('Erro ao carregar contatos');

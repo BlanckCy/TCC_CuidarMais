@@ -1,5 +1,5 @@
+import 'package:cuidarmais/pages/principal/principal.dart';
 import 'package:flutter/material.dart';
-import 'package:cuidarmais/pages/login/login.dart';
 import 'package:cuidarmais/pages/login/login.dart';
 
 void main() {
@@ -12,6 +12,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      initialRoute: '/',
+      routes: {
+        // '/': (context) => const PrincipalPage(),
+        // '/medicacao': (context) => MedicacaoPage(),
+      },
       title: 'Cuidar+',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

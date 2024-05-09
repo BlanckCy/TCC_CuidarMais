@@ -3,17 +3,15 @@ import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/models/tipoCuidado/medicacao.dart';
 import 'package:cuidarmais/models/tipoCuidado/medicacaolista.dart';
 import 'package:cuidarmais/pages/medication/medication_registration.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 
 class MedicacaoPage extends StatefulWidget {
-  final Paciente paciente;
   final int tipoCuidado;
 
-  const MedicacaoPage(
-      {Key? key, required this.paciente, required this.tipoCuidado})
-      : super(key: key);
+  const MedicacaoPage({Key? key, required this.tipoCuidado}) : super(key: key);
 
   @override
   State<MedicacaoPage> createState() => _MedicacaoPageState();
@@ -30,17 +28,29 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
   late MedicacaoLista medicacaolista = MedicacaoLista();
   late Medicacao medicacao = Medicacao();
   late Rotina rotina = Rotina();
+  late Paciente paciente = Paciente();
 
   @override
   void initState() {
     super.initState();
-    _carregarInformacoes();
+    _recuperarPaciente();
+  }
+
+  Future<void> _recuperarPaciente() async {
+    final pacienteRecuperado =
+        await PacienteSharedPreferences.recuperarPaciente();
+    if (pacienteRecuperado != null) {
+      setState(() {
+        paciente = pacienteRecuperado;
+      });
+      _carregarInformacoes();
+    } else {}
   }
 
   Future<List<Rotina>> _validarRotina() async {
     try {
       Rotina rotina = Rotina(
-        idpaciente: widget.paciente.idpaciente,
+        idpaciente: paciente.idpaciente,
         tipo_cuidado: widget.tipoCuidado,
         cuidado: 'Medicação',
         realizado: false,
@@ -70,8 +80,8 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
 
   Future<void> _carregarInformacoes() async {
     try {
-      medicacao.idpaciente = widget.paciente.idpaciente;
-      medicacaolista.idpaciente = widget.paciente.idpaciente;
+      medicacao.idpaciente = paciente.idpaciente;
+      medicacaolista.idpaciente = paciente.idpaciente;
 
       listaRotina = await _validarRotina();
       medicacao.idrotina = listaRotina[0].idrotina;
@@ -133,7 +143,7 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
         Medicacao medicacao = Medicacao(
           realizado: medicamento['realizado'],
           idcuidado_medicacao_lista: medicamento['idcuidado_medicacao_lista'],
-          idpaciente: widget.paciente.idpaciente,
+          idpaciente: paciente.idpaciente,
           idrotina: medicamento['idrotina'],
         );
 
@@ -297,9 +307,7 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MedicationRegistrationPage(
-                    paciente: widget.paciente,
-                  ),
+                  builder: (context) => const MedicationRegistrationPage(),
                 ),
               );
             },

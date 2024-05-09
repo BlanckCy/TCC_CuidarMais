@@ -90,7 +90,7 @@ class Cuidador {
       var resposta = jsonDecode(dados);
       var dadosCuidador = jsonDecode(resposta['dados']);
 
-      print(resposta['resposta']);
+      print("cuidador $resposta");
 
       if (resposta['resposta'] == 'ok') {
         return {

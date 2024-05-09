@@ -118,17 +118,24 @@ class Rotina {
     return [];
   }
 
-  Future<bool> atualizarDados() async {
+  Future<bool> atualizar() async {
     var database = Database();
 
-    Map<String, dynamic> cuidadoData = toJson();
-    cuidadoData['data_hora'] =
-        DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+    data_hora = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
 
-    print("aqui $cuidadoData");
+    print({
+      'realizado': realizado,
+      'data_hora': data_hora,
+      'idpaciente': idpaciente.toString()
+    });
+
     try {
       var dados = await database.buscarDadosPut(
-          '/rotina/update/$idrotina', cuidadoData);
+          '/rotina/update-rotinaAtual/$idpaciente', {
+        'realizado': realizado,
+        'data_hora': data_hora,
+        'idpaciente': idpaciente
+      });
 
       var resposta = jsonDecode(dados);
       print(resposta);

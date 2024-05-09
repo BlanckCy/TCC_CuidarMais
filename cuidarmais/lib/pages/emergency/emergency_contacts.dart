@@ -1,13 +1,11 @@
 import 'package:cuidarmais/models/contatoEmergencia.dart';
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/pages/emergency/emergency_contacts_management.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 class EmergencyContactsPage extends StatefulWidget {
-  final Paciente paciente;
-
-  const EmergencyContactsPage({Key? key, required this.paciente})
-      : super(key: key);
+  const EmergencyContactsPage({Key? key}) : super(key: key);
 
   @override
   State<EmergencyContactsPage> createState() => _EmergencyContactsPageState();
@@ -17,16 +15,30 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
   List<Contatoemergencia> contatos = [];
   bool _isLoading = true;
 
+  late Paciente paciente = Paciente();
+  late Contatoemergencia contatoemergencia = Contatoemergencia();
+
   @override
   void initState() {
     super.initState();
-    _carregarContatos(idpaciente: widget.paciente.idpaciente ?? 0);
+    _recuperarPaciente();
   }
 
-  Future<void> _carregarContatos({required int idpaciente}) async {
+  Future<void> _recuperarPaciente() async {
+    final pacienteRecuperado =
+        await PacienteSharedPreferences.recuperarPaciente();
+    if (pacienteRecuperado != null) {
+      setState(() {
+        paciente = pacienteRecuperado;
+      });
+      contatoemergencia.idpaciente = paciente.idpaciente;
+      _carregarContatos();
+    } else {}
+  }
+
+  Future<void> _carregarContatos() async {
     try {
-      var listarContatos =
-          await Contatoemergencia().carregarContatos(idpaciente);
+      var listarContatos = await contatoemergencia.carregarContatos();
       setState(() {
         contatos = listarContatos;
         _isLoading = false;
@@ -172,7 +184,6 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => EmergencyContactsManagementPage(
-                            paciente: widget.paciente,
                             idcontato_emergencia:
                                 contatos[index].idcontato_emergencia,
                           ),
@@ -211,8 +222,7 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EmergencyContactsManagementPage(
-                      paciente: widget.paciente),
+                  builder: (context) => const EmergencyContactsManagementPage(),
                 ),
               );
             },

@@ -3,6 +3,7 @@ import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/pages/list_patient/list_paciente.dart';
 import 'package:cuidarmais/pages/sign_up/sign_up_cuidador.dart';
 import 'package:cuidarmais/pages/password_recovery/password_recovery.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/constants/custom_colors.dart';
 
@@ -19,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final Cuidador cuidador = Cuidador();
+  late Cuidador cuidador = Cuidador();
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
@@ -103,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                       decoration: InputDecoration(
                         prefixIcon: const Icon(
                           Icons.vpn_key_sharp,
-                          color:  Color(0XFF1C51A1),
+                          color: Color(0XFF1C51A1),
                         ),
                         labelText: "Senha:",
                         labelStyle: const TextStyle(color: Colors.white),
@@ -182,15 +183,13 @@ class _LoginPageState extends State<LoginPage> {
                       _formKey.currentState!.validate()) {
                     Map<String, dynamic> loginResult = await cuidador.isValid(
                         emailController.text, senhaController.text);
-                    print(loginResult);
                     if (loginResult['resposta'] == true) {
-                      Paciente paciente = Paciente.fromJson(loginResult['dados']);
+                      cuidador = Cuidador.fromJson(loginResult['dados']);
+                      await CuidadorSharedPreferences.salvar(cuidador);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ListaPacientePage(
-                            paciente: paciente,
-                          ),
+                          builder: (context) => const ListaPacientePage(),
                         ),
                       );
                     } else {

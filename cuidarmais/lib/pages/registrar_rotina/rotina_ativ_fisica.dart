@@ -1,17 +1,16 @@
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/models/rotina.dart';
 import 'package:cuidarmais/models/tipoCuidado/atividadefisica.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:intl/intl.dart';
 
 class AtividadeFisicaPage extends StatefulWidget {
-  final Paciente paciente;
   final int tipoCuidado;
 
-  const AtividadeFisicaPage(
-      {Key? key, required this.paciente, required this.tipoCuidado})
+  const AtividadeFisicaPage({Key? key, required this.tipoCuidado})
       : super(key: key);
 
   @override
@@ -30,19 +29,31 @@ class _AtividadeFisicaPageState extends State<AtividadeFisicaPage> {
 
   late AtividadeFisica atividadefisica = AtividadeFisica();
   late Rotina rotina = Rotina();
+  late Paciente paciente = Paciente();
 
   @override
   void initState() {
     super.initState();
-    _carregarInformacoes();
+    _recuperarPaciente();
+  }
+
+  Future<void> _recuperarPaciente() async {
+    final pacienteRecuperado =
+        await PacienteSharedPreferences.recuperarPaciente();
+    if (pacienteRecuperado != null) {
+      setState(() {
+        paciente = pacienteRecuperado;
+      });
+      _carregarInformacoes();
+    } else {}
   }
 
   Future<List<Rotina>> _validarRotina() async {
     try {
       Rotina rotina = Rotina(
-        idpaciente: widget.paciente.idpaciente,
+        idpaciente: paciente.idpaciente,
         tipo_cuidado: widget.tipoCuidado,
-        cuidado: 'Sinais Vitais',
+        cuidado: 'Atividade Física',
         realizado: false,
       );
 
@@ -70,7 +81,7 @@ class _AtividadeFisicaPageState extends State<AtividadeFisicaPage> {
 
   Future<void> _carregarInformacoes() async {
     try {
-      atividadefisica.idpaciente = widget.paciente.idpaciente;
+      atividadefisica.idpaciente = paciente.idpaciente;
 
       listaRotina = await _validarRotina();
       atividadefisica.idrotina = listaRotina[0].idrotina;
@@ -111,7 +122,7 @@ class _AtividadeFisicaPageState extends State<AtividadeFisicaPage> {
         descricao: _observacoesAtividadeController.text,
         hora: _selectedTime,
         avaliacao: _atividadeBoa,
-        idpaciente: widget.paciente.idpaciente,
+        idpaciente: paciente.idpaciente,
         idrotina: listaRotina[0].idrotina,
       );
 
