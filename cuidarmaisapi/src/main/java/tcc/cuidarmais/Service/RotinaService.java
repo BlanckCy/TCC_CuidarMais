@@ -26,6 +26,10 @@ public class RotinaService {
         return cuidadoRepository.buscarPorIdpacienteTipo(idpaciente,tipo);
     }
 
+    public List<RotinaEntity> buscarPorIdpacienteRotinaAtual(int idpaciente) {
+        return cuidadoRepository.buscarPorIdpacienteRotinaAtual(idpaciente);
+    }
+
     public RotinaEntity buscarPorIdrotina(int idrotina) {
         return cuidadoRepository.findByIdrotina(idrotina);
     }

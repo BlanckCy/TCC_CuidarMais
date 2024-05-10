@@ -29,16 +29,16 @@ create table paciente(
     -- foreign key (idnivelcuidado) references nivelCuidado(idnivelcuidado)
 );
 
-create table listaCompra(
-	idlistaCompra int auto_increment primary key,
+create table lista_compra(
+	idlista_compra int auto_increment primary key,
     descricao varchar(255),
     quantidade int,
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );
 
-create table contatoEmergencia(
-	idcontatoEmergencia int auto_increment primary key,
+create table contato_emergencia(
+	idcontato_emergencia int auto_increment primary key,
     nome varchar(100),
     telefone varchar(20),
     parentesco varchar(100),
