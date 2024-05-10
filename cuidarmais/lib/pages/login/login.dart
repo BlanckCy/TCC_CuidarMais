@@ -1,7 +1,4 @@
 import 'package:cuidarmais/models/cuidador.dart';
-import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/list_patient/list_paciente.dart';
-import 'package:cuidarmais/pages/sign_up/sign_up_cuidador.dart';
 import 'package:cuidarmais/pages/password_recovery/password_recovery.dart';
 import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -150,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PasswordRecoveryPage(),
+                      builder: (context) => const PasswordRecoveryPage(),
                     ),
                   );
                 },
@@ -186,18 +183,21 @@ class _LoginPageState extends State<LoginPage> {
                     if (loginResult['resposta'] == true) {
                       cuidador = Cuidador.fromJson(loginResult['dados']);
                       await CuidadorSharedPreferences.salvar(cuidador);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ListaPacientePage(),
-                        ),
-                      );
+                      Future.microtask(() {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/listaPacientes',
+                          (route) => false,
+                        );
+                      });
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('E-mail ou senha inválidos.'),
-                        ),
-                      );
+                      Future.microtask(() {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('E-mail ou senha inválidos.'),
+                          ),
+                        );
+                      });
                     }
                   }
                 },
@@ -221,11 +221,9 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushNamed(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => const SignUpCuidadorPage(),
-                      ),
+                      '/cadastrarCuidador',
                     );
                   },
                   style: TextButton.styleFrom(

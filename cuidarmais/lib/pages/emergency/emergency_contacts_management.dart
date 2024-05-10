@@ -111,27 +111,26 @@ class _EmergencyContactsManagementPageState
         contatoemergencia.idcontato_emergencia = widget.idcontato_emergencia;
         bool resultado = await contatoemergencia.deletarContatoEmergencia();
 
-        showConfirmationDialog(
-          context: context,
-          title: resultado ? 'OK' : 'Erro',
-          message: resultado
-              ? 'O cadastro foi deletado com sucesso!'
-              : 'Ocorreu um erro ao deletar o cadastro.',
-          confirmButtonText: 'OK',
-          onConfirm: () {
-            if (resultado) {
-              Navigator.of(context).popUntil((route) => route.isFirst);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HomePage(
-                    selectedIndex: 2,
-                  ),
-                ),
-              );
-            }
-          },
-        );
+        Future.microtask(() {
+          showConfirmationDialog(
+            context: context,
+            title: resultado ? 'OK' : 'Erro',
+            message: resultado
+                ? 'O cadastro foi deletado com sucesso!'
+                : 'Ocorreu um erro ao deletar o cadastro.',
+            confirmButtonText: 'OK',
+            onConfirm: () {
+              if (resultado) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/home',
+                  (route) => false,
+                  arguments: 2,
+                );
+              }
+            },
+          );
+        });
       },
     );
   }
@@ -142,26 +141,25 @@ class _EmergencyContactsManagementPageState
 
     bool atualizacaoSucesso = await contatoemergencia.cadastrar();
 
-    showConfirmationDialog(
-      context: context,
-      title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-      message: atualizacaoSucesso
-          ? 'O cadastro foi realizado com sucesso!'
-          : 'Houve um erro ao realizar o cadastro. Por favor, tente novamente.',
-      onConfirm: () {
-        if (atualizacaoSucesso) {
-          Navigator.of(context).popUntil((route) => route.isFirst);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePage(
-                selectedIndex: 2,
-              ),
-            ),
-          );
-        }
-      },
-    );
+    Future.microtask(() {
+      showConfirmationDialog(
+        context: context,
+        title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+        message: atualizacaoSucesso
+            ? 'O cadastro foi realizado com sucesso!'
+            : 'Houve um erro ao realizar o cadastro. Por favor, tente novamente.',
+        onConfirm: () {
+          if (atualizacaoSucesso) {
+            Navigator.pop(context);
+            Navigator.pushReplacementNamed(
+              context,
+              '/home',
+              arguments: 2,
+            );
+          }
+        },
+      );
+    });
   }
 
   @override

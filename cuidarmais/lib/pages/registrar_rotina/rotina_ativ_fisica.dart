@@ -67,14 +67,16 @@ class _AtividadeFisicaPageState extends State<AtividadeFisicaPage> {
       }
       return listaRotina;
     } catch (error) {
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao carregar informações da rotina',
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao carregar informações da rotina',
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
+        );
+      });
       return [];
     }
   }
@@ -103,14 +105,16 @@ class _AtividadeFisicaPageState extends State<AtividadeFisicaPage> {
       setState(() {
         _isLoading = false;
       });
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao carregar informações da listaAtividadeFisica',
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao carregar informações da listaAtividadeFisica',
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
+        );
+      });
     }
   }
 
@@ -135,26 +139,30 @@ class _AtividadeFisicaPageState extends State<AtividadeFisicaPage> {
         atualizacaoSucesso = await atividadefisica.cadastrar();
       }
 
-      showConfirmationDialog(
-        context: context,
-        title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-        message: atualizacaoSucesso
-            ? 'As informações foram salvas com sucesso!'
-            : 'Houve um erro ao salvar os dados. Por favor, tente novamente.',
-        onConfirm: () {
-          if (atualizacaoSucesso) {
-            Navigator.of(context).pop();
-          }
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+          message: atualizacaoSucesso
+              ? 'As informações foram salvas com sucesso!'
+              : 'Houve um erro ao salvar os dados. Por favor, tente novamente.',
+          onConfirm: () {
+            if (atualizacaoSucesso) {
+              Navigator.of(context).pop();
+            }
+          },
+        );
+      });
     } catch (error) {
       print('Erro ao salvar os dados: $error');
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao salvar os dados.',
-        onConfirm: () {},
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao salvar os dados.',
+          onConfirm: () {},
+        );
+      });
     }
   }
 

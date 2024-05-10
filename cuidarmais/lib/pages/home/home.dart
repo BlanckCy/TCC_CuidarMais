@@ -40,12 +40,6 @@ class _HomePageState extends State<HomePage> {
     } else {}
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,5 +63,11 @@ class _HomePageState extends State<HomePage> {
       default:
         return Container();
     }
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 }

@@ -2,6 +2,7 @@ import 'package:cuidarmais/models/contatoEmergencia.dart';
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/pages/emergency/emergency_contacts_management.dart';
 import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
+import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/material.dart';
 
 class EmergencyContactsPage extends StatefulWidget {
@@ -44,31 +45,43 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
         _isLoading = false;
       });
     } catch (error) {
-      print('Erro ao carregar contatos de emergencia: $error');
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Erro'),
-          content: Text('Erro ao carregar os contatos de emergência'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      Future.microtask(() {
+        print('Erro ao carregar contatos de emergencia: $error');
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Erro'),
+            content: Text('Erro ao carregar os contatos de emergência'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _buildContactList(),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacementNamed(
+          context,
+          '/home',
+          arguments: 1,
+        );
+        return false;
+      },
+      child: Scaffold(
+        body: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _buildContactList(),
+      ),
     );
   }
 
@@ -180,14 +193,10 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => EmergencyContactsManagementPage(
-                            idcontato_emergencia:
-                                contatos[index].idcontato_emergencia,
-                          ),
-                        ),
+                        '/gerenciarContatos',
+                        arguments: contatos[index].idcontato_emergencia,
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -219,11 +228,9 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
-              Navigator.push(
+              Navigator.pushNamed(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const EmergencyContactsManagementPage(),
-                ),
+                '/gerenciarContatos',
               );
             },
             style: ElevatedButton.styleFrom(

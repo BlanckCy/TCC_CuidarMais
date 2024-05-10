@@ -77,14 +77,16 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
       }
       return listaRotina;
     } catch (error) {
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao carregar informações da rotina',
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao carregar informações da rotina',
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
+        );
+      });
       return [];
     }
   }
@@ -123,14 +125,16 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
       setState(() {
         _isLoading = false;
       });
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao carregar informações da listaRefeicao',
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao carregar informações da listaRefeicao',
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
+        );
+      });
     }
   }
 
@@ -162,18 +166,20 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
       atualizacaoSucesso = await refeicao.cadastrar();
     }
 
-    showConfirmationDialog(
-      context: context,
-      title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-      message: atualizacaoSucesso
-          ? 'As informações foram salvas com sucesso!'
-          : 'Houve um erro ao atualizar os dados. Por favor, tente novamente.',
-      onConfirm: () {
-        if (atualizacaoSucesso) {
-          Navigator.of(context).pop();
-        }
-      },
-    );
+    Future.microtask(() {
+      showConfirmationDialog(
+        context: context,
+        title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+        message: atualizacaoSucesso
+            ? 'As informações foram salvas com sucesso!'
+            : 'Houve um erro ao atualizar os dados. Por favor, tente novamente.',
+        onConfirm: () {
+          if (atualizacaoSucesso) {
+            Navigator.of(context).pop();
+          }
+        },
+      );
+    });
   }
 
   Widget _buildMealWidget(

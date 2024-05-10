@@ -18,6 +18,7 @@ class RegistrarRotinaPage extends StatefulWidget {
 }
 
 class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
+  bool _isLoading = true;
   late Paciente paciente = Paciente();
 
   @override
@@ -32,6 +33,7 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
     if (pacienteRecuperado != null) {
       setState(() {
         paciente = pacienteRecuperado;
+        _isLoading = false;
       });
     } else {}
   }
@@ -71,28 +73,50 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
 
         atualizacaoSucesso = await rotina.atualizar();
 
-        showConfirmationDialog(
-          context: context,
-          title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-          message: atualizacaoSucesso
-              ? 'A rotina foi finalizada!'
-              : 'Houve um erro ao finalizar a rotina. Por favor, tente novamente.',
-          onConfirm: () {},
-        );
+        Future.microtask(() {
+          showConfirmationDialog(
+            context: context,
+            title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+            message: atualizacaoSucesso
+                ? 'A rotina foi finalizada!'
+                : 'Houve um erro ao finalizar a rotina. Por favor, tente novamente.',
+            onConfirm: () {},
+          );
+        });
       }
     } catch (error) {
       print('Erro ao salvar os dados: $error');
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao salvar os dados.',
-        onConfirm: () {},
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao salvar os dados.',
+          onConfirm: () {},
+        );
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacementNamed(
+          context,
+          '/home',
+          arguments: 1,
+        );
+        return false;
+      },
+      child: Scaffold(
+        body: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _buildRotina(),
+      ),
+    );
+  }
+
+  Widget _buildRotina() {
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -111,47 +135,45 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
               ),
               const SizedBox(height: 10),
               _buildButton(
-                  'Medicação',
-                  Icons.medical_services_sharp,
-                  const MedicacaoPage(
-                    tipoCuidado: 5,
-                  )),
+                'Medicação',
+                Icons.medical_services_sharp,
+                'rotinaMedicacao',
+                5,
+              ),
               const SizedBox(height: 20),
               _buildButton(
-                  'Sinais Vitais',
-                  Icons.auto_graph_rounded,
-                  const SinaisVitaisPage(
-                    tipoCuidado: 2,
-                  )),
+                'Sinais Vitais',
+                Icons.auto_graph_rounded,
+                'rotinaSinaisVitais',
+                2,
+              ),
               const SizedBox(height: 20),
               _buildButton(
-                  'Refeições',
-                  Icons.food_bank,
-                  const RefeicaoPage(
-                    tipoCuidado: 1,
-                  )),
+                'Refeições',
+                Icons.food_bank,
+                'rotinaRefeicao',
+                1,
+              ),
               const SizedBox(height: 20),
               _buildButton(
-                  'Atividade Física',
-                  Icons.accessibility_new,
-                  const AtividadeFisicaPage(
-                    tipoCuidado: 3,
-                  )),
+                'Atividade Física',
+                Icons.accessibility_new,
+                'rotinaAtividadeFisica',
+                3,
+              ),
               const SizedBox(height: 20),
               _buildButton(
-                  'Higiene',
-                  Icons.shower,
-                  RotinaHigienePage(
-                    paciente: paciente,
-                    tipoCuidado: 4,
-                  )),
+                'Higiene',
+                Icons.shower,
+                'rotinaHigiene',
+                4,
+              ),
               const SizedBox(height: 20),
               _buildButton(
                 'Mudança Decúbito',
                 Icons.bedroom_child,
-                const RotinaDecubitoPage(
-                  tipoCuidado: 6,
-                ),
+                'rotinaDecubito',
+                6,
               ),
               const SizedBox(height: 30),
               _buildButtonFinalizar(),
@@ -195,15 +217,13 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
     );
   }
 
-  Widget _buildButton(String text, IconData icon, Widget destination) {
+  Widget _buildButton(
+      String text, IconData icon, String rota, int tipoCuidado) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: ElevatedButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => destination),
-          );
+          Navigator.pushNamed(context, '/$rota', arguments: tipoCuidado);
         },
         style: TextButton.styleFrom(
           backgroundColor: const Color(0XFF1C51A1),

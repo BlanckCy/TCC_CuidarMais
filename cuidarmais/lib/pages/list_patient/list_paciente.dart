@@ -2,8 +2,6 @@ import 'package:cuidarmais/models/cuidador.dart';
 import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/home/home.dart';
-import 'package:cuidarmais/pages/sign_up/sign_up_paciente.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/services.dart';
 
@@ -46,22 +44,27 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
       });
     } catch (error) {
       print('Erro ao carregar pacientes: $error');
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Erro ao carregar pacientes'),
-          content: Text('$error'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      Future.microtask(() {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Erro ao carregar pacientes'),
+            content: Text('$error'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/',
+                    (route) => false,
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      });
     }
   }
 
@@ -87,11 +90,9 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
           const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: () {
-              Navigator.push(
+              Navigator.pushNamed(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const SignUpPacientePage(),
-                ),
+                '/cadastrarPaciente',
               );
             },
             icon: const Icon(Icons.person_add_alt_1),
@@ -124,12 +125,12 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
                       await PacienteSharedPreferences.salvarPaciente(
                         pacientes[index],
                       );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomePage(),
-                        ),
-                      );
+                      Future.microtask(() {
+                        Navigator.pushNamed(
+                          context,
+                          '/home',
+                        );
+                      });
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 210, 228, 255),

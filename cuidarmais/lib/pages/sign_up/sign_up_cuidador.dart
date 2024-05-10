@@ -318,34 +318,33 @@ class _SignUpCuidadorPageState extends State<SignUpCuidadorPage> {
                       _formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     bool resultado = await cuidador.cadastrar();
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text(resultado ? 'Cadastro OK' : 'Erro'),
-                          content: Text(
-                            resultado
-                                ? 'O cadastro foi realizado com sucesso!'
-                                : 'Ocorreu um erro ao realizar o cadastro.',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const LoginPage(),
-                                  ),
-                                  (route) => false,
-                                );
-                              },
-                              child: Text('OK'),
+                    Future.microtask(() {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(resultado ? 'Cadastro OK' : 'Erro'),
+                            content: Text(
+                              resultado
+                                  ? 'O cadastro foi realizado com sucesso!'
+                                  : 'Ocorreu um erro ao realizar o cadastro.',
                             ),
-                          ],
-                        );
-                      },
-                    );
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    '/',
+                                    (route) => false,
+                                  );
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    });
                   }
                 },
                 style: TextButton.styleFrom(

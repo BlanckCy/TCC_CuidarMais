@@ -1,6 +1,4 @@
 import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/home/home.dart';
-import 'package:cuidarmais/pages/patient_data/patient_data.dart';
 import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
@@ -30,17 +28,17 @@ class _HomePageState extends State<PrincipalPage> {
     } else {}
   }
 
-  Widget buildCustomButton(IconData icon, String text, Color color,
-      Widget Function(BuildContext) onPressed) {
+  Widget buildCustomButton(
+      IconData icon, String text, Color color, String rota, int selectedIndex) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: ElevatedButton(
         onPressed: () {
-          Navigator.push(
+          Navigator.pop(context);
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(
-              builder: onPressed,
-            ),
+            '/$rota',
+            arguments: selectedIndex,
           );
         },
         style: ElevatedButton.styleFrom(
@@ -80,18 +78,16 @@ class _HomePageState extends State<PrincipalPage> {
               Icons.book,
               'Registrar Rotina',
               const Color(0xFF1C51A1),
-              (context) => const HomePage(
-                selectedIndex: 0,
-              ),
+              'home',
+              0,
             ),
             const SizedBox(height: 20),
             buildCustomButton(
               Icons.local_hospital,
               'SOS Emergência',
               Colors.red,
-              (context) => const HomePage(
-                selectedIndex: 2,
-              ),
+              'home',
+              2,
             ),
           ],
         ),
@@ -107,11 +103,9 @@ class _HomePageState extends State<PrincipalPage> {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.pushNamed(
           context,
-          MaterialPageRoute(
-            builder: (context) => const PatientDataPage(),
-          ),
+          '/dadosPaciente',
         );
       },
       child: Padding(

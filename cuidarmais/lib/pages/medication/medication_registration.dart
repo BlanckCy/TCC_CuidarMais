@@ -1,5 +1,4 @@
 import 'package:cuidarmais/models/tipoCuidado/medicacaolista.dart';
-import 'package:cuidarmais/pages/registrar_rotina/rotina_medicacao.dart';
 import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
@@ -44,40 +43,24 @@ class _MedicationRegistrationPageState
   Future<void> _cadastrar() async {
     medicacaolista.idpaciente = paciente.idpaciente;
     bool atualizacaoSucesso = await medicacaolista.cadastrar();
-
-    showConfirmationDialog(
-      context: context,
-      title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-      message: atualizacaoSucesso
-          ? 'O cadastro foi realizado com sucesso!'
-          : 'Houve um erro ao realizar o cadastro. Por favor, tente novamente.',
-      onConfirm: () {
-        if (atualizacaoSucesso) {
-          Navigator.of(context).popUntil((route) => route.isFirst);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const MedicacaoPage(
-                tipoCuidado: 5,
-              ),
-            ),
-          );
-
-          /* Navigator.popUntil(context, ModalRoute.withName('/'));
-
-          // Substitui a tela atual pela tela de MedicacaoPage
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MedicacaoPage(
-                paciente: widget.paciente,
-                tipoCuidado: 5,
-              ),
-            ),
-          ); */
-        }
-      },
-    );
+    Future.microtask(() {
+      showConfirmationDialog(
+        context: context,
+        title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+        message: atualizacaoSucesso
+            ? 'O cadastro foi realizado com sucesso!'
+            : 'Houve um erro ao realizar o cadastro. Por favor, tente novamente.',
+        onConfirm: () {
+          if (atualizacaoSucesso) {
+            Navigator.pop(context);
+            Navigator.pushReplacementNamed(
+              context,
+              '/rotinaMedicacao',
+            );
+          }
+        },
+      );
+    });
   }
 
   @override

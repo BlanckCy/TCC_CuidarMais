@@ -66,14 +66,16 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
       }
       return listaRotina;
     } catch (error) {
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao carregar informações da rotina',
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao carregar informações da rotina',
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
+        );
+      });
       return [];
     }
   }
@@ -121,14 +123,16 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
         return;
       });
     } catch (error) {
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao carregar informações da rotina',
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao carregar informações da rotina',
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
+        );
+      });
     }
   }
 
@@ -157,28 +161,32 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
 
         if (!mensagem) {
           mensagem = true;
-          showConfirmationDialog(
-            context: context,
-            title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-            message: atualizacaoSucesso
-                ? 'As informações foram salvas com sucesso!'
-                : 'Houve um erro ao salvar os dados. Por favor, tente novamente.',
-            onConfirm: () {
-              if (atualizacaoSucesso) {
-                Navigator.of(context).pop();
-              }
-            },
-          );
+          Future.microtask(() {
+            showConfirmationDialog(
+              context: context,
+              title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+              message: atualizacaoSucesso
+                  ? 'As informações foram salvas com sucesso!'
+                  : 'Houve um erro ao salvar os dados. Por favor, tente novamente.',
+              onConfirm: () {
+                if (atualizacaoSucesso) {
+                  Navigator.of(context).pop();
+                }
+              },
+            );
+          });
         }
       }
     } catch (error) {
-      print('Erro ao salvar os dados: $error');
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao salvar os dados.',
-        onConfirm: () {},
-      );
+      Future.microtask(() {
+        print('Erro ao salvar os dados: $error');
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao salvar os dados.',
+          onConfirm: () {},
+        );
+      });
     }
   }
 
@@ -304,11 +312,9 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.push(
+              Navigator.pushNamed(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const MedicationRegistrationPage(),
-                ),
+                '/gerenciarMedicacao',
               );
             },
             style: TextButton.styleFrom(
