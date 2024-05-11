@@ -1,5 +1,4 @@
 import 'package:cuidarmais/models/cuidador.dart';
-import 'package:cuidarmais/pages/login/login.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';

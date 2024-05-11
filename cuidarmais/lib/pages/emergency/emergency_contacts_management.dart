@@ -74,13 +74,14 @@ class _EmergencyContactsManagementPageState
         _isLoading = false;
       });
     } catch (error) {
-      print('Erro ao carregar dados: $error');
-      await showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao carregar os dados.',
-        onConfirm: () {},
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao carregar os dados.',
+          onConfirm: () {},
+        );
+      });
     }
   }
 
@@ -90,14 +91,16 @@ class _EmergencyContactsManagementPageState
 
     bool atualizacaoSucesso = await contatoemergencia.atualizarDados();
 
-    showConfirmationDialog(
-      context: context,
-      title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-      message: atualizacaoSucesso
-          ? 'Os dados foram atualizados com sucesso!'
-          : 'Houve um erro ao atualizar os dados. Por favor, tente novamente.',
-      onConfirm: () {},
-    );
+    Future.microtask(() {
+      showConfirmationDialog(
+        context: context,
+        title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+        message: atualizacaoSucesso
+            ? 'Os dados foram atualizados com sucesso!'
+            : 'Houve um erro ao atualizar os dados. Por favor, tente novamente.',
+        onConfirm: () {},
+      );
+    });
   }
 
   Future<void> _deletarDados() async {

@@ -179,7 +179,6 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
       }
     } catch (error) {
       Future.microtask(() {
-        print('Erro ao salvar os dados: $error');
         showConfirmationDialog(
           context: context,
           title: 'Erro',

@@ -85,7 +85,6 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
         });
       }
     } catch (error) {
-      print('Erro ao salvar os dados: $error');
       Future.microtask(() {
         showConfirmationDialog(
           context: context,
