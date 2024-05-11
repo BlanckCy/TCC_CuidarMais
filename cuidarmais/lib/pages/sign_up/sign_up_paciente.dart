@@ -1,13 +1,12 @@
+import 'package:cuidarmais/models/cuidador.dart';
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/pages/list_patient/list_paciente.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/material.dart';
 
 class SignUpPacientePage extends StatefulWidget {
-  final Paciente paciente;
-
-  const SignUpPacientePage({Key? key, required this.paciente})
-      : super(key: key);
+  const SignUpPacientePage({Key? key}) : super(key: key);
 
   @override
   State<SignUpPacientePage> createState() => _SignUpPacientePageState();
@@ -26,7 +25,24 @@ class _SignUpPacientePageState extends State<SignUpPacientePage> {
   final TextEditingController idadeController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final Paciente paciente = Paciente();
+
+  late Paciente paciente = Paciente();
+  late Cuidador cuidador = Cuidador();
+
+  @override
+  void initState() {
+    super.initState();
+    _recuperarCuidador();
+  }
+
+  Future<void> _recuperarCuidador() async {
+    final cuidadorRecuperado = await CuidadorSharedPreferences.recuperar();
+    if (cuidadorRecuperado != null) {
+      setState(() {
+        cuidador = cuidadorRecuperado;
+      });
+    } else {}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -321,8 +337,8 @@ class _SignUpPacientePageState extends State<SignUpPacientePage> {
                   if (_formKey.currentState != null &&
                       _formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    bool resultado = await paciente
-                        .cadastrar(widget.paciente.idcuidador ?? 0);
+                    bool resultado =
+                        await paciente.cadastrar(cuidador.idcuidador ?? 0);
                     if (resultado) {
                       showDialog(
                         context: context,
@@ -338,9 +354,8 @@ class _SignUpPacientePageState extends State<SignUpPacientePage> {
                                   Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => ListaPacientePage(
-                                        paciente: widget.paciente,
-                                      ),
+                                      builder: (context) =>
+                                          const ListaPacientePage(),
                                     ),
                                     (route) => false,
                                   );

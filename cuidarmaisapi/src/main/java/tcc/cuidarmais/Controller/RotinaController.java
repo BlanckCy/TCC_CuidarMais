@@ -31,11 +31,20 @@ public class RotinaController {
     public ResponseEntity<List<RotinaEntity>> listarPorIdpacienteTipo(@PathVariable int idpaciente, @PathVariable int tipo) {
         try {
             List<RotinaEntity> cuidados = rotinaService.buscarPorIdpacienteTipo(idpaciente,tipo);
-            System.err.println(cuidados);
             return new ResponseEntity<>(cuidados, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }        
+    }
+
+    @GetMapping("/lista-rotinaAtual/{idpaciente}")
+    public ResponseEntity<List<RotinaEntity>> buscarRotinaAtual(@PathVariable int idpaciente) {
+        List<RotinaEntity> cuidados = rotinaService.buscarPorIdpacienteRotinaAtual(idpaciente);
+        if (!cuidados.isEmpty()) {
+            return new ResponseEntity<>(cuidados, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/create")
@@ -59,6 +68,21 @@ public class RotinaController {
 
             RotinaEntity cuidadorAtualizadoDb = rotinaService.salvar(cuidado);
             return new ResponseEntity<>(cuidadorAtualizadoDb, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/update-rotinaAtual/{idpaciente}")
+    public ResponseEntity<List<RotinaEntity>> atualizarRotinaAtual(@PathVariable int idpaciente, @RequestBody RotinaEntity cuidadoAtualizado) {
+        List<RotinaEntity> cuidados = rotinaService.buscarPorIdpacienteRotinaAtual(idpaciente);
+        if (!cuidados.isEmpty()) {
+            for (RotinaEntity cuidado : cuidados) {
+                cuidado.setData_hora(cuidadoAtualizado.getData_hora());
+                cuidado.setRealizado(cuidadoAtualizado.isRealizado());
+                rotinaService.salvar(cuidado);
+            }
+            return new ResponseEntity<>(cuidados, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

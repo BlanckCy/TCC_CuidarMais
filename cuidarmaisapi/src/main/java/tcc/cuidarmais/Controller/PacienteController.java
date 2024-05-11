@@ -33,10 +33,9 @@ public class PacienteController {
         return new ResponseEntity<>(pacientes, HttpStatus.OK);
     }
 
-    @GetMapping("/{idcuidador}")
-    public ResponseEntity<PacienteEntity> buscarPacientePorId(@PathVariable int idcuidador) {
-        PacienteEntity paciente = pacienteService.buscarPacientePorId(idcuidador);
-        System.out.println(idcuidador);
+    @GetMapping("/{idpaciente}")
+    public ResponseEntity<PacienteEntity> buscarPacientePorIdpaciente(@PathVariable int idpaciente) {
+        PacienteEntity paciente = pacienteService.buscarPacientePorIdpaciente(idpaciente);
         if (paciente != null) {
             return new ResponseEntity<>(paciente, HttpStatus.OK);
         } else {
@@ -59,7 +58,7 @@ public class PacienteController {
 
     @PutMapping("/update/{idpaciente}")
     public ResponseEntity<PacienteEntity> atualizarPaciente(@PathVariable int idpaciente, @RequestBody PacienteEntity pacienteAtualizado) {
-        PacienteEntity paciente = pacienteService.buscarPacientePorId(idpaciente);
+        PacienteEntity paciente = pacienteService.buscarPacientePorIdpaciente(idpaciente);
         System.out.println(pacienteAtualizado.getEmail_responsavel());
         if (paciente != null) {
             paciente.setNome(pacienteAtualizado.getNome());

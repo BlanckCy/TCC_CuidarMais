@@ -1,8 +1,6 @@
 import 'package:cuidarmais/models/cuidador.dart';
-import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/list_patient/list_paciente.dart';
-import 'package:cuidarmais/pages/sign_up/sign_up_cuidador.dart';
 import 'package:cuidarmais/pages/password_recovery/password_recovery.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/constants/custom_colors.dart';
 
@@ -19,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final Cuidador cuidador = Cuidador();
+  late Cuidador cuidador = Cuidador();
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
@@ -103,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                       decoration: InputDecoration(
                         prefixIcon: const Icon(
                           Icons.vpn_key_sharp,
-                          color:  Color(0XFF1C51A1),
+                          color: Color(0XFF1C51A1),
                         ),
                         labelText: "Senha:",
                         labelStyle: const TextStyle(color: Colors.white),
@@ -149,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PasswordRecoveryPage(),
+                      builder: (context) => const PasswordRecoveryPage(),
                     ),
                   );
                 },
@@ -182,23 +180,24 @@ class _LoginPageState extends State<LoginPage> {
                       _formKey.currentState!.validate()) {
                     Map<String, dynamic> loginResult = await cuidador.isValid(
                         emailController.text, senhaController.text);
-                    print(loginResult);
                     if (loginResult['resposta'] == true) {
-                      Paciente paciente = Paciente.fromJson(loginResult['dados']);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ListaPacientePage(
-                            paciente: paciente,
-                          ),
-                        ),
-                      );
+                      cuidador = Cuidador.fromJson(loginResult['dados']);
+                      await CuidadorSharedPreferences.salvar(cuidador);
+                      Future.microtask(() {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/listaPacientes',
+                          (route) => false,
+                        );
+                      });
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('E-mail ou senha inválidos.'),
-                        ),
-                      );
+                      Future.microtask(() {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('E-mail ou senha inválidos.'),
+                          ),
+                        );
+                      });
                     }
                   }
                 },
@@ -222,11 +221,9 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushNamed(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => const SignUpCuidadorPage(),
-                      ),
+                      '/cadastrarCuidador',
                     );
                   },
                   style: TextButton.styleFrom(

@@ -23,7 +23,7 @@ public class ContatoEmergenciaController {
 
     @GetMapping("/lista")
     public ResponseEntity<List<ContatoEmergenciaEntity>> listarCuidados() {
-        List<ContatoEmergenciaEntity> contatos = contatoEmergenciaService.listarContatos();
+        List<ContatoEmergenciaEntity> contatos = contatoEmergenciaService.listar();
         return new ResponseEntity<>(contatos, HttpStatus.OK);
     }
 
@@ -46,7 +46,7 @@ public class ContatoEmergenciaController {
     @PostMapping("/create")
     public ResponseEntity<ContatoEmergenciaEntity> salvarCuidado(@RequestBody ContatoEmergenciaEntity contatoEmergencia) {
         try {
-            ContatoEmergenciaEntity novoContato = contatoEmergenciaService.salvarContato(contatoEmergencia);
+            ContatoEmergenciaEntity novoContato = contatoEmergenciaService.salvar(contatoEmergencia);
             return new ResponseEntity<>(novoContato, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -60,7 +60,7 @@ public class ContatoEmergenciaController {
             contatoEmergencia.setNome(contatoAtualizado.getNome());
             contatoEmergencia.setTelefone(contatoAtualizado.getTelefone());
             contatoEmergencia.setParentesco(contatoAtualizado.getParentesco());
-            ContatoEmergenciaEntity contatoEmergenciaAtualizadoDb = contatoEmergenciaService.salvarContato(contatoEmergencia);
+            ContatoEmergenciaEntity contatoEmergenciaAtualizadoDb = contatoEmergenciaService.salvar(contatoEmergencia);
             return new ResponseEntity<>(contatoEmergenciaAtualizadoDb, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -70,7 +70,7 @@ public class ContatoEmergenciaController {
     @DeleteMapping("/delete/{idcontato_emergencia}")
     public ResponseEntity<Void> deletarContato(@PathVariable int idcontato_emergencia) {
         try {
-            contatoEmergenciaService.deletarContato(idcontato_emergencia);
+            contatoEmergenciaService.deletar(idcontato_emergencia);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

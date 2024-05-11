@@ -1,14 +1,12 @@
+import 'package:cuidarmais/models/cuidador.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/home/home.dart';
-import 'package:cuidarmais/pages/sign_up/sign_up_paciente.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/services.dart';
 
 class ListaPacientePage extends StatefulWidget {
-  final Paciente paciente;
-
-  const ListaPacientePage({Key? key, required this.paciente}) : super(key: key);
+  const ListaPacientePage({Key? key}) : super(key: key);
 
   @override
   State<ListaPacientePage> createState() => _ListaPacientePageState();
@@ -17,37 +15,56 @@ class ListaPacientePage extends StatefulWidget {
 class _ListaPacientePageState extends State<ListaPacientePage> {
   List<Paciente> pacientes = [];
   bool _isLoading = true;
+  late Cuidador cuidador = Cuidador();
+  late Paciente paciente = Paciente();
 
   @override
   void initState() {
     super.initState();
-    _carregarPacientes(idcuidador: widget.paciente.idcuidador ?? 0);
+    _recuperarCuidador();
   }
 
-  Future<void> _carregarPacientes({required int idcuidador}) async {
+  Future<void> _recuperarCuidador() async {
+    final cuidadorRecuperado = await CuidadorSharedPreferences.recuperar();
+    if (cuidadorRecuperado != null) {
+      setState(() {
+        cuidador = cuidadorRecuperado;
+      });
+      paciente.idcuidador = cuidador.idcuidador;
+      _carregarPacientes();
+    } else {}
+  }
+
+  Future<void> _carregarPacientes() async {
     try {
-      var listaPacientes = await Paciente().carregarPacientes(idcuidador);
+      var listaPacientes = await paciente.carregarPacientes();
       setState(() {
         pacientes = listaPacientes;
-        _isLoading = false; // Marca o carregamento como concluído
+        _isLoading = false;
       });
     } catch (error) {
       print('Erro ao carregar pacientes: $error');
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Erro ao carregar pacientes'),
-          content: Text('$error'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      Future.microtask(() {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Erro ao carregar pacientes'),
+            content: Text('$error'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/',
+                    (route) => false,
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      });
     }
   }
 
@@ -58,8 +75,8 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
       child: Scaffold(
         appBar: const CustomAppBar(),
         body: _isLoading
-            ? const Center(child: CircularProgressIndicator()) 
-            : _buildPacientesList(), 
+            ? const Center(child: CircularProgressIndicator())
+            : _buildPacientesList(),
       ),
     );
   }
@@ -73,13 +90,9 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
           const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: () {
-              Navigator.push(
+              Navigator.pushNamed(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => SignUpPacientePage(
-                    paciente: widget.paciente,
-                  ),
-                ),
+                '/cadastrarPaciente',
               );
             },
             icon: const Icon(Icons.person_add_alt_1),
@@ -108,19 +121,19 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(
-                            paciente: pacientes[index],
-                          ),
-                        ),
+                    onPressed: () async {
+                      await PacienteSharedPreferences.salvarPaciente(
+                        pacientes[index],
                       );
+                      Future.microtask(() {
+                        Navigator.pushNamed(
+                          context,
+                          '/home',
+                        );
+                      });
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color.fromARGB(255, 210, 228, 255),
+                      backgroundColor: const Color.fromARGB(255, 210, 228, 255),
                       foregroundColor: Colors.black,
                       minimumSize: const Size(250, 50),
                     ),

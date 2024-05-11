@@ -12,18 +12,12 @@ public class ContatoEmergenciaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-    private int idcontato_emergencia;
+    private int idcontatoEmergencia;
     private String nome;
     private String telefone;
     private String parentesco;
     private int idpaciente;
 
-    public int getidcontato_emergencia() {
-        return idcontato_emergencia;
-    }
-    public void setidcontato_emergencia(int idcontato_emergencia) {
-        this.idcontato_emergencia = idcontato_emergencia;
-    }
     public String getNome() {
         return nome;
     }
@@ -47,5 +41,11 @@ public class ContatoEmergenciaEntity {
     }
     public void setIdpaciente(int idpaciente) {
         this.idpaciente = idpaciente;
+    }
+    public int getIdcontatoEmergencia() {
+        return idcontatoEmergencia;
+    }
+    public void setIdcontatoEmergencia(int idcontatoEmergencia) {
+        this.idcontatoEmergencia = idcontatoEmergencia;
     }    
 }

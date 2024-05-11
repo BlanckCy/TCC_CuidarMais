@@ -1,5 +1,5 @@
 import 'package:cuidarmais/models/tipoCuidado/medicacaolista.dart';
-import 'package:cuidarmais/pages/registrar_rotina/rotina_medicacao.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/models/paciente.dart';
@@ -7,10 +7,7 @@ import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:intl/intl.dart';
 
 class MedicationRegistrationPage extends StatefulWidget {
-  final Paciente paciente;
-
-  const MedicationRegistrationPage({Key? key, required this.paciente})
-      : super(key: key);
+  const MedicationRegistrationPage({Key? key}) : super(key: key);
 
   @override
   State<MedicationRegistrationPage> createState() =>
@@ -25,32 +22,45 @@ class _MedicationRegistrationPageState
   String _selectTipoDosagem = "";
 
   late MedicacaoLista medicacaolista = MedicacaoLista();
+  late Paciente paciente = Paciente();
+
+  @override
+  void initState() {
+    super.initState();
+    _recuperarPaciente();
+  }
+
+  Future<void> _recuperarPaciente() async {
+    final pacienteRecuperado =
+        await PacienteSharedPreferences.recuperarPaciente();
+    if (pacienteRecuperado != null) {
+      setState(() {
+        paciente = pacienteRecuperado;
+      });
+    } else {}
+  }
 
   Future<void> _cadastrar() async {
-    medicacaolista.idpaciente = widget.paciente.idpaciente;
+    medicacaolista.idpaciente = paciente.idpaciente;
     bool atualizacaoSucesso = await medicacaolista.cadastrar();
-
-    showConfirmationDialog(
-      context: context,
-      title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-      message: atualizacaoSucesso
-          ? 'O cadastro foi realizado com sucesso!'
-          : 'Houve um erro ao realizar o cadastro. Por favor, tente novamente.',
-      onConfirm: () {
-        if (atualizacaoSucesso) {
-          Navigator.of(context).popUntil((route) => route.isFirst);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MedicacaoPage(
-                paciente: widget.paciente,
-                tipoCuidado: 6,
-              ),
-            ),
-          );
-        }
-      },
-    );
+    Future.microtask(() {
+      showConfirmationDialog(
+        context: context,
+        title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+        message: atualizacaoSucesso
+            ? 'O cadastro foi realizado com sucesso!'
+            : 'Houve um erro ao realizar o cadastro. Por favor, tente novamente.',
+        onConfirm: () {
+          if (atualizacaoSucesso) {
+            Navigator.pop(context);
+            Navigator.pushReplacementNamed(
+              context,
+              '/rotinaMedicacao',
+            );
+          }
+        },
+      );
+    });
   }
 
   @override
@@ -206,7 +216,8 @@ class _MedicationRegistrationPageState
                                 if (selectedTime != null) {
                                   setState(() {
                                     _selectedTime = _formatTime(selectedTime);
-                                    medicacaolista.hora = _selectedTime;
+                                    medicacaolista.hora =
+                                        _formatTime(selectedTime);
                                   });
                                 }
                               },

@@ -12,4 +12,7 @@ public interface RotinaRepository extends JpaRepository<RotinaEntity, Integer> {
 
     @Query("SELECT c FROM RotinaEntity c WHERE c.idpaciente = ?1 AND c.tipo_cuidado = ?2 AND c.realizado = false")
     List<RotinaEntity> buscarPorIdpacienteTipo(int idpaciente, int tipo);
+
+    @Query("SELECT c FROM RotinaEntity c WHERE c.idpaciente = ?1 AND c.realizado = false")
+    List<RotinaEntity> buscarPorIdpacienteRotinaAtual(int idpaciente);
 }

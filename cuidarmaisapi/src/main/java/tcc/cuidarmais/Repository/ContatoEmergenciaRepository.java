@@ -9,6 +9,5 @@ public interface ContatoEmergenciaRepository extends JpaRepository<ContatoEmerge
     @Query("SELECT p FROM ContatoEmergenciaEntity p WHERE p.idpaciente = ?1")
     java.util.List<ContatoEmergenciaEntity> findByIdpaciente(int idpaciente);
 
-    @Query("SELECT p FROM ContatoEmergenciaEntity p WHERE p.idcontato_emergencia = ?1")
-    ContatoEmergenciaEntity findByIdcontato_emergencia(int idcontato_emergencia);    
+    ContatoEmergenciaEntity findByIdcontatoEmergencia(int idcontato_emergencia);    
 }

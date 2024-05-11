@@ -1,18 +1,16 @@
 import 'package:cuidarmais/models/rotina.dart';
 import 'package:cuidarmais/models/tipoCuidado/sinaisvitais.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
-import 'package:intl/intl.dart';
 
 class SinaisVitaisPage extends StatefulWidget {
-  final Paciente paciente;
   final int tipoCuidado;
 
   const SinaisVitaisPage({
     Key? key,
-    required this.paciente,
     required this.tipoCuidado,
   }) : super(key: key);
 
@@ -35,17 +33,29 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
 
   late SinaisVitais sinaisvitais = SinaisVitais();
   late Rotina rotina = Rotina();
+  late Paciente paciente = Paciente();
 
   @override
   void initState() {
     super.initState();
-    _carregarInformacoes();
+    _recuperarPaciente();
+  }
+
+  Future<void> _recuperarPaciente() async {
+    final pacienteRecuperado =
+        await PacienteSharedPreferences.recuperarPaciente();
+    if (pacienteRecuperado != null) {
+      setState(() {
+        paciente = pacienteRecuperado;
+      });
+      _carregarInformacoes();
+    } else {}
   }
 
   Future<List<Rotina>> _validarRotina() async {
     try {
       Rotina rotina = Rotina(
-        idpaciente: widget.paciente.idpaciente,
+        idpaciente: paciente.idpaciente,
         tipo_cuidado: widget.tipoCuidado,
         cuidado: 'Sinais Vitais',
         realizado: false,
@@ -61,21 +71,23 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
       }
       return listaRotina;
     } catch (error) {
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao carregar informações da rotina',
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao carregar informações da rotina',
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
+        );
+      });
       return [];
     }
   }
 
   Future<void> _carregarInformacoes() async {
     try {
-      sinaisvitais.idpaciente = widget.paciente.idpaciente;
+      sinaisvitais.idpaciente = paciente.idpaciente;
 
       listaRotina = await _validarRotina();
       sinaisvitais.idrotina = listaRotina[0].idrotina;
@@ -88,7 +100,7 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
 
         if (listaCuidado.isNotEmpty) {
           _selectedSistolica = listaCuidado[0].pressao_sistolica.toString();
-          _selectedDiastolica = listaCuidado[0].pressao_sistolica.toString();
+          _selectedDiastolica = listaCuidado[0].pressao_diastolica.toString();
           _selectedTemperatura = listaCuidado[0].temperatura.toString();
           _selectedRespiracao =
               listaCuidado[0].frequencia_respiratoria.toString();
@@ -101,14 +113,16 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
       setState(() {
         _isLoading = false;
       });
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao carregar informações da listaSinaisVitais',
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao carregar informações da listaSinaisVitais',
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
+        );
+      });
     }
   }
 
@@ -123,7 +137,7 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
         frequencia_cardiaca: _selectedFrequenciaCardiaca,
         frequencia_respiratoria: _selectedRespiracao,
         descricao: _observacoesController.text,
-        idpaciente: widget.paciente.idpaciente,
+        idpaciente: paciente.idpaciente,
         idrotina: listaRotina[0].idrotina,
       );
 
@@ -134,27 +148,30 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
       } else {
         atualizacaoSucesso = await sinaisvitais.cadastrar();
       }
-
-      showConfirmationDialog(
-        context: context,
-        title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-        message: atualizacaoSucesso
-            ? 'As informações foram salvas com sucesso!'
-            : 'Houve um erro ao salvar os dados. Por favor, tente novamente.',
-        onConfirm: () {
-          if (atualizacaoSucesso) {
-            Navigator.of(context).pop();
-          }
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+          message: atualizacaoSucesso
+              ? 'As informações foram salvas com sucesso!'
+              : 'Houve um erro ao salvar os dados. Por favor, tente novamente.',
+          onConfirm: () {
+            if (atualizacaoSucesso) {
+              Navigator.of(context).pop();
+            }
+          },
+        );
+      });
     } catch (error) {
-      print('Erro ao salvar os dados: $error');
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao salvar os dados.',
-        onConfirm: () {},
-      );
+      Future.microtask(() {
+        print('Erro ao salvar os dados: $error');
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao salvar os dados.',
+          onConfirm: () {},
+        );
+      });
     }
   }
 
@@ -178,7 +195,7 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (title != "")
+        if (title.isNotEmpty)
           Text(
             title,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -189,7 +206,7 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
             Text('$labelText:'),
             const SizedBox(width: 8),
             DropdownButton<String>(
-              value: value,
+              value: value ?? "",
               onChanged: onChanged,
               items: items,
               menuMaxHeight: 200,
@@ -264,13 +281,17 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
                           sinaisvitais.pressao_sistolica = newValue;
                         });
                       },
-                      items: List.generate(
-                        13,
-                        (index) => DropdownMenuItem<String>(
-                          value: '${90 + index * 5}',
-                          child: Text('${90 + index * 5}'),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: "",
+                          child: Text('Selecione'),
                         ),
-                      ),
+                        for (int i = 0; i < 13; i++)
+                          DropdownMenuItem<String>(
+                            value: '${90 + i * 5}',
+                            child: Text('${90 + i * 5}'),
+                          ),
+                      ],
                       tipo: ''),
                   const SizedBox(height: 12),
                   _buildDropdownButton(
@@ -283,13 +304,17 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
                           sinaisvitais.pressao_diastolica = newValue;
                         });
                       },
-                      items: List.generate(
-                        13,
-                        (index) => DropdownMenuItem<String>(
-                          value: '${50 + index * 5}',
-                          child: Text('${50 + index * 5}'),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: "",
+                          child: Text('Selecione'),
                         ),
-                      ),
+                        for (int i = 0; i < 13; i++)
+                          DropdownMenuItem<String>(
+                            value: '${50 + i * 5}',
+                            child: Text('${50 + i * 5}'),
+                          ),
+                      ],
                       tipo: ''),
                   const SizedBox(height: 4),
                   const Text(
@@ -322,14 +347,19 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
                           sinaisvitais.temperatura = newValue;
                         });
                       },
-                      items: List.generate(
-                        50,
-                        (index) => DropdownMenuItem<String>(
-                            value: (351 + index).toString(),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: "",
+                          child: Text('Selecione'),
+                        ),
+                        for (int i = 0; i < 50; i++)
+                          DropdownMenuItem<String>(
+                            value: (351 + i).toString(),
                             child: Text(
-                              (35.1 + index * 0.1).toStringAsFixed(1),
-                            )),
-                      ),
+                              (35.1 + i * 0.1).toStringAsFixed(1),
+                            ),
+                          ),
+                      ],
                       tipo: '°C'),
                   const SizedBox(height: 4),
                   const Text(
@@ -362,13 +392,17 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
                         sinaisvitais.frequencia_respiratoria = newValue;
                       });
                     },
-                    items: List.generate(
-                      25,
-                      (index) => DropdownMenuItem<String>(
-                        value: (8 + index).toString(),
-                        child: Text((8 + index).toString()),
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: "",
+                        child: Text('Selecione'),
                       ),
-                    ),
+                      for (int i = 0; i < 25; i++)
+                        DropdownMenuItem<String>(
+                          value: (8 + i).toString(),
+                          child: Text((8 + i).toString()),
+                        ),
+                    ],
                     tipo: 'IRPM',
                   ),
                   const SizedBox(height: 4),
@@ -402,13 +436,17 @@ class _SinaisVitaisPageState extends State<SinaisVitaisPage> {
                         sinaisvitais.frequencia_cardiaca = newValue;
                       });
                     },
-                    items: List.generate(
-                      100,
-                      (index) => DropdownMenuItem<String>(
-                        value: (30 + index).toString(),
-                        child: Text((30 + index).toString()),
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: "",
+                        child: Text('Selecione'),
                       ),
-                    ),
+                      for (int i = 0; i < 100; i++)
+                        DropdownMenuItem<String>(
+                          value: (30 + i).toString(),
+                          child: Text((30 + i).toString()),
+                        ),
+                    ],
                     tipo: 'BPM',
                   ),
                   const Text(
