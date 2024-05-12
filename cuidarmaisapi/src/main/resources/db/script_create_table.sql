@@ -49,8 +49,9 @@ create table contato_emergencia(
 create table escala(
 	idescala int auto_increment primary key,
     data_hora datetime,
-    dia_semana varchar(50),
-    dtAlteracao datetime,
+    dia date,
+    hora_inicio datetime,
+    hora_final datetime,
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );

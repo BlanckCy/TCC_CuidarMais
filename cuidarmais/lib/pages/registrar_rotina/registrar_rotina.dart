@@ -1,11 +1,5 @@
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/models/rotina.dart';
-import 'package:cuidarmais/pages/registrar_rotina/rotina_ativ_fisica.dart';
-import 'package:cuidarmais/pages/registrar_rotina/rotina_decubito.dart';
-import 'package:cuidarmais/pages/registrar_rotina/rotina_medicacao.dart';
-import 'package:cuidarmais/pages/registrar_rotina/rotina_higiene.dart';
-import 'package:cuidarmais/pages/registrar_rotina/rotina_refeicao.dart';
-import 'package:cuidarmais/pages/registrar_rotina/rotina_sinais_vitais.dart';
 import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
