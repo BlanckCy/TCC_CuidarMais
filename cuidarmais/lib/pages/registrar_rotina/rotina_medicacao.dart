@@ -2,7 +2,6 @@ import 'package:cuidarmais/models/rotina.dart';
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/models/tipoCuidado/medicacao.dart';
 import 'package:cuidarmais/models/tipoCuidado/medicacaolista.dart';
-import 'package:cuidarmais/pages/medication/medication_registration.dart';
 import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';

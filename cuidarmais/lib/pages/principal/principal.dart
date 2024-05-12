@@ -28,8 +28,8 @@ class _HomePageState extends State<PrincipalPage> {
     } else {}
   }
 
-  Widget buildCustomButton(
-      IconData icon, String text, Color color, String rota, int selectedIndex) {
+  Widget buildCustomButton(IconData icon, String text, Color color, String rota,
+      [int selectedIndex = 0]) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: ElevatedButton(
@@ -75,6 +75,14 @@ class _HomePageState extends State<PrincipalPage> {
             const Divider(),
             const SizedBox(height: 20),
             buildCustomButton(
+              Icons.local_hospital,
+              'SOS Emergência',
+              Colors.red,
+              'home',
+              2,
+            ),
+            const SizedBox(height: 20),
+            buildCustomButton(
               Icons.book,
               'Registrar Rotina',
               const Color(0xFF1C51A1),
@@ -83,11 +91,10 @@ class _HomePageState extends State<PrincipalPage> {
             ),
             const SizedBox(height: 20),
             buildCustomButton(
-              Icons.local_hospital,
-              'SOS Emergência',
-              Colors.red,
-              'home',
-              2,
+              Icons.calendar_month,
+              'Calendário Escala',
+              const Color(0xFF1C51A1),
+              'escala',
             ),
           ],
         ),

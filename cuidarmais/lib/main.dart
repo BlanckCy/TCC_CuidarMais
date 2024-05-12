@@ -1,4 +1,5 @@
 import 'package:cuidarmais/pages/emergency/emergency_contacts_management.dart';
+import 'package:cuidarmais/pages/escala_trabalho/escala.dart';
 import 'package:cuidarmais/pages/home/home.dart';
 import 'package:cuidarmais/pages/list_patient/list_paciente.dart';
 import 'package:cuidarmais/pages/medication/medication_registration.dart';
@@ -15,9 +16,10 @@ import 'package:cuidarmais/pages/sign_up/sign_up_paciente.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/pages/principal/principal.dart';
 import 'package:cuidarmais/pages/login/login.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
-  runApp(const MyApp());
+  initializeDateFormatting().then((_) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -86,6 +88,10 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (_) => const RotinaDecubitoPage(tipoCuidado: 6),
             );
+          case '/escala':
+            return MaterialPageRoute(
+              builder: (_) => const EscalaTrabalhoPage(),
+            );
           default:
             return MaterialPageRoute(builder: (_) => const LoginPage());
         }
@@ -98,6 +104,9 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
+      /* localizationsDelegates: [
+        GlobalMa
+      ], */
     );
   }
 }
