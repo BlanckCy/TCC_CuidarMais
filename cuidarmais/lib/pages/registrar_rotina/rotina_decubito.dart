@@ -1,17 +1,16 @@
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/models/rotina.dart';
 import 'package:cuidarmais/models/tipoCuidado/mudancadecubito.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:intl/intl.dart';
 
 class RotinaDecubitoPage extends StatefulWidget {
-  final Paciente paciente;
   final int tipoCuidado;
 
-  const RotinaDecubitoPage(
-      {Key? key, required this.paciente, required this.tipoCuidado})
+  const RotinaDecubitoPage({Key? key, required this.tipoCuidado})
       : super(key: key);
 
   @override
@@ -29,16 +28,29 @@ class _RotinaDecubitoPageState extends State<RotinaDecubitoPage> {
 
   List<Rotina> listaRotina = [];
 
+  late Paciente paciente = Paciente();
+
   @override
   void initState() {
     super.initState();
-    _carregarInformacoes();
+    _recuperarPaciente();
+  }
+
+  Future<void> _recuperarPaciente() async {
+    final pacienteRecuperado =
+        await PacienteSharedPreferences.recuperarPaciente();
+    if (pacienteRecuperado != null) {
+      setState(() {
+        paciente = pacienteRecuperado;
+      });
+      _carregarInformacoes();
+    } else {}
   }
 
   Future<List<Rotina>> _validarRotina() async {
     try {
       Rotina rotina = Rotina(
-        idpaciente: widget.paciente.idpaciente,
+        idpaciente: paciente.idpaciente,
         tipo_cuidado: widget.tipoCuidado,
         cuidado: 'Mudança Decúbito',
         realizado: false,
@@ -54,21 +66,23 @@ class _RotinaDecubitoPageState extends State<RotinaDecubitoPage> {
       }
       return listaRotina;
     } catch (error) {
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao carregar informações da rotina',
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao carregar informações da rotina',
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
+        );
+      });
       return [];
     }
   }
 
   Future<void> _carregarInformacoes() async {
     try {
-      mudancaDecubito.idpaciente = widget.paciente.idpaciente;
+      mudancaDecubito.idpaciente = paciente.idpaciente;
 
       listaRotina = await _validarRotina();
 
@@ -93,14 +107,16 @@ class _RotinaDecubitoPageState extends State<RotinaDecubitoPage> {
       setState(() {
         _isLoading = false;
       });
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao carregar informações da rotina',
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao carregar informações da rotina',
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
+        );
+      });
     }
   }
 
@@ -111,33 +127,36 @@ class _RotinaDecubitoPageState extends State<RotinaDecubitoPage> {
         MudancaDecubito mudancaDecubito = MudancaDecubito(
           mudanca: rotina.key,
           hora: rotina.value,
-          idpaciente: widget.paciente.idpaciente,
+          idpaciente: paciente.idpaciente,
           idrotina: listaRotina[0].idrotina,
         );
 
         atualizacaoSucesso = await mudancaDecubito.cadastrar();
       }
-
-      showConfirmationDialog(
-        context: context,
-        title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-        message: atualizacaoSucesso
-            ? 'As informações foram salvas com sucesso!'
-            : 'Houve um erro ao salvar os dados. Por favor, tente novamente.',
-        onConfirm: () {
-          if (atualizacaoSucesso) {
-            Navigator.of(context).pop();
-          }
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+          message: atualizacaoSucesso
+              ? 'As informações foram salvas com sucesso!'
+              : 'Houve um erro ao salvar os dados. Por favor, tente novamente.',
+          onConfirm: () {
+            if (atualizacaoSucesso) {
+              Navigator.of(context).pop();
+            }
+          },
+        );
+      });
     } catch (error) {
       print('Erro ao salvar os dados: $error');
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao salvar os dados.',
-        onConfirm: () {},
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao salvar os dados.',
+          onConfirm: () {},
+        );
+      });
     }
   }
 
@@ -228,7 +247,9 @@ class _RotinaDecubitoPageState extends State<RotinaDecubitoPage> {
                         value: task['mudanca'],
                         onChanged: (String? newValue) {
                           setState(() {
-                            task['mudanca'] = newValue;
+                            if (newValue != "") {
+                              task['mudanca'] = newValue;
+                            }
                           });
                         },
                         items: <String?>[

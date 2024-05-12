@@ -1,13 +1,12 @@
 import 'package:cuidarmais/models/contatoEmergencia.dart';
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/pages/emergency/emergency_contacts_management.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
+import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/material.dart';
 
 class EmergencyContactsPage extends StatefulWidget {
-  final Paciente paciente;
-
-  const EmergencyContactsPage({Key? key, required this.paciente})
-      : super(key: key);
+  const EmergencyContactsPage({Key? key}) : super(key: key);
 
   @override
   State<EmergencyContactsPage> createState() => _EmergencyContactsPageState();
@@ -17,46 +16,72 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
   List<Contatoemergencia> contatos = [];
   bool _isLoading = true;
 
+  late Paciente paciente = Paciente();
+  late Contatoemergencia contatoemergencia = Contatoemergencia();
+
   @override
   void initState() {
     super.initState();
-    _carregarContatos(idpaciente: widget.paciente.idpaciente ?? 0);
+    _recuperarPaciente();
   }
 
-  Future<void> _carregarContatos({required int idpaciente}) async {
+  Future<void> _recuperarPaciente() async {
+    final pacienteRecuperado =
+        await PacienteSharedPreferences.recuperarPaciente();
+    if (pacienteRecuperado != null) {
+      setState(() {
+        paciente = pacienteRecuperado;
+      });
+      contatoemergencia.idpaciente = paciente.idpaciente;
+      _carregarContatos();
+    } else {}
+  }
+
+  Future<void> _carregarContatos() async {
     try {
-      var listarContatos =
-          await Contatoemergencia().carregarContatos(idpaciente);
+      var listarContatos = await contatoemergencia.carregarContatos();
       setState(() {
         contatos = listarContatos;
         _isLoading = false;
       });
     } catch (error) {
-      print('Erro ao carregar contatos de emergencia: $error');
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Erro'),
-          content: Text('Erro ao carregar os contatos de emergência'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      Future.microtask(() {
+        print('Erro ao carregar contatos de emergencia: $error');
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Erro'),
+            content: Text('Erro ao carregar os contatos de emergência'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _buildContactList(),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacementNamed(
+          context,
+          '/home',
+          arguments: 1,
+        );
+        return false;
+      },
+      child: Scaffold(
+        body: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _buildContactList(),
+      ),
     );
   }
 
@@ -168,15 +193,10 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => EmergencyContactsManagementPage(
-                            paciente: widget.paciente,
-                            idcontato_emergencia:
-                                contatos[index].idcontato_emergencia,
-                          ),
-                        ),
+                        '/gerenciarContatos',
+                        arguments: contatos[index].idcontato_emergencia,
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -208,12 +228,9 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
-              Navigator.push(
+              Navigator.pushNamed(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => EmergencyContactsManagementPage(
-                      paciente: widget.paciente),
-                ),
+                '/gerenciarContatos',
               );
             },
             style: ElevatedButton.styleFrom(

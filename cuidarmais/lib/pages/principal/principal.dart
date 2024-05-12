@@ -1,29 +1,44 @@
 import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/home/home.dart';
-import 'package:cuidarmais/pages/patient_data/patient_data.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 class PrincipalPage extends StatefulWidget {
-  final Paciente paciente;
-
-  const PrincipalPage({Key? key, required this.paciente}) : super(key: key);
+  const PrincipalPage({Key? key}) : super(key: key);
 
   @override
   State<PrincipalPage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<PrincipalPage> {
-  Widget buildCustomButton(IconData icon, String text, Color color,
-      Widget Function(BuildContext) onPressed) {
+  late Paciente paciente = Paciente();
+
+  @override
+  void initState() {
+    super.initState();
+    _recuperarPaciente();
+  }
+
+  Future<void> _recuperarPaciente() async {
+    final pacienteRecuperado =
+        await PacienteSharedPreferences.recuperarPaciente();
+    if (pacienteRecuperado != null) {
+      setState(() {
+        paciente = pacienteRecuperado;
+      });
+    } else {}
+  }
+
+  Widget buildCustomButton(IconData icon, String text, Color color, String rota,
+      [int selectedIndex = 0]) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: ElevatedButton(
         onPressed: () {
-          Navigator.push(
+          Navigator.pop(context);
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(
-              builder: onPressed,
-            ),
+            '/$rota',
+            arguments: selectedIndex,
           );
         },
         style: ElevatedButton.styleFrom(
@@ -60,23 +75,26 @@ class _HomePageState extends State<PrincipalPage> {
             const Divider(),
             const SizedBox(height: 20),
             buildCustomButton(
-              Icons.book,
-              'Registrar Rotina',
-              const Color(0xFF1C51A1),
-              (context) => HomePage(
-                paciente: Paciente(idpaciente: 1),
-                selectedIndex: 0,
-              ),
-            ),
-            const SizedBox(height: 20),
-            buildCustomButton(
               Icons.local_hospital,
               'SOS Emergência',
               Colors.red,
-              (context) => HomePage(
-                paciente: Paciente(idpaciente: 1),
-                selectedIndex: 2,
-              ),
+              'home',
+              2,
+            ),
+            const SizedBox(height: 20),
+            buildCustomButton(
+              Icons.book,
+              'Registrar Rotina',
+              const Color(0xFF1C51A1),
+              'home',
+              0,
+            ),
+            const SizedBox(height: 20),
+            buildCustomButton(
+              Icons.calendar_month,
+              'Calendário Escala',
+              const Color(0xFF1C51A1),
+              'escala',
             ),
           ],
         ),
@@ -86,17 +104,15 @@ class _HomePageState extends State<PrincipalPage> {
 
   Widget _buildProfileButton() {
     IconData genderIcon = Icons.person_outline;
-    if (widget.paciente.genero == 'F') {
+    if (paciente.genero == 'F') {
       genderIcon = Icons.person_2_outlined;
     }
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.pushNamed(
           context,
-          MaterialPageRoute(
-            builder: (context) => PatientDataPage(paciente: widget.paciente),
-          ),
+          '/dadosPaciente',
         );
       },
       child: Padding(
@@ -115,7 +131,7 @@ class _HomePageState extends State<PrincipalPage> {
             ),
             const SizedBox(width: 10),
             Text(
-              widget.paciente.nome ?? 'Nome Paciente',
+              paciente.nome ?? 'Nome Paciente',
               style: const TextStyle(fontSize: 16),
             ),
           ],

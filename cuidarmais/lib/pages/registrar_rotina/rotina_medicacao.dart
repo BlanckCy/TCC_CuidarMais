@@ -2,18 +2,15 @@ import 'package:cuidarmais/models/rotina.dart';
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/models/tipoCuidado/medicacao.dart';
 import 'package:cuidarmais/models/tipoCuidado/medicacaolista.dart';
-import 'package:cuidarmais/pages/medication/medication_registration.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 
 class MedicacaoPage extends StatefulWidget {
-  final Paciente paciente;
   final int tipoCuidado;
 
-  const MedicacaoPage(
-      {Key? key, required this.paciente, required this.tipoCuidado})
-      : super(key: key);
+  const MedicacaoPage({Key? key, required this.tipoCuidado}) : super(key: key);
 
   @override
   State<MedicacaoPage> createState() => _MedicacaoPageState();
@@ -30,17 +27,29 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
   late MedicacaoLista medicacaolista = MedicacaoLista();
   late Medicacao medicacao = Medicacao();
   late Rotina rotina = Rotina();
+  late Paciente paciente = Paciente();
 
   @override
   void initState() {
     super.initState();
-    _carregarInformacoes();
+    _recuperarPaciente();
+  }
+
+  Future<void> _recuperarPaciente() async {
+    final pacienteRecuperado =
+        await PacienteSharedPreferences.recuperarPaciente();
+    if (pacienteRecuperado != null) {
+      setState(() {
+        paciente = pacienteRecuperado;
+      });
+      _carregarInformacoes();
+    } else {}
   }
 
   Future<List<Rotina>> _validarRotina() async {
     try {
       Rotina rotina = Rotina(
-        idpaciente: widget.paciente.idpaciente,
+        idpaciente: paciente.idpaciente,
         tipo_cuidado: widget.tipoCuidado,
         cuidado: 'Medicação',
         realizado: false,
@@ -56,22 +65,24 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
       }
       return listaRotina;
     } catch (error) {
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao carregar informações da rotina',
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao carregar informações da rotina',
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
+        );
+      });
       return [];
     }
   }
 
   Future<void> _carregarInformacoes() async {
     try {
-      medicacao.idpaciente = widget.paciente.idpaciente;
-      medicacaolista.idpaciente = widget.paciente.idpaciente;
+      medicacao.idpaciente = paciente.idpaciente;
+      medicacaolista.idpaciente = paciente.idpaciente;
 
       listaRotina = await _validarRotina();
       medicacao.idrotina = listaRotina[0].idrotina;
@@ -111,14 +122,16 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
         return;
       });
     } catch (error) {
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao carregar informações da rotina',
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao carregar informações da rotina',
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
+        );
+      });
     }
   }
 
@@ -133,7 +146,7 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
         Medicacao medicacao = Medicacao(
           realizado: medicamento['realizado'],
           idcuidado_medicacao_lista: medicamento['idcuidado_medicacao_lista'],
-          idpaciente: widget.paciente.idpaciente,
+          idpaciente: paciente.idpaciente,
           idrotina: medicamento['idrotina'],
         );
 
@@ -147,28 +160,31 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
 
         if (!mensagem) {
           mensagem = true;
-          showConfirmationDialog(
-            context: context,
-            title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-            message: atualizacaoSucesso
-                ? 'As informações foram salvas com sucesso!'
-                : 'Houve um erro ao salvar os dados. Por favor, tente novamente.',
-            onConfirm: () {
-              if (atualizacaoSucesso) {
-                Navigator.of(context).pop();
-              }
-            },
-          );
+          Future.microtask(() {
+            showConfirmationDialog(
+              context: context,
+              title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+              message: atualizacaoSucesso
+                  ? 'As informações foram salvas com sucesso!'
+                  : 'Houve um erro ao salvar os dados. Por favor, tente novamente.',
+              onConfirm: () {
+                if (atualizacaoSucesso) {
+                  Navigator.of(context).pop();
+                }
+              },
+            );
+          });
         }
       }
     } catch (error) {
-      print('Erro ao salvar os dados: $error');
-      showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao salvar os dados.',
-        onConfirm: () {},
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao salvar os dados.',
+          onConfirm: () {},
+        );
+      });
     }
   }
 
@@ -294,13 +310,9 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.push(
+              Navigator.pushNamed(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => MedicationRegistrationPage(
-                    paciente: widget.paciente,
-                  ),
-                ),
+                '/gerenciarMedicacao',
               );
             },
             style: TextButton.styleFrom(

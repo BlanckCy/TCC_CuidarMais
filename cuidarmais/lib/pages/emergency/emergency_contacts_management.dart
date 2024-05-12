@@ -1,18 +1,16 @@
 import 'package:cuidarmais/models/contatoEmergencia.dart';
 import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/home/home.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:cuidarmais/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class EmergencyContactsManagementPage extends StatefulWidget {
-  final Paciente paciente;
   final int? idcontato_emergencia;
 
   const EmergencyContactsManagementPage({
     Key? key,
-    required this.paciente,
     this.idcontato_emergencia,
   }) : super(key: key);
 
@@ -38,20 +36,30 @@ class _EmergencyContactsManagementPageState
   });
 
   late Contatoemergencia contatoemergencia = Contatoemergencia();
+  late Paciente paciente = Paciente();
 
   @override
   void initState() {
     super.initState();
-    contatoemergencia = Contatoemergencia(
-      idcontato_emergencia: widget.idcontato_emergencia,
-      idpaciente: widget.paciente.idpaciente,
-    );
+    _recuperarPaciente();
+  }
 
-    _isLoading = false;
-    if (widget.idcontato_emergencia != null) {
-      _isLoading = true;
-      _informacoesContato();
-    }
+  Future<void> _recuperarPaciente() async {
+    final pacienteRecuperado =
+        await PacienteSharedPreferences.recuperarPaciente();
+    if (pacienteRecuperado != null) {
+      setState(() {
+        paciente = pacienteRecuperado;
+      });
+      contatoemergencia.idcontato_emergencia = widget.idcontato_emergencia;
+      contatoemergencia.idpaciente = paciente.idpaciente;
+
+      _isLoading = false;
+      if (widget.idcontato_emergencia != null) {
+        _isLoading = true;
+        _informacoesContato();
+      }
+    } else {}
   }
 
   Future<void> _informacoesContato() async {
@@ -65,15 +73,14 @@ class _EmergencyContactsManagementPageState
         _isLoading = false;
       });
     } catch (error) {
-      print('Erro ao carregar dados: $error');
-      await showConfirmationDialog(
-        context: context,
-        title: 'Erro',
-        message: 'Erro ao carregar os dados.',
-        onConfirm: () {
-          // Navigator.of(context).pop();
-        },
-      );
+      Future.microtask(() {
+        showConfirmationDialog(
+          context: context,
+          title: 'Erro',
+          message: 'Erro ao carregar os dados.',
+          onConfirm: () {},
+        );
+      });
     }
   }
 
@@ -83,16 +90,16 @@ class _EmergencyContactsManagementPageState
 
     bool atualizacaoSucesso = await contatoemergencia.atualizarDados();
 
-    showConfirmationDialog(
-      context: context,
-      title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-      message: atualizacaoSucesso
-          ? 'Os dados foram atualizados com sucesso!'
-          : 'Houve um erro ao atualizar os dados. Por favor, tente novamente.',
-      onConfirm: () {
-        // Navigator.of(context).pop();
-      },
-    );
+    Future.microtask(() {
+      showConfirmationDialog(
+        context: context,
+        title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+        message: atualizacaoSucesso
+            ? 'Os dados foram atualizados com sucesso!'
+            : 'Houve um erro ao atualizar os dados. Por favor, tente novamente.',
+        onConfirm: () {},
+      );
+    });
   }
 
   Future<void> _deletarDados() async {
@@ -106,28 +113,26 @@ class _EmergencyContactsManagementPageState
         contatoemergencia.idcontato_emergencia = widget.idcontato_emergencia;
         bool resultado = await contatoemergencia.deletarContatoEmergencia();
 
-        showConfirmationDialog(
-          context: context,
-          title: resultado ? 'OK' : 'Erro',
-          message: resultado
-              ? 'O cadastro foi deletado com sucesso!'
-              : 'Ocorreu um erro ao deletar o cadastro.',
-          confirmButtonText: 'OK',
-          onConfirm: () {
-            if (resultado) {
-              Navigator.of(context).popUntil((route) => route.isFirst);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HomePage(
-                    paciente: widget.paciente,
-                    selectedIndex: 2,
-                  ),
-                ),
-              );
-            }
-          },
-        );
+        Future.microtask(() {
+          showConfirmationDialog(
+            context: context,
+            title: resultado ? 'OK' : 'Erro',
+            message: resultado
+                ? 'O cadastro foi deletado com sucesso!'
+                : 'Ocorreu um erro ao deletar o cadastro.',
+            confirmButtonText: 'OK',
+            onConfirm: () {
+              if (resultado) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/home',
+                  (route) => false,
+                  arguments: 2,
+                );
+              }
+            },
+          );
+        });
       },
     );
   }
@@ -138,27 +143,25 @@ class _EmergencyContactsManagementPageState
 
     bool atualizacaoSucesso = await contatoemergencia.cadastrar();
 
-    showConfirmationDialog(
-      context: context,
-      title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
-      message: atualizacaoSucesso
-          ? 'O cadastro foi realizado com sucesso!'
-          : 'Houve um erro ao realizar o cadastro. Por favor, tente novamente.',
-      onConfirm: () {
-        if (atualizacaoSucesso) {
-          Navigator.of(context).popUntil((route) => route.isFirst);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePage(
-                paciente: widget.paciente,
-                selectedIndex: 2,
-              ),
-            ),
-          );
-        }
-      },
-    );
+    Future.microtask(() {
+      showConfirmationDialog(
+        context: context,
+        title: atualizacaoSucesso ? 'Sucesso' : 'Erro',
+        message: atualizacaoSucesso
+            ? 'O cadastro foi realizado com sucesso!'
+            : 'Houve um erro ao realizar o cadastro. Por favor, tente novamente.',
+        onConfirm: () {
+          if (atualizacaoSucesso) {
+            Navigator.pop(context);
+            Navigator.pushReplacementNamed(
+              context,
+              '/home',
+              arguments: 2,
+            );
+          }
+        },
+      );
+    });
   }
 
   @override

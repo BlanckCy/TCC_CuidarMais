@@ -30,12 +30,11 @@ public class PacienteService {
         return pacienteRepository.findByCuidadorId(idCuidador);
     }
 
-    public PacienteEntity buscarPacientePorId(int idPaciente) {
-        Optional<PacienteEntity> pacienteOptional = pacienteRepository.findById(idPaciente);
-        return pacienteOptional.orElse(null); 
+    public PacienteEntity buscarPacientePorIdpaciente(int idpaciente) {
+        return pacienteRepository.findByIdpaciente(idpaciente);
     }    
 
-    public void deletarPacientePorId(int idPaciente) {
-        pacienteRepository.deleteById(idPaciente);
+    public void deletarPacientePorId(int idpaciente) {
+        pacienteRepository.deleteById(idpaciente);
     }
 }

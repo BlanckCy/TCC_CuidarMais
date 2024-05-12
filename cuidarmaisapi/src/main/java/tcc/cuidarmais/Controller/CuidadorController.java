@@ -55,16 +55,16 @@ public class CuidadorController {
     }   
 
     @PostMapping("/login")
-    public ResponseEntity<CuidadorEntity> fazerLogin(@RequestBody Map<String, String> corpo) {
-        String email = corpo.get("email");
-        String senha = corpo.get("senha");
+    public ResponseEntity<CuidadorEntity> fazerLogin(@RequestBody CuidadorEntity cuidador) {
+        String email = cuidador.getEmail();
+        String senha = cuidador.getSenha(); 
 
         System.out.println(email);
         System.out.println(senha);
 
-        CuidadorEntity cuidador = cuidadorService.validateLogin(email, senha);
-        if (cuidador != null) {
-            return new ResponseEntity<>(cuidador, HttpStatus.OK);
+        CuidadorEntity cuidadorValidado  = cuidadorService.validateLogin(email, senha);
+        if (cuidadorValidado  != null) {
+            return new ResponseEntity<>(cuidadorValidado , HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
