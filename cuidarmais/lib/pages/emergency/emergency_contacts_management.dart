@@ -24,6 +24,7 @@ class _EmergencyContactsManagementPageState
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Contatoemergencia? infoContato;
   bool _isLoading = false;
+  bool isEditing = false;
 
   String _selectParentesco = '';
 
@@ -58,6 +59,10 @@ class _EmergencyContactsManagementPageState
       if (widget.idcontato_emergencia != null) {
         _isLoading = true;
         _informacoesContato();
+      } else {
+        setState(() {
+          isEditing = true;
+        });
       }
     } else {}
   }
@@ -184,9 +189,9 @@ class _EmergencyContactsManagementPageState
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              "Dados do Contato",
-              style: TextStyle(
+            Text(
+              infoContato != null ? "Dados do Contato" : "Cadastro do Contato",
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -198,6 +203,7 @@ class _EmergencyContactsManagementPageState
               child: Column(
                 children: [
                   TextFormField(
+                    enabled: isEditing,
                     controller: nomeController,
                     decoration: const InputDecoration(
                       labelText: 'Nome do Contato:',
@@ -213,66 +219,78 @@ class _EmergencyContactsManagementPageState
                       return null;
                     },
                   ),
-                  DropdownButtonFormField<String>(
-                    value: _selectParentesco,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectParentesco = newValue!;
-                      });
-                    },
-                    items: <String?>[
-                      null,
-                      'Pai',
-                      'Mãe',
-                      'Filho',
-                      'Filha',
-                      'Irmão',
-                      'Irmã',
-                      'Avô',
-                      'Avó',
-                      'Tio',
-                      'Tia',
-                      'Primo',
-                      'Prima',
-                    ].map<DropdownMenuItem<String>>((String? value) {
-                      return DropdownMenuItem<String>(
-                        value: value ?? '',
-                        child: Text(
-                          value ?? 'Selecione o parentesco',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w400,
+                  AbsorbPointer(
+                    absorbing:
+                        !isEditing, // Desabilita o DropdownButtonFormField quando isEditing for falso
+                    child: DropdownButtonFormField<String>(
+                      value: _selectParentesco,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectParentesco = newValue!;
+                        });
+                      },
+                      items: <String?>[
+                        null,
+                        'Pai',
+                        'Mãe',
+                        'Filho',
+                        'Filha',
+                        'Irmão',
+                        'Irmã',
+                        'Avô',
+                        'Avó',
+                        'Tio',
+                        'Tia',
+                        'Primo',
+                        'Prima',
+                      ].map<DropdownMenuItem<String>>((String? value) {
+                        return DropdownMenuItem<String>(
+                          value: value ?? '',
+                          child: Text(
+                            value ?? 'Selecione o parentesco',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: !isEditing ? Colors.grey : Colors.black,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      decoration: InputDecoration(
+                        hintText: 'Selecione o parentesco',
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: !isEditing ? Colors.grey : Colors.black,
                           ),
                         ),
-                      );
-                    }).toList(),
-                    decoration: const InputDecoration(
-                      hintText: 'Selecione o parentesco',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.black,
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: !isEditing ? Colors.grey : Colors.black,
+                          ),
                         ),
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 20.0),
                       ),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.black,
-                        ),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(vertical: 20.0),
+                      menuMaxHeight: 200,
+                      isExpanded: true,
+                      onSaved: (value) {
+                        contatoemergencia.parentesco = value;
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor, selecione o parentesco';
+                        }
+                        return null;
+                      },
+                      onTap: () {
+                        if (!isEditing) {
+                          return;
+                        }
+                      },
                     ),
-                    menuMaxHeight: 200,
-                    isExpanded: true,
-                    onSaved: (value) {
-                      contatoemergencia.parentesco = value;
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor, selecione o parentesco';
-                      }
-                      return null;
-                    },
                   ),
                   TextFormField(
+                    enabled: isEditing,
                     controller: telefoneController,
                     keyboardType: TextInputType.phone,
                     inputFormatters: [_telefoneMaskFormatter],
@@ -303,6 +321,28 @@ class _EmergencyContactsManagementPageState
               ),
             ),
             const SizedBox(height: 20),
+            if (infoContato != null)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: const Row(
+                      children: [
+                        Icon(Icons.edit),
+                        SizedBox(width: 8),
+                        Text('Editar'),
+                      ],
+                    ),
+                    color: const Color(0xFF1C51A1),
+                    onPressed: () {
+                      setState(() {
+                        isEditing = !isEditing;
+                      });
+                    },
+                  )
+                ],
+              ),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState != null &&
@@ -331,7 +371,7 @@ class _EmergencyContactsManagementPageState
                   _deletarDados();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: const Color.fromARGB(255, 208, 20, 20),
                 ),
                 child: const Text(
                   'Deletar Contato',

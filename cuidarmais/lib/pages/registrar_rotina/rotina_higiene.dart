@@ -346,7 +346,6 @@ class _RotinaHigienePageState extends State<RotinaHigienePage> {
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0XFF1C51A1),
         foregroundColor: Colors.white,
-        minimumSize: const Size(250, 50),
       ),
       child: Text(label),
     );

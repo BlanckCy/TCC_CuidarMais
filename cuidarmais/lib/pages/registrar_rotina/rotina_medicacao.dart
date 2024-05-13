@@ -253,6 +253,7 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
                       itemCount: medicamentos.length,
                       itemBuilder: (context, index) {
                         return Card(
+                          color: const Color.fromARGB(255, 191, 212, 241),
                           elevation: 2,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
@@ -318,11 +319,10 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
             style: TextButton.styleFrom(
               backgroundColor: const Color(0XFF1C51A1),
               foregroundColor: Colors.white,
-              minimumSize: const Size(250, 50),
             ),
             child: const Text("Adicionar Novo Medicamento"),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
               _salvarInformacoes();
@@ -330,7 +330,6 @@ class _MedicacaoPageState extends State<MedicacaoPage> {
             style: TextButton.styleFrom(
               backgroundColor: const Color(0XFF1C51A1),
               foregroundColor: Colors.white,
-              minimumSize: const Size(250, 50),
             ),
             child: const Text("Salvar"),
           ),

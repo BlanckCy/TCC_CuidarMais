@@ -32,8 +32,6 @@ class _PatientDataPage extends State<PatientDataPage> {
         paciente = pacienteRecuperado;
         _isLoading = false;
       });
-      print("paciente");
-      print(paciente.nome_responsavel);
     } else {}
   }
 
@@ -188,37 +186,38 @@ class _PatientDataPage extends State<PatientDataPage> {
                   Map<String, dynamic> itens = await paciente.salvarDados();
                   bool resposta = itens['resposta'];
                   var dadosPaciente = itens['dados'];
-
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Status da operação'),
-                      content: Text(resposta
-                          ? 'Dados salvos com sucesso!'
-                          : 'Erro ao salvar os dados.'),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () async {
-                            if (resposta) {
-                              await PacienteSharedPreferences.salvarPaciente(
-                                Paciente.fromJson(dadosPaciente),
-                              );
-                            }
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('OK'),
-                        ),
-                      ],
-                    ),
-                  );
+                  Future.microtask(() {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Status da operação'),
+                        content: Text(resposta
+                            ? 'Dados salvos com sucesso!'
+                            : 'Erro ao salvar os dados.'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () async {
+                              if (resposta) {
+                                await PacienteSharedPreferences.salvarPaciente(
+                                  Paciente.fromJson(dadosPaciente),
+                                );
+                              }
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  });
                 }
               },
-              child: Text(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1C51A1),
+              ),
+              child: const Text(
                 'Salvar Alterações',
                 style: TextStyle(color: Colors.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF1C51A1),
               ),
             ),
             const SizedBox(height: 20),
@@ -227,21 +226,21 @@ class _PatientDataPage extends State<PatientDataPage> {
                 bool confirmacao = await showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text('Confirmar exclusão'),
-                    content:
-                        Text('Tem certeza que deseja deletar este paciente?'),
+                    title: const Text('Confirmar exclusão'),
+                    content: const Text(
+                        'Tem certeza que deseja deletar este paciente?'),
                     actions: <Widget>[
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).pop(false);
                         },
-                        child: Text('Cancelar'),
+                        child: const Text('Cancelar'),
                       ),
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).pop(true);
                         },
-                        child: Text('Confirmar'),
+                        child: const Text('Confirmar'),
                       ),
                     ],
                   ),
@@ -250,42 +249,43 @@ class _PatientDataPage extends State<PatientDataPage> {
                 if (confirmacao == true) {
                   bool resposta =
                       await paciente.deletarPaciente(paciente.idpaciente ?? 0);
-
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Status da operação'),
-                      content: Text(resposta
-                          ? 'Paciente Deletado!'
-                          : 'Erro ao deletar o paciente.'),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            if (resposta) {
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ListaPacientePage(),
-                                ),
-                                (route) => false,
-                              );
-                            }
-                          },
-                          child: Text('OK'),
-                        ),
-                      ],
-                    ),
-                  );
+                  Future.microtask(() {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Status da operação'),
+                        content: Text(resposta
+                            ? 'Paciente Deletado!'
+                            : 'Erro ao deletar o paciente.'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              if (resposta) {
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ListaPacientePage(),
+                                  ),
+                                  (route) => false,
+                                );
+                              }
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  });
                 }
               },
-              child: Text(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 208, 20, 20),
+              ),
+              child: const Text(
                 'Deletar Paciente',
                 style: TextStyle(color: Colors.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
               ),
             ),
           ],

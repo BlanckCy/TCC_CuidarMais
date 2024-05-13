@@ -208,7 +208,7 @@ class _RegistrarPontoPageState extends State<RegistrarPontoPage> {
           Text(
             'Registros de ${DateFormat('dd/MM/yyyy').format(_selectedDay)}',
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,

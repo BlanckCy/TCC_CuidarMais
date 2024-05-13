@@ -190,7 +190,7 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
           _atualizarRotinaAtual();
         },
         style: TextButton.styleFrom(
-          backgroundColor: const Color.fromARGB(255, 66, 141, 69),
+          backgroundColor: const Color.fromARGB(255, 30, 124, 33),
           foregroundColor: Colors.white,
           minimumSize: const Size(250, 50),
         ),
@@ -219,7 +219,7 @@ class _RegistrarRotinaPageState extends State<RegistrarRotinaPage> {
           Navigator.pushNamed(context, '/$rota', arguments: tipoCuidado);
         },
         style: TextButton.styleFrom(
-          backgroundColor: const Color(0XFF1C51A1),
+          backgroundColor: const Color.fromARGB(255, 49, 89, 149),
           foregroundColor: Colors.white,
           minimumSize: const Size(250, 50),
         ),

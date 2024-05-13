@@ -43,7 +43,6 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
         _isLoading = false;
       });
     } catch (error) {
-      print('Erro ao carregar pacientes: $error');
       Future.microtask(() {
         showDialog(
           context: context,
@@ -133,7 +132,7 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
                       });
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 210, 228, 255),
+                      backgroundColor: const Color.fromARGB(255, 164, 197, 248),
                       foregroundColor: Colors.black,
                       minimumSize: const Size(250, 50),
                     ),

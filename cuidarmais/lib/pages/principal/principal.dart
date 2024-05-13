@@ -116,6 +116,13 @@ class _HomePageState extends State<PrincipalPage> {
               const Color.fromARGB(255, 49, 89, 149),
               'escala',
             ),
+            const SizedBox(height: 20),
+            buildCustomButton(
+              Icons.receipt_long_sharp,
+              'Relatório',
+              const Color.fromARGB(255, 49, 89, 149),
+              'relatorioRotina',
+            ),
           ],
         ),
       ),

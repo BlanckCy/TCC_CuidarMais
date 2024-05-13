@@ -103,7 +103,7 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
               // Ação para chamar o bombeiro
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: const Color.fromARGB(255, 208, 20, 20),
               minimumSize: const Size(double.infinity, 50),
             ),
             child: const Row(
@@ -131,7 +131,7 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
               // Ação para chamar a polícia
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
+              backgroundColor: const Color.fromARGB(255, 29, 131, 214),
               minimumSize: const Size(double.infinity, 50),
             ),
             child: const Row(
@@ -159,7 +159,7 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
               // Ação para chamar o SAMU
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
+              backgroundColor: const Color.fromARGB(255, 28, 151, 32),
               minimumSize: const Size(double.infinity, 50),
             ),
             child: const Row(
@@ -197,7 +197,7 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 210, 228, 255),
+                      backgroundColor: const Color.fromARGB(255, 164, 197, 248),
                       foregroundColor: Colors.black,
                       minimumSize: const Size(250, 50),
                     ),
