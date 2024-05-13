@@ -1,6 +1,7 @@
-import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:cuidarmais/models/paciente.dart';
+import 'package:cuidarmais/pages/registrarPonto/registrarPonto.dart';
+import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 
 class PrincipalPage extends StatefulWidget {
   const PrincipalPage({Key? key}) : super(key: key);
@@ -11,6 +12,7 @@ class PrincipalPage extends StatefulWidget {
 
 class _HomePageState extends State<PrincipalPage> {
   late Paciente paciente = Paciente();
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -24,21 +26,24 @@ class _HomePageState extends State<PrincipalPage> {
     if (pacienteRecuperado != null) {
       setState(() {
         paciente = pacienteRecuperado;
+        _isLoading = false;
       });
     } else {}
   }
 
   Widget buildCustomButton(IconData icon, String text, Color color, String rota,
-      [int selectedIndex = 0]) {
+      [int? selectedIndex]) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: ElevatedButton(
         onPressed: () {
-          Navigator.pop(context);
+          if (selectedIndex != null) {
+            Navigator.pop(context);
+          }
           Navigator.pushNamed(
             context,
             '/$rota',
-            arguments: selectedIndex,
+            arguments: selectedIndex ?? 0,
           );
         },
         style: ElevatedButton.styleFrom(
@@ -64,20 +69,35 @@ class _HomePageState extends State<PrincipalPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        padding: const EdgeInsets.only(top: 25),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _buildPrincipalWidget(),
+    );
+  }
+
+  Widget _buildPrincipalWidget() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      padding: const EdgeInsets.only(top: 25),
+      child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _buildProfileButton(),
             const Divider(),
+            const Text(
+              'Clique sobre a data atual para registrar o ponto',
+              style: TextStyle(fontSize: 14),
+            ),
+            RegistrarPontoPage(
+              paciente: paciente,
+            ),
             const SizedBox(height: 20),
             buildCustomButton(
               Icons.local_hospital,
               'SOS Emergência',
-              Colors.red,
+              const Color.fromARGB(255, 208, 20, 20),
               'home',
               2,
             ),
@@ -85,7 +105,7 @@ class _HomePageState extends State<PrincipalPage> {
             buildCustomButton(
               Icons.book,
               'Registrar Rotina',
-              const Color(0xFF1C51A1),
+              const Color.fromARGB(255, 49, 89, 149),
               'home',
               0,
             ),
@@ -93,7 +113,7 @@ class _HomePageState extends State<PrincipalPage> {
             buildCustomButton(
               Icons.calendar_month,
               'Calendário Escala',
-              const Color(0xFF1C51A1),
+              const Color.fromARGB(255, 49, 89, 149),
               'escala',
             ),
           ],
@@ -121,7 +141,7 @@ class _HomePageState extends State<PrincipalPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             CircleAvatar(
-              backgroundColor: Colors.blue,
+              backgroundColor: const Color.fromARGB(255, 72, 128, 212),
               radius: 30,
               child: Icon(
                 genderIcon,

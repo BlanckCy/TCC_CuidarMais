@@ -50,9 +50,13 @@ public class EscalaController {
     }
 
     @GetMapping("/{dia}/{idpaciente}")
-    public ResponseEntity<List<EscalaEntity>> buscarPorDiaIdpaciente(@PathVariable String dia, @PathVariable int idpaciente) {
-        List<EscalaEntity> escala = escalaService.buscarPorDiaIdpaciente(dia, idpaciente);
-        return new ResponseEntity<>(escala, HttpStatus.OK);
+    public ResponseEntity<EscalaEntity> buscarPorDiaIdpaciente(@PathVariable String dia, @PathVariable int idpaciente) {
+        EscalaEntity escala = escalaService.buscarPorDiaIdpaciente(dia, idpaciente);
+        if (escala != null) {
+            return new ResponseEntity<>(escala, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/create")

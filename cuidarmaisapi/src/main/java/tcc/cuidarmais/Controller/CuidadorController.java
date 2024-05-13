@@ -9,7 +9,6 @@ import tcc.cuidarmais.Entity.CuidadorEntity;
 import tcc.cuidarmais.Service.CuidadorService;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/cuidador")

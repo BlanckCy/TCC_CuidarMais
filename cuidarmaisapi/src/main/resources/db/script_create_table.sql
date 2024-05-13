@@ -50,18 +50,20 @@ create table escala(
 	idescala int auto_increment primary key,
     data_hora datetime,
     dia date,
-    hora_inicio datetime,
-    hora_final datetime,
+    hora_inicio time,
+    hora_final time,
     idpaciente int,
     foreign key (idpaciente) references paciente(idpaciente)
 );
 
-create table pontoEletronico(
-	idpontoEletronico int auto_increment primary key,
-    data_hora_entrada datetime,
-    data_hora_saida datetime,
+create table ponto_eletronico(
+	idponto_eletronico int auto_increment primary key,
+    hora_entrada time,
+    hora_saida time,
     idpaciente int,
-    foreign key (idpaciente) references paciente(idpaciente)
+    foreign key (idpaciente) references paciente(idpaciente),
+    idescala int,
+    foreign key (idescala) references escala(idescala)
 );
 
 create table rotina(

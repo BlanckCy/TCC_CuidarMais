@@ -101,6 +101,28 @@ class Escala {
     return [];
   }
 
+  Future<Escala?> carregarPorData() async {
+    var database = Database();
+
+    print('/escala/$dia/$idpaciente');
+
+    var dados = await database.buscarDadosGet('/escala/$dia/$idpaciente');
+
+    var resposta = jsonDecode(dados);
+
+    print(resposta);
+
+    if (resposta['resposta'] == 'ok') {
+      dynamic cuidadoData = jsonDecode(resposta['dados']);
+
+      Escala escala = Escala.fromJson(cuidadoData);
+
+      return escala;
+    }
+
+    return null;
+  }
+
   Future<bool> atualizar() async {
     var database = Database();
 
