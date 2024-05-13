@@ -25,8 +25,8 @@ public class EscalaService {
         return escalaRepository.findAll();
     }
 
-    public List<EscalaEntity> buscarPorDiaIdpaciente(String dia, int idescala) {
-        return escalaRepository.buscarPorDiaIdpaciente(dia, idescala);
+    public EscalaEntity buscarPorDiaIdpaciente(String dia, int idpaciente) {
+        return escalaRepository.buscarPorDiaIdpaciente(dia, idpaciente);
     }
 
     public List<EscalaEntity> buscarPorIdpaciente(int idpaciente) {

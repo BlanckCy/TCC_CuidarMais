@@ -1,8 +1,6 @@
 import 'package:cuidarmais/models/contatoEmergencia.dart';
 import 'package:cuidarmais/models/paciente.dart';
-import 'package:cuidarmais/pages/emergency/emergency_contacts_management.dart';
 import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
-import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/material.dart';
 
 class EmergencyContactsPage extends StatefulWidget {
@@ -46,12 +44,11 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
       });
     } catch (error) {
       Future.microtask(() {
-        print('Erro ao carregar contatos de emergencia: $error');
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Erro'),
-            content: Text('Erro ao carregar os contatos de emergência'),
+            content: const Text('Erro ao carregar os contatos de emergência'),
             actions: [
               TextButton(
                 onPressed: () {

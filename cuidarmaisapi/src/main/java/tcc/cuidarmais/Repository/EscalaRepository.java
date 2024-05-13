@@ -9,6 +9,6 @@ public interface EscalaRepository extends JpaRepository<EscalaEntity, Integer>{
     EscalaEntity findByIdescala(int idescala);
     java.util.List<EscalaEntity> findByIdpaciente(int idpaciente);
 
-    @Query("SELECT p FROM EscalaEntity p WHERE p.dia = ?1 and p.idescala = ?2")
-    java.util.List<EscalaEntity> buscarPorDiaIdpaciente(String dia, int idescala);
+    @Query("SELECT p FROM EscalaEntity p WHERE p.dia = ?1 and p.idpaciente = ?2")
+    EscalaEntity buscarPorDiaIdpaciente(String dia, int idpaciente);
 }

@@ -4,6 +4,7 @@ import 'package:cuidarmais/pages/home/home.dart';
 import 'package:cuidarmais/pages/list_patient/list_paciente.dart';
 import 'package:cuidarmais/pages/medication/medication_registration.dart';
 import 'package:cuidarmais/pages/patient_data/patient_data.dart';
+import 'package:cuidarmais/pages/registrarPonto/registrarPonto.dart';
 import 'package:cuidarmais/pages/registrar_rotina/registrar_rotina.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_ativ_fisica.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_decubito.dart';
@@ -92,6 +93,10 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (_) => const EscalaTrabalhoPage(),
             );
+          /* case '/registrarPonto':
+            return MaterialPageRoute(
+              builder: (_) => const RegistrarPontoPage(),
+            ); */
           default:
             return MaterialPageRoute(builder: (_) => const LoginPage());
         }

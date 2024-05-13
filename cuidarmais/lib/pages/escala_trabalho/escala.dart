@@ -127,7 +127,7 @@ class _EscalaTrabalhoPageState extends State<EscalaTrabalhoPage> {
   }
 
   void _setCalendarRange() {
-    _firstDay = DateTime.utc(_focusedDay.year, _focusedDay.month, 1);
+    _firstDay = DateTime.utc(_focusedDay.year, 5, 1);
     _lastDay = DateTime.utc(2050, 12, 31);
   }
 
@@ -153,9 +153,17 @@ class _EscalaTrabalhoPageState extends State<EscalaTrabalhoPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           const Text(
+            "Calendário da Escala",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const Text(
             'Selecione a data desejada, insira o horário de ínicio e fim do plantão.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: 14),
           ),
           const SizedBox(height: 20),
           TableCalendar(
@@ -178,6 +186,24 @@ class _EscalaTrabalhoPageState extends State<EscalaTrabalhoPage> {
               });
             },
             availableCalendarFormats: const {CalendarFormat.month: 'Mês'},
+            headerStyle: const HeaderStyle(
+              titleCentered: true,
+            ),
+            calendarStyle: CalendarStyle(
+              todayDecoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: const Color.fromARGB(255, 49, 89, 149),
+                  width: 2,
+                ),
+              ),
+              todayTextStyle: const TextStyle(color: Colors.black),
+              defaultTextStyle: const TextStyle(color: Colors.black),
+              markerDecoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color.fromARGB(255, 72, 128, 212),
+              ),
+            ),
           ),
           const SizedBox(height: 20),
           const Text(
@@ -204,7 +230,6 @@ class _EscalaTrabalhoPageState extends State<EscalaTrabalhoPage> {
   }
 
   Widget _buildescalasList(Map<DateTime, List<Event>> events) {
-    // Ordenar as chaves do mapa
     List<DateTime> sortedDays = events.keys.toList()..sort();
 
     return Column(
