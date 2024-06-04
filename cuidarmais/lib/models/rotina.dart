@@ -150,6 +150,47 @@ class Rotina {
     }
   }
 
+  Future<Map<String, List<dynamic>>> carregarRelatorioRotina() async {
+    var database = Database();
+
+    print('/rotina/relatorio/$idpaciente/$data_hora');
+
+    var dados = await database
+        .buscarDadosGet('/rotina/relatorio/$idpaciente/$data_hora');
+
+    var resposta = jsonDecode(dados);
+
+    if (resposta['resposta'] == 'ok') {
+      Map<String, dynamic> jsonDataMap = jsonDecode(resposta['dados']);
+      Map<String, dynamic> cuidadosMap = jsonDataMap['cuidados'];
+
+      Map<String, List<dynamic>> dados = {};
+
+      final tipoCuidadoMap = {
+        "1": 'Refeição',
+        "2": 'Sinais Vitais',
+        "3": 'Atividade Física',
+        "4": 'Higiene',
+        "5": 'Medicação',
+        "6": 'Mudança Decúbito'
+      };
+
+      for (var key in cuidadosMap.keys) {
+        List<dynamic> cuidadosList = cuidadosMap[key];
+        String? tipoCuidado = tipoCuidadoMap[key];
+        if (tipoCuidado != null) {
+          dados[tipoCuidado] = cuidadosList;
+        }
+      }
+
+      print(dados);
+
+      return dados;
+    }
+
+    return {};
+  }
+
   DateTime converterDatas(TimeOfDay? timeOfDay) {
     DateTime now = DateTime.now();
     return DateTime(
