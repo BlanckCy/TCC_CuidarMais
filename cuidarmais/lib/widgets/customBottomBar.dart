@@ -34,7 +34,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         ),
       ],
       currentIndex: widget.selectedIndex,
-      selectedItemColor: Colors.blue,
+      selectedItemColor: const Color.fromARGB(255, 49, 89, 149),
       onTap: widget.onItemTapped,
     );
   }

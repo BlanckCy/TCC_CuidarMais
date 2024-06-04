@@ -66,7 +66,7 @@ class _MedicationRegistrationPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: const CustomAppBar(hasPreviousRoute: true),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(20),
@@ -247,7 +247,6 @@ class _MedicationRegistrationPageState
                   style: TextButton.styleFrom(
                     backgroundColor: const Color(0XFF1C51A1),
                     foregroundColor: Colors.white,
-                    minimumSize: const Size(250, 50),
                   ),
                   child: const Text("Salvar"),
                 ),

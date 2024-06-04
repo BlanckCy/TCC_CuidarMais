@@ -4,7 +4,6 @@ import 'package:cuidarmais/pages/home/home.dart';
 import 'package:cuidarmais/pages/list_patient/list_paciente.dart';
 import 'package:cuidarmais/pages/medication/medication_registration.dart';
 import 'package:cuidarmais/pages/patient_data/patient_data.dart';
-import 'package:cuidarmais/pages/registrarPonto/registrarPonto.dart';
 import 'package:cuidarmais/pages/registrar_rotina/registrar_rotina.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_ativ_fisica.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_decubito.dart';
@@ -12,6 +11,7 @@ import 'package:cuidarmais/pages/registrar_rotina/rotina_higiene.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_medicacao.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_refeicao.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_sinais_vitais.dart';
+import 'package:cuidarmais/pages/relatorio/relatorioCuidados.dart';
 import 'package:cuidarmais/pages/sign_up/sign_up_cuidador.dart';
 import 'package:cuidarmais/pages/sign_up/sign_up_paciente.dart';
 import 'package:flutter/material.dart';
@@ -93,10 +93,10 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (_) => const EscalaTrabalhoPage(),
             );
-          /* case '/registrarPonto':
+          case '/relatorioRotina':
             return MaterialPageRoute(
-              builder: (_) => const RegistrarPontoPage(),
-            ); */
+              builder: (_) => const RelatorioCuidadosPage(),
+            );
           default:
             return MaterialPageRoute(builder: (_) => const LoginPage());
         }
@@ -109,9 +109,6 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      /* localizationsDelegates: [
-        GlobalMa
-      ], */
     );
   }
 }

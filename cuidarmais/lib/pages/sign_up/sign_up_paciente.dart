@@ -47,7 +47,7 @@ class _SignUpPacientePageState extends State<SignUpPacientePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: const CustomAppBar(hasPreviousRoute: true),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,

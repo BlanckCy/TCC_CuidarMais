@@ -269,7 +269,7 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: const CustomAppBar(hasPreviousRoute: true),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _buildRotinaRefeicao(),
@@ -354,30 +354,32 @@ class _RefeicaoPageState extends State<RefeicaoPage> {
               _jantarHorarioSelecionado,
             ),
             const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                if ((_cafeManhaBoa != null &&
-                        _cafeManhaHorarioSelecionado != '00:00') ||
-                    (_almocoBoa != null &&
-                        _almocoHorarioSelecionado != '00:00') ||
-                    (_jantarBoa != null &&
-                        _jantarHorarioSelecionado != '00:00')) {
-                  _salvarInformacoes();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                          'Por favor, selecione se o paciente se alimentou bem ou mal e o hórario em pelo menos uma das refeições.'),
-                    ),
-                  );
-                }
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: const Color(0XFF1C51A1),
-                foregroundColor: Colors.white,
-                minimumSize: const Size(250, 50),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: ElevatedButton(
+                onPressed: () {
+                  if ((_cafeManhaBoa != null &&
+                          _cafeManhaHorarioSelecionado != '00:00') ||
+                      (_almocoBoa != null &&
+                          _almocoHorarioSelecionado != '00:00') ||
+                      (_jantarBoa != null &&
+                          _jantarHorarioSelecionado != '00:00')) {
+                    _salvarInformacoes();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                            'Por favor, selecione se o paciente se alimentou bem ou mal e o hórario em pelo menos uma das refeições.'),
+                      ),
+                    );
+                  }
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color(0XFF1C51A1),
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text("Salvar"),
               ),
-              child: const Text("Salvar"),
             ),
           ],
         ),

@@ -15,7 +15,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: const CustomAppBar(),
+      appBar: const CustomAppBar(hasPreviousRoute: true),
       body: Center(
         child: Container(
           width: MediaQuery.of(context).size.width,

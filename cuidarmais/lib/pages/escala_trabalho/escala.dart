@@ -134,7 +134,7 @@ class _EscalaTrabalhoPageState extends State<EscalaTrabalhoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: const CustomAppBar(hasPreviousRoute: true),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _buildEscalaWidget(),
@@ -287,8 +287,9 @@ class _EscalaTrabalhoPageState extends State<EscalaTrabalhoPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _buildTimeField(_horaInicialController, 'Início do plantão'),
-              _buildTimeField(_horaFinalController, 'Fim do plantão'),
+              _buildTimeField(
+                  _horaInicialController, 'Início do plantão', 'Entrada'),
+              _buildTimeField(_horaFinalController, 'Fim do plantão', 'Saida'),
             ],
           ),
           actions: <Widget>[
@@ -304,22 +305,35 @@ class _EscalaTrabalhoPageState extends State<EscalaTrabalhoPage> {
     );
   }
 
-  Widget _buildTimeField(TextEditingController controller, String hintText) {
-    return TextFormField(
-      readOnly: true,
-      controller: controller,
-      onTap: () async {
-        final pickedTime = await _selectTime(context);
-        if (pickedTime != null) {
-          setState(() {
-            controller.text = pickedTime.format(context);
-          });
-        }
-      },
-      decoration: InputDecoration(
-        hintText: hintText,
-        suffixIcon: const Icon(Icons.access_time),
-      ),
+  Widget _buildTimeField(
+      TextEditingController controller, String hintText, String label) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$label:',
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        TextFormField(
+          readOnly: true,
+          controller: controller,
+          onTap: () async {
+            final pickedTime = await _selectTime(context);
+            if (pickedTime != null) {
+              setState(() {
+                controller.text = pickedTime.format(context);
+              });
+            }
+          },
+          decoration: InputDecoration(
+            hintText: hintText,
+            suffixIcon: const Icon(Icons.access_time),
+          ),
+        ),
+      ],
     );
   }
 

@@ -71,8 +71,6 @@ class Pontoeletronico {
   Future<Pontoeletronico?> carregar() async {
     var database = Database();
 
-    String dataAtual = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-
     print('/pontoeletronico/por-data/$idescala/$idpaciente');
 
     var dados = await database
