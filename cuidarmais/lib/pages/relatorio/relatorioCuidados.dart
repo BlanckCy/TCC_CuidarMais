@@ -7,6 +7,7 @@ import 'package:cuidarmais/utils/gerar_pdf.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class RelatorioCuidadosPage extends StatefulWidget {
   const RelatorioCuidadosPage({Key? key}) : super(key: key);
@@ -38,8 +39,6 @@ class _RelatorioCuidadosState extends State<RelatorioCuidadosPage> {
       });
 
       rotina = Rotina();
-
-      // _gerarRelatorioPDF(paciente);
     } else {}
   }
 
@@ -74,12 +73,27 @@ class _RelatorioCuidadosState extends State<RelatorioCuidadosPage> {
   }
 
   void _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final DateTime? picked = await showModalBottomSheet<DateTime>(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2101),
+      builder: (context) => TableCalendar(
+        locale: 'pt_BR',
+        firstDay: DateTime(2024),
+        lastDay: DateTime(2101),
+        focusedDay: _selectedDate ?? DateTime.now(),
+        calendarFormat: CalendarFormat.month,
+        headerStyle: const HeaderStyle(
+          titleTextStyle: TextStyle(fontSize: 18),
+          formatButtonVisible: false,
+        ),
+        onDaySelected: (selectedDay, focusedDay) {
+          setState(() {
+            _selectedDate = selectedDay;
+          });
+          Navigator.pop(context);
+        },
+      ),
     );
+
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
@@ -120,7 +134,7 @@ class _RelatorioCuidadosState extends State<RelatorioCuidadosPage> {
                       ),
                       ElevatedButton(
                         onPressed: () => _selectDate(context),
-                        style: TextButton.styleFrom(
+                        style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0XFF1C51A1),
                           foregroundColor: Colors.white,
                         ),
