@@ -2,6 +2,7 @@ import 'package:cuidarmais/models/contatoEmergencia.dart';
 import 'package:cuidarmais/models/paciente.dart';
 import 'package:cuidarmais/shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
 class EmergencyContactsPage extends StatefulWidget {
   const EmergencyContactsPage({Key? key}) : super(key: key);
@@ -100,7 +101,7 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
           const SizedBox(height: 30),
           ElevatedButton(
             onPressed: () {
-              // Ação para chamar o bombeiro
+              // _fazerChamada('193');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromARGB(255, 208, 20, 20),
@@ -128,7 +129,7 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
-              // Ação para chamar a polícia
+              // _fazerChamada('190');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromARGB(255, 29, 131, 214),
@@ -156,7 +157,7 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
-              // Ação para chamar o SAMU
+              // _fazerChamada('192');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromARGB(255, 28, 151, 32),
@@ -256,4 +257,13 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
       ),
     );
   }
+
+  /* void _fazerChamada(String phoneNumber) async {
+    Uri url = Uri.parse('tel:$phoneNumber');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  } */
 }

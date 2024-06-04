@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cuidarmais/models/rotina.dart';
 import 'package:cuidarmais/widgets/customAppBar.dart';
 import 'package:flutter/material.dart';
