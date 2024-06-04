@@ -43,7 +43,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: CustomAppBar(
+        hasPreviousRoute: true,
+        tohome: _selectedIndex != 1,
+      ),
       body: _getBody(_selectedIndex),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: _selectedIndex,

@@ -72,7 +72,7 @@ class _ListaPacientePageState extends State<ListaPacientePage> {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
-        appBar: const CustomAppBar(),
+        appBar: const CustomAppBar(hasPreviousRoute: false),
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _buildPacientesList(),

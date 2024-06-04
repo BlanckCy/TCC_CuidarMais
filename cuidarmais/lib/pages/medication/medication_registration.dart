@@ -66,7 +66,7 @@ class _MedicationRegistrationPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: const CustomAppBar(hasPreviousRoute: true),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(20),

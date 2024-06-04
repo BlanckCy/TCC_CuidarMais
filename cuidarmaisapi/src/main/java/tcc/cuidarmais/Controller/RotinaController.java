@@ -9,6 +9,7 @@ import tcc.cuidarmais.Entity.RotinaEntity;
 import tcc.cuidarmais.Service.RotinaService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/rotina")
@@ -24,6 +25,13 @@ public class RotinaController {
     @GetMapping("/lista")
     public ResponseEntity<List<RotinaEntity>> listar() {
         List<RotinaEntity> cuidados = rotinaService.listar();
+        return new ResponseEntity<>(cuidados, HttpStatus.OK);
+    }
+
+    @GetMapping("/relatorio/{idpaciente}/{data}")
+    public ResponseEntity<Map<String, Object>> relatorioRotina(@PathVariable int idpaciente, @PathVariable String data) {
+        Map<String, Object> cuidados = rotinaService.relatorioRotina(idpaciente, data);
+        System.out.println(cuidados); // Apenas para depuração
         return new ResponseEntity<>(cuidados, HttpStatus.OK);
     }
 

@@ -11,6 +11,7 @@ import 'package:cuidarmais/pages/registrar_rotina/rotina_higiene.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_medicacao.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_refeicao.dart';
 import 'package:cuidarmais/pages/registrar_rotina/rotina_sinais_vitais.dart';
+import 'package:cuidarmais/pages/relatorio/relatorioCuidados.dart';
 import 'package:cuidarmais/pages/sign_up/sign_up_cuidador.dart';
 import 'package:cuidarmais/pages/sign_up/sign_up_paciente.dart';
 import 'package:flutter/material.dart';
@@ -92,10 +93,10 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (_) => const EscalaTrabalhoPage(),
             );
-          /* case '/gerarRelatorio':
+          case '/relatorioRotina':
             return MaterialPageRoute(
-              builder: (_) => ,
-            ); */
+              builder: (_) => const RelatorioCuidadosPage(),
+            );
           default:
             return MaterialPageRoute(builder: (_) => const LoginPage());
         }

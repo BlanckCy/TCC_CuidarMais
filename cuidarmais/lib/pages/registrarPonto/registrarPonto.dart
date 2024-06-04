@@ -204,15 +204,17 @@ class _RegistrarPontoPageState extends State<RegistrarPontoPage> {
               defaultTextStyle: const TextStyle(color: Colors.black),
             ),
           ),
-          const SizedBox(height: 20),
-          Text(
-            'Registros de ${DateFormat('dd/MM/yyyy').format(_selectedDay)}',
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
+          // if (registros.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            Text(
+              'Registros de ${DateFormat('dd/MM/yyyy').format(_selectedDay)}',
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
+          // ],
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

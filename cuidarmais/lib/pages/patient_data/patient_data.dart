@@ -38,7 +38,7 @@ class _PatientDataPage extends State<PatientDataPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: const CustomAppBar(hasPreviousRoute: true),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _buildDadosPaciente(),
