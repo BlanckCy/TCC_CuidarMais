@@ -221,7 +221,7 @@ class _PatientDataPage extends State<PatientDataPage> {
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
+            /* ElevatedButton(
               onPressed: () async {
                 bool confirmacao = await showDialog(
                   context: context,
@@ -287,7 +287,7 @@ class _PatientDataPage extends State<PatientDataPage> {
                 'Deletar Paciente',
                 style: TextStyle(color: Colors.white),
               ),
-            ),
+            ), */
           ],
         ),
       ),

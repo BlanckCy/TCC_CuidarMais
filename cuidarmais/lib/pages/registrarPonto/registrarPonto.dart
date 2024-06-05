@@ -60,21 +60,26 @@ class _RegistrarPontoPageState extends State<RegistrarPontoPage> {
         pontoeletronico =
             (await pontoeletronico.carregar()) ?? Pontoeletronico();
 
-        if (pontoeletronico.hora_entrada != null) {
+        if (pontoeletronico.hora_entrada != null &&
+            pontoeletronico.hora_entrada != '00:00') {
           setState(() {
             rotulos.add("Entrada");
-            registros.add(pontoeletronico.hora_entrada ?? '00:00');
+            registros.add(pontoeletronico.hora_entrada!);
             allowAddCircle = false;
           });
         }
-        if (pontoeletronico.hora_saida != null) {
+        if (pontoeletronico.hora_saida != null &&
+            pontoeletronico.hora_saida != '00:00') {
           setState(() {
             rotulos.add("Saída");
-            registros.add(pontoeletronico.hora_saida ?? '00:00');
+            registros.add(pontoeletronico.hora_saida!);
             allowAddCircle = false;
           });
         }
       }
+      setState(() {
+        allowAddCircle = true;
+      });
     } catch (error) {
       Future.microtask(() {
         showConfirmationDialog(
@@ -205,15 +210,15 @@ class _RegistrarPontoPageState extends State<RegistrarPontoPage> {
             ),
           ),
           // if (registros.isNotEmpty) ...[
-            const SizedBox(height: 20),
-            Text(
-              'Registros de ${DateFormat('dd/MM/yyyy').format(_selectedDay)}',
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
+          const SizedBox(height: 20),
+          Text(
+            'Registros de ${DateFormat('dd/MM/yyyy').format(_selectedDay)}',
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
             ),
+            textAlign: TextAlign.center,
+          ),
           // ],
           const SizedBox(height: 20),
           Row(
