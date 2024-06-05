@@ -210,7 +210,7 @@ class _RegistrarPontoPageState extends State<RegistrarPontoPage> {
             ),
           ),
           // if (registros.isNotEmpty) ...[
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           Text(
             'Registros de ${DateFormat('dd/MM/yyyy').format(_selectedDay)}',
             style: const TextStyle(
@@ -220,7 +220,7 @@ class _RegistrarPontoPageState extends State<RegistrarPontoPage> {
             textAlign: TextAlign.center,
           ),
           // ],
-          const SizedBox(height: 20),
+          const SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
