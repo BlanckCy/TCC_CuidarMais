@@ -243,6 +243,7 @@ class _EmergencyContactsManagementPageState
                         'Tia',
                         'Primo',
                         'Prima',
+                        'Outro',
                       ].map<DropdownMenuItem<String>>((String? value) {
                         return DropdownMenuItem<String>(
                           value: value ?? '',
