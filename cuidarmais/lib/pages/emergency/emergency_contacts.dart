@@ -132,7 +132,7 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
               // _fazerChamada('190');
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 29, 131, 214),
+              backgroundColor: const Color.fromARGB(255, 47, 48, 50),
               minimumSize: const Size(double.infinity, 50),
             ),
             child: const Row(
@@ -160,7 +160,7 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
               // _fazerChamada('192');
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 28, 151, 32),
+              backgroundColor: const Color.fromARGB(255, 29, 131, 214),
               minimumSize: const Size(double.infinity, 50),
             ),
             child: const Row(
@@ -182,7 +182,23 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
               ],
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
+          Container(
+            width: double.infinity,
+            height: 1.0,
+            color: Colors.grey,
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Principais Contatos',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
           Expanded(
             child: ListView.builder(
               itemCount: contatos.length,
@@ -203,17 +219,30 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
                       minimumSize: const Size(250, 50),
                     ),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        const Icon(
-                          Icons.person,
-                        ),
+                        const Icon(Icons.person),
+                        const SizedBox(width: 8),
                         Expanded(
-                          child: Text(
-                            contatos[index].nome ?? "Erro nome",
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                contatos[index].nome ?? "Erro nome",
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                contatos[index].telefone ?? "Erro telefone",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],

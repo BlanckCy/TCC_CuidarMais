@@ -59,14 +59,14 @@ class GerarPdf {
           pw.Row(
             children: [
               pw.Text(
-                'Nome: ${rotinas['paciente']![0]['nome']}',
+                'Nome: ${rotinas['paciente']?[0]['nome'] ?? 'Não Realizado.'}',
                 style: const pw.TextStyle(
                   fontSize: 14.0,
                 ),
               ),
               pw.Spacer(),
               pw.Text(
-                'Data: ${rotinas['paciente']![0]['data']}',
+                'Data: ${rotinas['paciente']?[0]['data'] ?? 'Não Realizado.'}',
                 style: const pw.TextStyle(
                   fontSize: 14.0,
                 ),
@@ -95,15 +95,15 @@ class GerarPdf {
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
                           pw.Text(
-                            'Café da Manhã: ${(rotina['descricao_cafe'].isEmpty ? 'Sem Descrição' : rotina['descricao_cafe'])} - Hora: ${rotina['hora_cafe']} - ${(rotina['avaliacao_cafe'] ? 'Se alimentou bem' : 'Não se alimentou bem')}',
+                            'Café da Manhã: ${rotina['hora_cafe'] != null ? '${rotina['descricao_cafe']?.isEmpty ?? true ? 'Sem Descrição' : rotina['descricao_cafe']} - Hora: ${rotina['hora_cafe']} - ${rotina['avaliacao_cafe'] == true ? 'Se alimentou bem' : 'Não se alimentou bem'}' : 'Não realizado.'}',
                           ),
                           pw.SizedBox(height: 5),
                           pw.Text(
-                            'Almoço: ${(rotina['descricao_almoco'].isEmpty ? 'Sem Descrição' : rotina['descricao_almoco'])} - Hora: ${rotina['hora_almoco']} - ${(rotina['avaliacao_almoco'] ? 'Se alimentou bem' : 'Não se alimentou bem')}',
+                            'Almoço: ${rotina['hora_almoco'] != null ? '${rotina['descricao_almoco']?.isEmpty ?? true ? 'Sem Descrição' : rotina['descricao_almoco']} - Hora: ${rotina['hora_almoco']} - ${rotina['avaliacao_almoco'] == true ? 'Se alimentou bem' : 'Não se alimentou bem'}' : 'Não realizado.'}',
                           ),
                           pw.SizedBox(height: 5),
                           pw.Text(
-                            'Jantar: ${(rotina['descricao_jantar'].isEmpty ? 'Sem Descrição' : rotina['descricao_jantar'])} - Hora: ${rotina['hora_jantar']} - ${(rotina['avaliacao_jantar'] ? 'Se alimentou bem' : 'Não se alimentou bem')}',
+                            'Jantar: ${rotina['hora_jantar'] != null ? '${rotina['descricao_jantar']?.isEmpty ?? true ? 'Sem Descrição' : rotina['descricao_jantar']} - Hora: ${rotina['hora_jantar']} - ${rotina['avaliacao_jantar'] == true ? 'Se alimentou bem' : 'Não se alimentou bem'}' : 'Não realizado.'}',
                           ),
                         ],
                       ),
@@ -112,41 +112,47 @@ class GerarPdf {
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
                           pw.Text(
-                            'Pressão: ${rotina['pressao_sistolica']} / ${rotina['pressao_diastolica']} mmHg',
+                            'Pressão: ${rotina['pressao_sistolica'] == null || rotina['pressao_diastolica'] == null ? 'Não Realizado.' : '${rotina['pressao_sistolica']} / ${rotina['pressao_diastolica']} mmHg'}',
                           ),
                           pw.SizedBox(height: 5),
                           pw.Text(
-                            'Temperatura: ${(rotina['temperatura'].isEmpty ? 'Não informardo' : rotina['temperatura'] + ' ºC')}',
+                            'Temperatura: ${(rotina['temperatura']?.isEmpty ?? true ? 'Não Realizado.' : rotina['temperatura'] + ' ºC')}',
                           ),
                           pw.SizedBox(height: 5),
                           pw.Text(
-                            'Frequência Respiratória: ${(rotina['frequencia_respiratoria'].isEmpty ? 'Não informardo' : rotina['frequencia_respiratoria'] + ' IRPM')}',
+                            'Frequência Respiratória: ${(rotina['frequencia_respiratoria']?.isEmpty ?? true ? 'Não Realizado.' : rotina['frequencia_respiratoria'] + ' IRPM')}',
                           ),
                           pw.SizedBox(height: 5),
                           pw.Text(
-                            'Frequência Cardíaca: ${(rotina['frequencia_cardiaca'].isEmpty ? 'Não informardo' : rotina['frequencia_cardiaca'] + ' BPM')}',
+                            'Frequência Cardíaca: ${(rotina['frequencia_cardiaca']?.isEmpty ?? true ? 'Não Realizado.' : rotina['frequencia_cardiaca'] + ' BPM')}',
                           ),
                           pw.SizedBox(height: 5),
                           pw.Text(
-                            'Descrição: ${(rotina['descricao_sinais_vitais'].isEmpty ? 'Sem descrição' : rotina['descricao_sinais_vitais'])}',
+                            'Descrição: ${(rotina['descricao_sinais_vitais']?.isEmpty ?? true ? 'Sem descrição' : rotina['descricao_sinais_vitais'])}',
                           ),
                         ],
                       ),
                     if (entry.key == 'Atividade Física')
                       pw.Text(
-                        'Descrição: ${(rotina['descricao_atividade_fisica'].isEmpty ? 'Sem descrição' : rotina['descricao_atividade_fisica'])} - ${rotina['hora_atividade_fisica']} - ${(rotina['avaliacao_atividade_fisica'] ? 'Se exercitou bem' : 'Não se exercitou bem')}',
+                        rotina['hora_atividade_fisica'] != null
+                            ? 'Descrição: ${(rotina['descricao_atividade_fisica']?.isEmpty ?? true ? 'Sem descrição' : rotina['descricao_atividade_fisica'])} - ${rotina['hora_atividade_fisica'] ?? 'Não Realizado.'} - ${(rotina['avaliacao_atividade_fisica'] == true ? 'Se exercitou bem' : 'Não se exercitou bem')}'
+                            : 'Não Realizado.',
                       ),
                     if (entry.key == 'Higiene')
                       pw.Text(
-                        'Tarefa: ${rotina['tarefa_higiene']} - ${rotina['hora_higiene']}',
+                        rotina['tarefa_higiene'] != null
+                            ? 'Tarefa: ${rotina['tarefa_higiene']} - ${rotina['hora_higiene']}'
+                            : 'Não Realizado.',
                       ),
                     if (entry.key == 'Medicação')
                       pw.Text(
-                        'Medicamento: ${rotina['medicamento']} - ${(rotina['realizado_medicamento'] ? 'Realizado' : 'Não Realizado')}',
+                        'Medicamento: ${rotina['medicamento'] ?? ''} - ${(rotina['realizado_medicamento'] == true ? 'Realizado' : 'Não Realizado.')}',
                       ),
                     if (entry.key == 'Mudança Decúbito')
                       pw.Text(
-                        'Mudança Decúbito: ${rotina['mudanca_decubito']} - ${rotina['hora_mudancadecubito']}',
+                        rotina['hora_mudancadecubito'] != null
+                            ? 'Mudança Decúbito: ${rotina['mudanca_decubito']} - ${rotina['hora_mudancadecubito']}'
+                            : 'Não Realizado.',
                       ),
                     pw.SizedBox(height: 5),
                   ],

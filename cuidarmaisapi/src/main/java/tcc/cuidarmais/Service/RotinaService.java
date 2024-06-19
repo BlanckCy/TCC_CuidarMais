@@ -55,49 +55,70 @@ public class RotinaService {
         switch (tipoCuidado) {
             case "1":
                 mappedResult.put("cuidado", "Refeição");
-                mappedResult.put("avaliacao_cafe", Boolean.valueOf(result[2].toString()));
-                mappedResult.put("hora_cafe", String.valueOf(result[3]));
-                mappedResult.put("descricao_cafe", String.valueOf(result[4]));
-                mappedResult.put("avaliacao_almoco", Boolean.valueOf(result[5].toString()));
-                mappedResult.put("hora_almoco", String.valueOf(result[6]));
-                mappedResult.put("descricao_almoco", String.valueOf(result[7]));
-                mappedResult.put("descricao_jantar", String.valueOf(result[8]));
-                mappedResult.put("avaliacao_jantar", Boolean.valueOf(result[9].toString()));
-                mappedResult.put("hora_jantar", String.valueOf(result[10]));
+                mappedResult.put("avaliacao_cafe", getBooleanValue(result, 2));
+                mappedResult.put("hora_cafe", getStringValue(result, 3));
+                mappedResult.put("descricao_cafe", getStringValue(result, 4));
+                mappedResult.put("avaliacao_almoco", getBooleanValue(result, 5));
+                mappedResult.put("hora_almoco", getStringValue(result, 6));
+                mappedResult.put("descricao_almoco", getStringValue(result, 7));
+                mappedResult.put("descricao_jantar", getStringValue(result, 8));
+                mappedResult.put("avaliacao_jantar", getBooleanValue(result, 9));
+                mappedResult.put("hora_jantar", getStringValue(result, 10));
                 break;
             case "2":
                 mappedResult.put("cuidado", "Sinais Vitais");
-                mappedResult.put("pressao_sistolica", Integer.valueOf(result[11].toString()));
-                mappedResult.put("pressao_diastolica", Integer.valueOf(result[12].toString()));
-                mappedResult.put("temperatura", String.valueOf(result[13]));
-                mappedResult.put("frequencia_respiratoria", String.valueOf(result[14]));
-                mappedResult.put("frequencia_cardiaca", String.valueOf(result[15]));
-                mappedResult.put("descricao_sinais_vitais", String.valueOf(result[16]));
+                mappedResult.put("pressao_sistolica", getIntegerValue(result, 11));
+                mappedResult.put("pressao_diastolica", getIntegerValue(result, 12));
+                mappedResult.put("temperatura", getStringValue(result, 13));
+                mappedResult.put("frequencia_respiratoria", getStringValue(result, 14));
+                mappedResult.put("frequencia_cardiaca", getStringValue(result, 15));
+                mappedResult.put("descricao_sinais_vitais", getStringValue(result, 16));
                 break;
             case "3":
                 mappedResult.put("cuidado", "Atividade Física");
-                mappedResult.put("avaliacao_atividade_fisica", Boolean.valueOf(result[17].toString()));
-                mappedResult.put("hora_atividade_fisica", String.valueOf(result[18]));
-                mappedResult.put("descricao_atividade_fisica", String.valueOf(result[19]));
+                mappedResult.put("avaliacao_atividade_fisica", getBooleanValue(result, 17));
+                mappedResult.put("hora_atividade_fisica", getStringValue(result, 18));
+                mappedResult.put("descricao_atividade_fisica", getStringValue(result, 19));
                 break;
             case "4":
                 mappedResult.put("cuidado", "Higiene");
-                mappedResult.put("tarefa_higiene", String.valueOf(result[20]));
-                mappedResult.put("hora_higiene", String.valueOf(result[21]));
+                mappedResult.put("tarefa_higiene", getStringValue(result, 20));
+                mappedResult.put("hora_higiene", getStringValue(result, 21));
                 break;
             case "5":
                 mappedResult.put("cuidado", "Medicação");
-                mappedResult.put("medicamento", String.valueOf(result[22]));
-                mappedResult.put("realizado_medicamento", Boolean.valueOf(result[23].toString()));
-                mappedResult.put("data_hora_medicamento", String.valueOf(result[24]));
+                mappedResult.put("medicamento", getStringValue(result, 22));
+                mappedResult.put("realizado_medicamento", getBooleanValue(result, 23));
+                mappedResult.put("data_hora_medicamento", getStringValue(result, 24));
                 break;
             case "6":
                 mappedResult.put("cuidado", "Mudança Decúbito");
-                mappedResult.put("mudanca_decubito", String.valueOf(result[25]));
-                mappedResult.put("hora_mudancadecubito", String.valueOf(result[26]));
+                mappedResult.put("mudanca_decubito", getStringValue(result, 25));
+                mappedResult.put("hora_mudancadecubito", getStringValue(result, 26));
                 break;
         }
-    }    
+    }
+    
+    private Boolean getBooleanValue(Object[] result, int index) {
+        if (result != null && result.length > index && result[index] != null) {
+            return Boolean.valueOf(result[index].toString());
+        }
+        return null;
+    }
+    
+    private Integer getIntegerValue(Object[] result, int index) {
+        if (result != null && result.length > index && result[index] != null) {
+            return Integer.valueOf(result[index].toString());
+        }
+        return null;
+    }
+    
+    private String getStringValue(Object[] result, int index) {
+        if (result != null && result.length > index && result[index] != null) {
+            return result[index].toString();
+        }
+        return null;
+    }      
 
     public List<RotinaEntity> buscarPorIdpacienteTipo(int idpaciente, int tipo) {
         return cuidadoRepository.buscarPorIdpacienteTipo(idpaciente,tipo);

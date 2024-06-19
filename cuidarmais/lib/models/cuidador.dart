@@ -85,7 +85,7 @@ class Cuidador {
 
     try {
       var dados = await database
-          .buscarDadosPost('/cuidador/login', {'email': email, 'senha': senha});
+          .buscarDadosPost('/cuidador/login', {'email': email.trim(), 'senha': senha});
 
       var resposta = jsonDecode(dados);
       var dadosCuidador = jsonDecode(resposta['dados']);
